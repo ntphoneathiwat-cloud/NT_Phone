@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NT PHONE | POS System</title>
+    
+    <style>@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap');</style>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root {
+            --sys-black: #111827;
+            --sys-dark: #374151;
+            --sys-gray: #9CA3AF;
+            --sys-light: #F3F4F6;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --accent: #2563EB;
+            --success: #10B981;
+            --error: #EF4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Anuphan', sans-serif; }
+        body { background-color: var(--sys-light); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* ================= Navbar ================= */
+        .navbar { background: var(--white); height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid var(--border); z-index: 10; }
+        .nav-brand { font-size: 1.5rem; font-weight: 700; color: var(--sys-black); display: flex; align-items: center; gap: 10px; }
+        .nav-brand i { color: var(--accent); font-size: 1.8rem; }
+        .nav-user { display: flex; align-items: center; gap: 15px; }
+        .user-name { font-weight: 600; color: var(--sys-dark); display: flex; align-items: center; gap: 8px; }
+        .btn-logout { background: #FEE2E2; color: var(--error); border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+        .btn-logout:hover { background: #FECACA; }
+
+        /* ================= Layout ================= */
+        .pos-container { display: flex; flex: 1; overflow: hidden; }
+
+        /* ฝั่งสินค้า */
+        .product-section { flex: 7; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        .search-bar { position: relative; }
+        .search-bar i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--sys-gray); font-size: 1.2rem; }
+        .search-bar input { width: 100%; padding: 15px 15px 15px 45px; border: 2px solid var(--border); border-radius: 12px; font-size: 1rem; outline: none; transition: 0.3s; }
+        .search-bar input:focus { border-color: var(--accent); }
+
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .product-card { background: var(--white); border-radius: 16px; padding: 15px; text-align: center; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; justify-content: space-between; }
+        .product-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: var(--accent); }
+        .prod-img { width: 100%; height: 140px; object-fit: contain; margin-bottom: 15px; border-radius: 8px; background: #f9f9f9; padding: 10px;}
+        .prod-name { font-weight: 600; color: var(--sys-black); font-size: 0.95rem; margin-bottom: 5px; }
+        .prod-brand { font-size: 0.8rem; color: var(--sys-gray); margin-bottom: 10px; text-transform: uppercase; }
+        .prod-price { font-weight: 700; color: var(--accent); font-size: 1.1rem; }
+        .prod-stock { font-size: 0.75rem; color: var(--sys-gray); margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .prod-stock i { color: var(--success); }
+
+        /* ฝั่งตะกร้า */
+        .cart-section { flex: 3; background: var(--white); border-left: 1px solid var(--border); display: flex; flex-direction: column; min-width: 380px; }
+        
+        .customer-panel { padding: 20px; border-bottom: 1px solid var(--border); background: #F9FAFB; }
+        .customer-title { font-size: 0.85rem; font-weight: 700; color: var(--sys-gray); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .selected-customer { background: var(--white); border: 2px dashed var(--sys-gray); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .selected-customer:hover { border-color: var(--accent); background: #EFF6FF; color: var(--accent); }
+        .customer-name-display { font-weight: 700; color: var(--sys-black); font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .customer-id-display { font-size: 0.85rem; color: var(--sys-gray); margin-top: 4px; }
+
+        .cart-items { flex: 1; overflow-y: auto; padding: 20px; }
+        .empty-cart { text-align: center; color: var(--sys-gray); margin-top: 50px; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .empty-cart i { font-size: 3rem; color: var(--border); }
+        
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; margin-bottom: 15px; border-bottom: 1px solid var(--sys-light); }
+        .ci-info { flex: 1; }
+        .ci-name { font-weight: 600; font-size: 0.95rem; color: var(--sys-black); }
+        .ci-price { font-size: 0.85rem; color: var(--sys-gray); }
+        .ci-qty { display: flex; align-items: center; gap: 15px; background: var(--sys-light); padding: 5px 10px; border-radius: 8px; font-weight: 600; }
+        .qty-btn { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--sys-gray); transition: 0.2s; display: flex; align-items: center;}
+        .qty-btn:hover { color: var(--sys-black); }
+        .ci-total { font-weight: 700; color: var(--sys-black); margin-left: 15px; min-width: 80px; text-align: right; }
+
+        .cart-summary { padding: 20px; border-top: 1px solid var(--border); background: var(--white); }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 600; color: var(--sys-gray); font-size: 0.95rem;}
+        .summary-row.total { font-size: 1.6rem; color: var(--sys-black); font-weight: 700; margin-bottom: 20px; }
+        
+        .checkout-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-checkout { padding: 16px; border: none; border-radius: 12px; font-weight: 600; font-size: 1rem; color: var(--white); cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-cash { background: var(--sys-black); } .btn-cash:hover { background: var(--sys-dark); }
+        .btn-credit { background: var(--accent); } .btn-credit:hover { background: #1D4ED8; }
+
+        /* ================= Modals ================= */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; visibility: hidden; transition: 0.2s; backdrop-filter: blur(4px); }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-content { background: var(--white); width: 90%; max-width: 450px; border-radius: 20px; padding: 30px; transform: scale(0.95); transition: 0.2s; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .modal-header h2 { font-size: 1.3rem; color: var(--sys-black); display: flex; align-items: center; gap: 10px; }
+        .close-btn { background: var(--sys-light); border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--sys-gray); transition: 0.2s; }
+        .close-btn:hover { background: #E5E7EB; color: var(--sys-black); }
+
+        .tabs { display: flex; border-bottom: 2px solid var(--sys-light); margin-bottom: 20px; }
+        .tab { flex: 1; text-align: center; padding: 12px; cursor: pointer; font-weight: 600; color: var(--sys-gray); border-bottom: 2px solid transparent; margin-bottom: -2px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+        .tab-content { display: none; } .tab-content.active { display: block; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--sys-dark); }
+        .form-group input { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 10px; font-size: 1rem; outline: none; background: #FAFAFA; transition: 0.2s;}
+        .form-group input:focus { border-color: var(--accent); background: var(--white); }
+
+        .btn-full { width: 100%; padding: 16px; background: var(--sys-black); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-full:hover { background: var(--sys-dark); }
+
+        .info-box { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; padding: 12px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
+        .info-box i { font-size: 1.2rem; flex-shrink: 0; }
+
+        /* Loader Overlay (ตอนกดจ่ายเงิน) */
+        .loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; visibility: hidden; backdrop-filter: blur(5px); }
+        .loader-overlay.active { opacity: 1; visibility: visible; }
+        .spinner-large { font-size: 3rem; color: var(--accent); animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="nav-brand"><i class="ph-fill ph-device-mobile"></i> NT PHONE <span>POS</span></div>
+        <div class="nav-user">
+            <span class="user-name"><i class="ph-fill ph-user-circle"></i> <span id="display-emp-name">กำลังโหลด...</span></span>
+            <button class="btn-logout" onclick="logout()"><i class="ph-bold ph-sign-out"></i> ออกจากระบบ</button>
+        </div>
+    </div>
+
+    <div class="pos-container">
+        <div class="product-section">
+            <div class="search-bar">
+                <i class="ph-bold ph-magnifying-glass"></i>
+                <input type="text" id="search-product" placeholder="ค้นหารุ่นโทรศัพท์, แบรนด์...">
+            </div>
+            <div class="product-grid" id="product-list">
+                </div>
+        </div>
+
+        <div class="cart-section">
+            <div class="customer-panel">
+                <div class="customer-title"><i class="ph-bold ph-user-focus"></i> ข้อมูลลูกค้า</div>
+                <div class="selected-customer" onclick="openCustomerModal()">
+                    <div id="cust-display-area">
+                        <i class="ph-bold ph-user-plus" style="font-size: 1.8rem; color: var(--sys-gray); margin-bottom: 5px;"></i>
+                        <div style="font-weight: 600; color: var(--sys-dark);">คลิกเพื่อเลือกลูกค้า</div>
+                        <div style="font-size: 0.8rem; color: var(--sys-gray); margin-top: 4px;">จำเป็นต้องเลือกก่อนทำรายการ</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cart-items" id="cart-container">
+                <div class="empty-cart">
+                    <i class="ph-light ph-shopping-cart"></i>
+                    ยังไม่มีสินค้าในตะกร้า
+                </div>
+            </div>
+
+            <div class="cart-summary">
+                <div class="summary-row"><span>จำนวนรวม</span><span id="sum-qty">0 รายการ</span></div>
+                <div class="summary-row total"><span>ยอดรวมสุทธิ</span><span id="sum-total">฿0</span></div>
+                <div class="checkout-btns">
+                    <button class="btn-checkout btn-cash" onclick="processCheckout('cash')">
+                        <i class="ph-bold ph-money"></i> ชำระเงินสด
+                    </button>
+                    <button class="btn-checkout btn-credit" onclick="processCheckout('installment')">
+                        <i class="ph-bold ph-file-text"></i> สัญญาผ่อน
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="customer-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="ph-bold ph-users"></i> จัดการลูกค้า</h2>
+                <button class="close-btn" onclick="closeCustomerModal()"><i class="ph-bold ph-x"></i></button>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('search')"><i class="ph-bold ph-magnifying-glass"></i> ค้นหาฐานข้อมูล</div>
+                <div class="tab" onclick="switchTab('new')"><i class="ph-bold ph-user-plus"></i> ลงทะเบียนใหม่</div>
+            </div>
+
+            <div id="tab-search" class="tab-content active">
+                <div class="form-group">
+                    <label>เบอร์โทรศัพท์ (10 หลัก)</label>
+                    <input type="tel" id="search-cust-phone" placeholder="08XXXXXXXX" maxlength="10">
+                </div>
+                <button class="btn-full" onclick="searchCustomer()"><i class="ph-bold ph-check-circle"></i> ยืนยันเลือกลูกค้า</button>
+            </div>
+
+            <div id="tab-new" class="tab-content">
+                <div class="info-box">
+                    <i class="ph-fill ph-info"></i>
+                    <div>การลงทะเบียนลูกค้าผ่านหน้านี้ ระบบจะบันทึกรหัสพนักงานของคุณเป็นผู้แนะนำโดยอัตโนมัติ (สำหรับระบบค่าคอมมิชชัน)</div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;"><label>ชื่อจริง</label><input type="text" id="new-cust-fname" placeholder="ระบุชื่อ"></div>
+                    <div class="form-group" style="flex: 1;"><label>นามสกุล</label><input type="text" id="new-cust-lname" placeholder="ระบุนามสกุล"></div>
+                </div>
+                <div class="form-group">
+                    <label>เบอร์โทรศัพท์ (ใช้เข้าระบบ)</label>
+                    <input type="tel" id="new-cust-phone" placeholder="08XXXXXXXX" maxlength="10">
+                </div>
+                <button class="btn-full" onclick="registerNewCustomer()"><i class="ph-bold ph-floppy-disk"></i> บันทึกและเลือกลูกค้า</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="alert-modal">
+        <div class="modal-content" style="text-align: center; max-width: 320px; padding: 40px 20px;">
+            <i id="alert-icon" class="" style="font-size: 4rem; margin-bottom: 15px; display: block;"></i>
+            <h2 id="alert-title" style="font-size: 1.3rem; margin-bottom: 10px; color: var(--sys-black);"></h2>
+            <p id="alert-desc" style="color: var(--sys-gray); line-height: 1.5; margin-bottom: 25px; font-size: 0.95rem; white-space: pre-line;"></p>
+            <button class="btn-full" onclick="document.getElementById('alert-modal').classList.remove('active')">รับทราบ</button>
+        </div>
+    </div>
+
+    <div class="loader-overlay" id="checkout-loader">
+        <i class="ph-bold ph-spinner-gap spinner-large"></i>
+        <h3 style="margin-top: 15px; color: var(--sys-black);">กำลังบันทึกรายการ...</h3>
+        <p style="color: var(--sys-gray); font-size: 0.9rem; margin-top: 5px;">ห้ามปิดหน้าต่างนี้</p>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+        const supabaseUrl = 'https://xjjcnlzynzsvopmcooky.supabase.co'
+        const supabaseKey = 'sb_publishable_w7A_BOSi0r1r4t93exl1gg_j1jPRU_E'
+        const supabase = createClient(supabaseUrl, supabaseKey)
+
+        // ================= 1. Auth & Utility =================
+        const empId = localStorage.getItem('emp_id');
+        const empName = localStorage.getItem('emp_name');
+        
+        if (!empId) {
+            window.location.href = "index.html";
+        }
+        document.getElementById('display-emp-name').innerText = empName;
+
+        window.logout = () => {
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+
+        window.customAlert = (type, title, desc) => {
+            const modal = document.getElementById('alert-modal');
+            const icon = document.getElementById('alert-icon');
+            document.getElementById('alert-title').innerText = title;
+            document.getElementById('alert-desc').innerText = desc;
+
+            if(type === 'success') {
+                icon.className = 'ph-fill ph-check-circle';
+                icon.style.color = 'var(--success)';
+            } else {
+                icon.className = 'ph-fill ph-warning-circle';
+                icon.style.color = 'var(--error)';
+            }
+            modal.classList.add('active');
+        }
+
+        // ================= 2. จัดการสินค้า (Products) =================
+        let products = [];
+        let cart = [];
+        let currentCustomer = null;
+
+        async function fetchProducts() {
+            const { data, error } = await supabase.from('products').select('*').gt('stock', 0).order('created_at', { ascending: false });
+            if (!error && data) {
+                products = data;
+                renderProducts(products);
+            }
+        }
+
+        function renderProducts(items) {
+            const container = document.getElementById('product-list');
+            container.innerHTML = '';
+            
+            if(items.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--sys-gray); padding: 40px;"><i class="ph-light ph-package" style="font-size: 3rem; margin-bottom:10px; display:block;"></i>ไม่พบสินค้าที่ค้นหา หรือสินค้าหมดสต็อก</div>`;
+                return;
+            }
+
+            items.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <img src="${p.image_url || 'https://via.placeholder.com/150'}" class="prod-img">
+                    <div>
+                        <div class="prod-brand">${p.brand}</div>
+                        <div class="prod-name">${p.name}</div>
+                        <div class="prod-price">฿${p.price.toLocaleString()}</div>
+                        <div class="prod-stock"><i class="ph-bold ph-check"></i> พร้อมขาย ${p.stock}</div>
+                    </div>
+                `;
+                card.onclick = () => addToCart(p);
+                container.appendChild(card);
+            });
+        }
+
+        document.getElementById('search-product').addEventListener('input', (e) => {
+            const keyword = e.target.value.toLowerCase();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(keyword) || p.brand.toLowerCase().includes(keyword));
+            renderProducts(filtered);
+        });
+
+        // ================= 3. จัดการตะกร้า (Cart) =================
+        window.addToCart = (product) => {
+            const exist = cart.find(item => item.product_id === product.product_id);
+            if (exist) {
+                if(exist.qty < product.stock) exist.qty++;
+                else customAlert('error', 'สต็อกไม่พอ', `สินค้ารุ่นนี้มีเหลือเพียง ${product.stock} เครื่อง`);
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+            updateCartUI();
+        }
+
+        window.updateQty = (id, delta) => {
+            const item = cart.find(i => i.product_id === id);
+            if(item) {
+                item.qty += delta;
+                if(item.qty <= 0) {
+                    cart = cart.filter(i => i.product_id !== id);
+                } else if(item.qty > item.stock) { 
+                    item.qty = item.stock; 
+                    customAlert('error', 'สต็อกไม่พอ', `มีสินค้าในสต็อกเพียง ${item.stock} ชิ้น`); 
+                }
+                updateCartUI();
+            }
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-container');
+            if (cart.length === 0) {
+                container.innerHTML = '<div class="empty-cart"><i class="ph-light ph-shopping-cart"></i>ยังไม่มีสินค้าในตะกร้า</div>';
+                document.getElementById('sum-qty').innerText = "0 รายการ";
+                document.getElementById('sum-total').innerText = "฿0";
+                return;
+            }
+
+            container.innerHTML = '';
+            let totalQty = 0, totalPrice = 0;
+
+            cart.forEach(item => {
+                totalQty += item.qty; totalPrice += (item.price * item.qty);
+                container.innerHTML += `
+                    <div class="cart-item">
+                        <div class="ci-info">
+                            <div class="ci-name">${item.name}</div>
+                            <div class="ci-price">฿${item.price.toLocaleString()} / ชิ้น</div>
+                        </div>
+                        <div class="ci-qty">
+                            <button class="qty-btn" onclick="updateQty('${item.product_id}', -1)"><i class="ph-bold ph-minus"></i></button>
+                            <span>${item.qty}</span>
+                            <button class="qty-btn" onclick="updateQty('${item.product_id}', 1)"><i class="ph-bold ph-plus"></i></button>
+                        </div>
+                        <div class="ci-total">฿${(item.price * item.qty).toLocaleString()}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('sum-qty').innerText = `${totalQty} รายการ`;
+            document.getElementById('sum-total').innerText = `฿${totalPrice.toLocaleString()}`;
+        }
+
+        // ================= 4. จัดการลูกค้า =================
+        window.openCustomerModal = () => document.getElementById('customer-modal').classList.add('active');
+        window.closeCustomerModal = () => document.getElementById('customer-modal').classList.remove('active');
+        
+        window.switchTab = (tab) => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tab).classList.add('active');
+        }
+
+        function setCustomer(cust) {
+            currentCustomer = cust;
+            document.getElementById('cust-display-area').innerHTML = `
+                <div class="customer-name-display"><i class="ph-fill ph-user-check" style="color:var(--success);"></i> ${cust.first_name} ${cust.last_name || ''}</div>
+                <div class="customer-id-display">รหัส: ${cust.customer_id} | โทร: ${cust.phone}</div>
+            `;
+            closeCustomerModal();
+        }
+
+        window.searchCustomer = async () => {
+            const phone = document.getElementById('search-cust-phone').value;
+            if(phone.length !== 10) return customAlert('error', 'ระบุข้อมูลไม่ครบ', 'กรุณากรอกเบอร์โทรศัพท์ 10 หลัก');
+
+            const { data } = await supabase.from('customers').select('*').eq('phone', phone);
+            if(data && data.length > 0) {
+                setCustomer(data[0]);
+            } else {
+                customAlert('error', 'ไม่พบข้อมูล', 'ไม่พบลูกค้านี้ในระบบ กรุณาใช้เมนูลงทะเบียนใหม่');
+            }
+        }
+
+        window.registerNewCustomer = async () => {
+            const fname = document.getElementById('new-cust-fname').value;
+            const lname = document.getElementById('new-cust-lname').value;
+            const phone = document.getElementById('new-cust-phone').value;
+
+            if(!fname || phone.length !== 10) return customAlert('error', 'ข้อมูลไม่ครบ', 'กรุณากรอกชื่อและเบอร์โทรศัพท์ให้ครบถ้วน');
+
+            // สุ่มรหัสลูกค้า
+            const newCustId = 'NT' + Math.floor(100000 + Math.random() * 900000);
+            
+            const { data, error } = await supabase.from('customers').insert([{ 
+                customer_id: newCustId, phone: phone, password: phone,
+                first_name: fname, last_name: lname, role: 'buyer',
+                registered_by: empId // บันทึกชื่อพนักงานรับคอม
+            }]).select();
+
+            if(error) {
+                customAlert('error', 'ลงทะเบียนล้มเหลว', 'เบอร์โทรศัพท์นี้ถูกใช้งานแล้วในระบบ');
+            } else if(data) {
+                setCustomer(data[0]);
+                customAlert('success', 'ลงทะเบียนสำเร็จ', `รหัสลูกค้าใหม่: ${newCustId}\n(รหัสผ่านตั้งต้นคือเบอร์โทรศัพท์)`);
+            }
+        }
+
+        // ================= 5. กระบวนการชำระเงิน (Real Database Transaction) =================
+        window.processCheckout = async (type) => {
+            if(!currentCustomer) return customAlert('error', 'การทำรายการไม่สมบูรณ์', 'กรุณาเลือกลูกค้าก่อนชำระเงิน');
+            if(cart.length === 0) return customAlert('error', 'ตะกร้าสินค้าว่างเปล่า', 'กรุณาเลือกสินค้าลงตะกร้า');
+
+            const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const typeText = type === 'cash' ? 'ชำระเงินสด' : 'สัญญาผ่อนชำระ';
+            
+            if(!confirm(`ยืนยันรายการ: ${typeText}\nยอดรวมทั้งสิ้น: ฿${totalAmount.toLocaleString()}\n\nดำเนินการต่อหรือไม่?`)) return;
+
+            // 1. เปิดหน้าจอ Loading
+            document.getElementById('checkout-loader').classList.add('active');
+
+            try {
+                // 2. สร้างบิลหลักลงตาราง orders
+                const orderNo = 'INV' + Date.now().toString().slice(-6) + Math.floor(Math.random() * 100);
+                
+                const { data: orderData, error: orderError } = await supabase.from('orders').insert([{
+                    order_no: orderNo,
+                    customer_id: currentCustomer.customer_id,
+                    sold_by: empId,
+                    sale_type: type,
+                    total_amount: totalAmount
+                }]).select();
+
+                if (orderError) throw new Error("ไม่สามารถสร้างบิลได้");
+                const orderId = orderData[0].order_id;
+
+                // 3. บันทึกรายการสินค้า และ ตัดสต็อก
+                for (const item of cart) {
+                    // บันทึกลงตาราง order_items
+                    await supabase.from('order_items').insert([{
+                        order_id: orderId,
+                        product_id: item.product_id,
+                        price: item.price,
+                        quantity: item.qty
+                    }]);
+
+                    // ตัดสต็อกในตาราง products
+                    const newStock = item.stock - item.qty;
+                    await supabase.from('products').update({ stock: newStock }).eq('product_id', item.product_id);
+                }
+
+                // 4. สำเร็จ! ล้างตะกร้า รีเฟรชหน้าจอ
+                document.getElementById('checkout-loader').classList.remove('active');
+                
+                customAlert('success', 'บันทึกรายการสำเร็จ!', `เลขที่ใบเสร็จ: ${orderNo}\nยอดรวม: ฿${totalAmount.toLocaleString()}\n(สต็อกสินค้าถูกหักเรียบร้อยแล้ว)`);
+                
+                cart = [];
+                currentCustomer = null;
+                updateCartUI();
+                fetchProducts(); // โหลดข้อมูลสต็อกใหม่ล่าสุด
+                
+                // รีเซ็ตปุ่มเลือกลูกค้า
+                document.getElementById('cust-display-area').innerHTML = `
+                    <i class="ph-bold ph-user-plus" style="font-size: 1.8rem; color: var(--sys-gray); margin-bottom: 5px;"></i>
+                    <div style="font-weight: 600; color: var(--sys-dark);">คลิกเพื่อเลือกลูกค้า</div>
+                    <div style="font-size: 0.8rem; color: var(--sys-gray); margin-top: 4px;">จำเป็นต้องเลือกก่อนทำรายการ</div>
+                `;
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('checkout-loader').classList.remove('active');
+                customAlert('error', 'เกิดข้อผิดพลาด', 'ระบบไม่สามารถบันทึกข้อมูลได้ กรุณาติดต่อผู้ดูแลระบบ');
+            }
+        }
+
+        // โหลดข้อมูลเริ่มต้น
+        fetchProducts();
+
+    </script>
+</body>
+</html>

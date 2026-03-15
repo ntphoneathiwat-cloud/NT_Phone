@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NT PHONE | Staff Portal</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --sys-black: #0A0A0A;
+            --sys-dark: #171717;
+            --sys-gray: #404040;
+            --sys-light: #F5F5F5;
+            --white: #FFFFFF;
+            --border: #E5E5E5;
+            --accent: #2563EB; /* Enterprise Blue */
+            --success: #059669;
+            --error: #DC2626;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Anuphan', sans-serif; }
+
+        body {
+            background-color: var(--sys-light);
+            min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            background-image: 
+                linear-gradient(to right, #e5e5e5 1px, transparent 1px),
+                linear-gradient(to bottom, #e5e5e5 1px, transparent 1px);
+            background-size: 40px 40px; /* ลายตารางจางๆ ให้ดูเป็นระบบหลังบ้าน */
+        }
+
+        .login-container {
+            width: 100%; max-width: 420px;
+            background: var(--white);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0,0,0,0.05);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* แถบสีด้านบนการ์ด */
+        .login-container::before {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+            background: var(--sys-black);
+        }
+
+        .logo-box {
+            width: 80px; height: 80px;
+            background: var(--sys-black);
+            color: var(--white);
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; font-weight: 700;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        h1 { font-size: 1.8rem; color: var(--sys-black); margin-bottom: 5px; font-weight: 700; }
+        p.subtitle { color: var(--sys-gray); margin-bottom: 30px; font-size: 0.95rem; }
+
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--sys-dark); text-transform: uppercase; letter-spacing: 0.5px;}
+        
+        .input-wrapper input {
+            width: 100%; padding: 16px;
+            border: 2px solid var(--border); border-radius: 12px;
+            font-size: 1.05rem; background: var(--white); color: var(--sys-black);
+            transition: all 0.3s ease; outline: none;
+        }
+        .input-wrapper input:focus { border-color: var(--sys-black); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
+
+        .btn-primary {
+            width: 100%; padding: 18px; 
+            background: var(--sys-black); color: var(--white);
+            border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 600;
+            cursor: pointer; transition: all 0.3s ease; margin-top: 10px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-primary:hover { background: var(--sys-dark); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        .spinner {
+            width: 20px; height: 20px;
+            border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid white;
+            border-radius: 50%; animation: spin 1s linear infinite; display: none;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .system-footer { margin-top: 30px; font-size: 0.8rem; color: var(--sys-gray); }
+
+        /* ================= Custom Modal (โทนโปร) ================= */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center; z-index: 9999;
+            opacity: 0; visibility: hidden; transition: 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-box {
+            background: var(--white); width: 90%; max-width: 340px;
+            border-radius: 20px; padding: 30px; text-align: center;
+            transform: scale(0.95); transition: 0.3s; box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-icon { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 30px; color: white; }
+        .modal-icon.success { background: var(--success); }
+        .modal-icon.error { background: var(--error); }
+        .modal-title { font-size: 1.3rem; color: var(--sys-black); margin-bottom: 10px; font-weight: 700; }
+        .modal-message { font-size: 0.95rem; color: var(--sys-gray); margin-bottom: 25px; line-height: 1.5; }
+        .btn-modal { width: 100%; padding: 14px; background: var(--sys-black); border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; color: white; cursor: pointer; }
+
+        @media (max-width: 480px) {
+            body { padding: 20px; background: var(--white); }
+            .login-container { padding: 30px 20px; box-shadow: none; border: 1px solid var(--border); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="logo-box">NT</div>
+        <h1>Staff Portal</h1>
+        <p class="subtitle">เข้าสู่ระบบการจัดการร้าน NT PHONE</p>
+        
+        <div class="input-group">
+            <label>Username</label>
+            <div class="input-wrapper">
+                <input type="text" id="login-username" placeholder="ระบุชื่อผู้ใช้งาน">
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label>Password</label>
+            <div class="input-wrapper">
+                <input type="password" id="login-password" placeholder="••••••••">
+            </div>
+        </div>
+
+        <button class="btn-primary" id="btn-login">
+            <span class="spinner" id="login-spinner"></span>
+            <span id="login-btn-text">เข้าสู่ระบบระบบปฏิบัติการ</span>
+        </button>
+
+        <div class="system-footer">Secure Access • NT PHONE POS System V1.0</div>
+    </div>
+
+    <div class="modal-overlay" id="custom-modal">
+        <div class="modal-box">
+            <div class="modal-icon" id="modal-icon">✓</div>
+            <h3 class="modal-title" id="modal-title">แจ้งเตือน</h3>
+            <p class="modal-message" id="modal-message">ข้อความ</p>
+            <button class="btn-modal" id="modal-btn" onclick="closeModal()">ตกลง</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+        const supabaseUrl = 'https://xjjcnlzynzsvopmcooky.supabase.co'
+        const supabaseKey = 'sb_publishable_w7A_BOSi0r1r4t93exl1gg_j1jPRU_E'
+        const supabase = createClient(supabaseUrl, supabaseKey)
+
+        // ================= Popup =================
+        window.showModal = (type, title, message, onConfirm = null) => {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            const btn = document.getElementById('modal-btn');
+            
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+
+            if(type === 'success') { icon.className = 'modal-icon success'; icon.innerHTML = '✓'; } 
+            else { icon.className = 'modal-icon error'; icon.innerHTML = '✕'; }
+            
+            btn.onclick = () => {
+                closeModal();
+                if(onConfirm) onConfirm();
+            };
+            modal.classList.add('active');
+        };
+        window.closeModal = () => document.getElementById('custom-modal').classList.remove('active');
+
+        function setLoading(isLoading) {
+            const btn = document.getElementById('btn-login');
+            const spinner = document.getElementById('login-spinner');
+            const text = document.getElementById('login-btn-text');
+            if(isLoading) { btn.disabled = true; spinner.style.display = 'block'; text.innerText = 'Authenticating...'; } 
+            else { btn.disabled = false; spinner.style.display = 'none'; text.innerText = 'เข้าสู่ระบบระบบปฏิบัติการ'; }
+        }
+
+        // ================= เข้าสู่ระบบพนักงาน (Smart Router) =================
+        document.getElementById('btn-login').addEventListener('click', async () => {
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            if(!username || !password) return showModal('error', 'ข้อมูลไม่ครบ', 'กรุณาระบุ Username และ Password');
+
+            setLoading(true);
+
+            // ดึงข้อมูลพนักงานจากตาราง employees
+            const { data, error } = await supabase
+                .from('employees')
+                .select('*')
+                .eq('username', username)
+                .eq('password', password);
+
+            setLoading(false);
+
+            if (error) return showModal('error', 'ข้อผิดพลาดระบบ', 'ไม่สามารถเชื่อมต่อฐานข้อมูลได้');
+
+            if (data && data.length > 0) {
+                const emp = data[0]; // ข้อมูลพนักงานที่ล็อกอินผ่าน
+                
+                // จำข้อมูลพนักงานลงเครื่อง (สำคัญมากสำหรับหน้า POS / Admin)
+                localStorage.setItem('emp_id', emp.emp_id);
+                localStorage.setItem('emp_name', emp.name);
+                localStorage.setItem('emp_role', emp.role);
+
+                // ตรวจสอบสิทธิ์ (Role) แล้วพาแยกทาง
+                if(emp.role === 'admin') {
+                    showModal('success', 'ยินดีต้อนรับ (Admin)', `สวัสดีคุณ ${emp.name}\nระบบกำลังพาท่านไปที่หน้าจัดการร้าน...`, () => {
+                        alert("จำลองการเปลี่ยนหน้าไปที่ 👉 admin.html");
+                        // window.location.href = "admin.html"; // เปิดคอมเมนต์เมื่อไฟล์ admin.html เสร็จ
+                    });
+                } else if(emp.role === 'sales') {
+                    showModal('success', 'ยินดีต้อนรับ (Sales)', `สวัสดีคุณ ${emp.name}\nระบบกำลังพาท่านไปที่หน้า POS ขายสินค้า...`, () => {
+                        alert("จำลองการเปลี่ยนหน้าไปที่ 👉 pos.html");
+                        // window.location.href = "pos.html"; // เปิดคอมเมนต์เมื่อไฟล์ pos.html เสร็จ
+                    });
+                }
+            } else {
+                showModal('error', 'การเข้าถึงถูกปฏิเสธ', 'Username หรือ Password ไม่ถูกต้อง!');
+            }
+        });
+    </script>
+</body>
+</html>
