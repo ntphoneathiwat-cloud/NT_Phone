@@ -2,250 +2,196 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NT PHONE | เข้าสู่ระบบ</title>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap');
 
         :root {
-            /* สีเริ่มต้น (หน้า Login) */
-            --theme-color: #4F46E5; /* Indigo */
-            --theme-light: #EEF2FF;
-            --theme-gradient: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
+            /* สีธีมใหม่: ขาวเป็นเบส แต่ดูแพงแบบมีสีสัน */
+            --theme-login: linear-gradient(135deg, #2563EB 0%, #4F46E5 100%); /* น้ำเงิน-ม่วงคราม */
+            --theme-register: linear-gradient(135deg, #EC4899 0%, #F43F5E 100%); /* ชมพู-พีช */
+            --theme-current: var(--theme-login);
             
-            --text-main: #1F2937;
+            --text-main: #111827;
             --text-light: #6B7280;
             --bg-base: #F3F4F6;
             --white: #FFFFFF;
             --border-color: #E5E7EB;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
         }
 
-        /* เมื่อสลับเป็นหน้า Register จะใช้สีชุดนี้ */
         body.register-mode {
-            --theme-color: #E11D48; /* Rose */
-            --theme-light: #FFF1F2;
-            --theme-gradient: linear-gradient(135deg, #E11D48 0%, #F43F5E 100%);
+            --theme-current: var(--theme-register);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Anuphan', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Anuphan', sans-serif; }
 
         body {
             background-color: var(--bg-base);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.5s ease;
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+            background-image: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.8) 0%, transparent 80%);
+            transition: background 0.5s ease;
         }
 
+        /* ================= คอนเทนเนอร์ (แก้ปัญหาฟอร์มล้น) ================= */
         .container {
             display: flex;
-            width: 100%;
-            max-width: 1000px;
-            height: 600px;
+            width: 100%; max-width: 1050px;
+            min-height: 600px;
             background: var(--white);
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            border-radius: 30px;
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            margin: 20px;
             position: relative;
         }
 
-        /* แถบสีตกแต่งด้านบน */
-        .color-bar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 6px;
-            background: var(--theme-gradient);
-            transition: all 0.5s ease;
-            z-index: 10;
-        }
-
-        /* ฝั่งซ้าย: แบรนด์ */
         .brand-section {
             flex: 1;
-            background-color: var(--theme-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            transition: all 0.5s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* วงกลมตกแต่งฉากหลัง */
-        .brand-section::before {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: var(--theme-gradient);
-            border-radius: 50%;
-            opacity: 0.1;
-            top: -50px;
-            left: -50px;
-            transition: all 0.5s ease;
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+            display: flex; align-items: center; justify-content: center;
+            padding: 40px; position: relative;
         }
 
         .glass-panel {
             background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            padding: 40px;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(20px);
+            padding: 50px 40px; border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.9);
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            z-index: 2;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
         }
 
-        .glass-panel h1 {
-            font-size: 3.2rem;
-            font-weight: 700;
-            background: var(--theme-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-            transition: all 0.5s ease;
+        .glass-panel h1 { 
+            font-size: 3.5rem; font-weight: 700; 
+            background: var(--theme-current);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 15px; letter-spacing: -1px; transition: 0.5s;
         }
+        .glass-panel p { color: var(--text-light); font-size: 1.15rem; line-height: 1.6; }
 
-        .glass-panel p {
-            color: var(--text-light);
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-
-        /* ฝั่งขวา: ฟอร์ม */
+        /* ================= ฟอร์มฝั่งขวา (เลื่อนได้) ================= */
         .form-section {
-            flex: 1;
-            padding: 40px 50px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--white);
+            flex: 1; padding: 50px 60px;
+            display: flex; align-items: center; justify-content: center;
+            overflow-y: auto; /* ให้เลื่อนขึ้นลงได้ถ้าจอมันเล็ก */
+            max-height: 90vh; /* ไม่ให้ล้นจอหลัก */
         }
+        .form-section::-webkit-scrollbar { width: 6px; }
+        .form-section::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
 
+        /* แก้เรื่อง Absolute: ใช้ Display None/Block แทน เพื่อให้กล่องขยายตามเนื้อหา */
         .form-card {
-            width: 100%;
-            max-width: 380px;
-            position: absolute;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateX(30px);
-            pointer-events: none;
+            width: 100%; max-width: 400px;
+            display: none; 
+            animation: fadeIn 0.4s ease forwards;
+        }
+        .form-card.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .form-card.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(0);
-            pointer-events: auto;
-        }
-
-        /* แอนิเมชันตอนสลับไปหน้าสมัคร */
-        .form-card.slide-left {
-            transform: translateX(-30px);
-        }
-
-        .form-card h2 {
-            font-size: 2rem;
-            color: var(--text-main);
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            color: var(--text-light);
-            margin-bottom: 30px;
-            font-size: 0.95rem;
-        }
+        .form-card h2 { font-size: 2.2rem; color: var(--text-main); margin-bottom: 5px; font-weight: 700; }
+        .subtitle { color: var(--text-light); margin-bottom: 30px; font-size: 1rem; }
 
         .input-row { display: flex; gap: 15px; }
-        .input-group { margin-bottom: 18px; width: 100%; }
+        .input-group { margin-bottom: 20px; width: 100%; position: relative; }
+        .input-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
         
-        .input-group label {
-            display: block;
-            font-size: 0.9rem;
-            color: var(--text-main);
-            font-weight: 600;
-            margin-bottom: 8px;
+        .input-wrapper { position: relative; }
+        .input-wrapper input, .input-wrapper select {
+            width: 100%; padding: 16px 18px;
+            border: 2px solid transparent; border-radius: 16px;
+            font-size: 1.05rem; background: #F3F4F6; color: var(--text-main);
+            transition: all 0.3s ease; outline: none; -webkit-appearance: none;
+        }
+        .input-wrapper input:focus, .input-wrapper select:focus {
+            background: var(--white); border-color: #9CA3AF;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         }
 
-        .input-group input, .input-group select {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: #FAFAFA;
-            outline: none;
-            color: var(--text-main);
-        }
+        /* Micro-interactions */
+        .char-counter { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); font-size: 0.85rem; color: var(--text-light); font-weight: 600; transition: 0.3s; }
+        .char-counter.complete { color: var(--success); }
+        .strength-meter { display: flex; gap: 5px; margin-top: 10px; height: 4px; }
+        .strength-bar { flex: 1; background: #E5E7EB; border-radius: 4px; transition: 0.4s ease; }
+        .strength-text { font-size: 0.8rem; margin-top: 6px; color: var(--text-light); font-weight: 500; text-align: right; }
+        .match-msg { font-size: 0.85rem; margin-top: 8px; font-weight: 600; display: flex; align-items: center; gap: 5px; opacity: 0; transition: 0.3s;}
+        .match-msg.show { opacity: 1; }
+        .match-msg.error { color: var(--error); }
+        .match-msg.success { color: var(--success); }
 
-        .input-group input:focus, .input-group select:focus {
-            border-color: var(--theme-color);
-            background: var(--white);
-            box-shadow: 0 0 0 4px var(--theme-light);
-        }
-
+        /* ================= ปุ่มกด + ตัวโหลดดิ้ง ================= */
         .btn-primary {
-            width: 100%;
-            padding: 16px;
-            background: var(--theme-gradient);
-            color: var(--white);
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%; padding: 18px; 
+            background: var(--theme-current); color: var(--white);
+            border: none; border-radius: 16px; font-size: 1.15rem; font-weight: 600;
+            cursor: pointer; transition: all 0.3s ease; margin-top: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
         }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        /* ตัวหมุน (Spinner) */
+        .spinner {
+            width: 22px; height: 22px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none; /* ซ่อนไว้ก่อน */
         }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .switch-text {
-            text-align: center;
-            margin-top: 25px;
-            color: var(--text-light);
-            font-size: 0.95rem;
+        .switch-text { text-align: center; margin-top: 30px; color: var(--text-light); font-size: 1rem; }
+        .switch-text span { color: var(--text-main); font-weight: 700; cursor: pointer; transition: 0.3s; padding: 5px 10px; border-radius: 8px; }
+        .switch-text span:hover { background: #E5E7EB; }
+
+        /* ================= Custom Modal ================= */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center; z-index: 9999;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease;
         }
-
-        .switch-text span {
-            color: var(--theme-color);
-            font-weight: 700;
-            cursor: pointer;
-            transition: opacity 0.2s;
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-box {
+            background: var(--white); width: 90%; max-width: 360px;
+            border-radius: 28px; padding: 35px 25px; text-align: center;
+            transform: scale(0.9) translateY(20px); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
         }
+        .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
+        .modal-icon { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 35px; color: white; }
+        .modal-icon.success { background: var(--success); box-shadow: 0 15px 30px rgba(16, 185, 129, 0.3); }
+        .modal-icon.error { background: var(--error); box-shadow: 0 15px 30px rgba(239, 68, 68, 0.3); }
+        .modal-title { font-size: 1.5rem; color: var(--text-main); margin-bottom: 10px; font-weight: 700; }
+        .modal-message { font-size: 1.05rem; color: var(--text-light); margin-bottom: 30px; line-height: 1.6; white-space: pre-line; }
+        .btn-modal { width: 100%; padding: 16px; background: var(--theme-current); border: none; border-radius: 14px; font-size: 1.1rem; font-weight: 600; color: white; cursor: pointer; transition: 0.2s; }
 
-        .switch-text span:hover { opacity: 0.7; }
-
-        @media (max-width: 768px) {
-            .container { flex-direction: column; height: auto; min-height: 90vh; }
-            .brand-section { padding: 40px 20px; }
-            .form-section { padding: 40px 20px; min-height: 520px; }
+        /* ================= Responsive (Mobile) ================= */
+        @media (max-width: 800px) {
+            body { padding: 0; align-items: flex-start; }
+            .container { flex-direction: column; height: auto; min-height: 100vh; border-radius: 0; }
+            .brand-section { flex: none; padding: 40px 20px 30px; }
+            .glass-panel { padding: 0; border: none; background: transparent; backdrop-filter: none; box-shadow: none;}
+            .glass-panel h1 { font-size: 2.8rem; }
+            .form-section { flex: 1; padding: 20px 20px 50px; align-items: flex-start; max-height: none; overflow: visible;}
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="color-bar"></div>
-        
         <div class="brand-section">
             <div class="glass-panel">
                 <h1>NT PHONE</h1>
@@ -254,65 +200,99 @@
         </div>
 
         <div class="form-section">
-            
             <div id="login-form" class="form-card active">
                 <h2>เข้าสู่ระบบ</h2>
-                <p class="subtitle">ยินดีต้อนรับกลับมา, ระบุเบอร์โทรศัพท์เพื่อเข้าใช้งาน</p>
+                <p class="subtitle">ระบุเบอร์โทรศัพท์เพื่อเข้าใช้งานหน้าร้าน</p>
                 
                 <div class="input-group">
-                    <label>เบอร์โทรศัพท์ (10 หลัก)</label>
-                    <input type="tel" id="login-phone" placeholder="08XXXXXXXX" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    <label>เบอร์โทรศัพท์</label>
+                    <div class="input-wrapper">
+                        <input type="tel" id="login-phone" placeholder="08XXXXXXXX" maxlength="10" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    </div>
                 </div>
                 
                 <div class="input-group">
                     <label>รหัสผ่าน</label>
-                    <input type="password" id="login-password" placeholder="••••••••">
+                    <div class="input-wrapper">
+                        <input type="password" id="login-password" placeholder="••••••••">
+                    </div>
                 </div>
 
-                <button class="btn-primary" id="btn-login">เข้าสู่ระบบ</button>
-                
-                <p class="switch-text">ยังไม่มีบัญชีใช่ไหม? <span id="go-to-register">สมัครสมาชิกใหม่</span></p>
+                <button class="btn-primary" id="btn-login">
+                    <span class="spinner" id="login-spinner"></span>
+                    <span id="login-btn-text">เข้าสู่ระบบ</span>
+                </button>
+                <p class="switch-text">ยังไม่มีบัญชีใช่ไหม? <span id="go-to-register">สร้างบัญชีใหม่</span></p>
             </div>
 
-            <div id="register-form" class="form-card slide-left">
-                <h2>สมัครสมาชิกใหม่</h2>
-                <p class="subtitle">เริ่มต้นประสบการณ์ใหม่กับ NT PHONE</p>
+            <div id="register-form" class="form-card">
+                <h2>สร้างบัญชีใหม่</h2>
+                <p class="subtitle">กรอกข้อมูลเพื่อรับรหัสประจำตัวลูกค้า</p>
                 
                 <div class="input-row">
-                    <div class="input-group" style="flex: 0.8;">
+                    <div class="input-group" style="flex: 0.7;">
                         <label>คำนำหน้า</label>
-                        <select id="reg-prefix">
-                            <option value="นาย">นาย</option>
-                            <option value="นาง">นาง</option>
-                            <option value="นางสาว">นางสาว</option>
-                        </select>
+                        <div class="input-wrapper">
+                            <select id="reg-prefix">
+                                <option value="นาย">นาย</option><option value="นาง">นาง</option><option value="นางสาว">นางสาว</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="input-group" style="flex: 1.2;">
+                    <div class="input-group" style="flex: 1.3;">
                         <label>ชื่อจริง</label>
-                        <input type="text" id="reg-firstname" placeholder="ชื่อจริง">
+                        <div class="input-wrapper"><input type="text" id="reg-firstname" placeholder="ชื่อจริง"></div>
                     </div>
                 </div>
 
                 <div class="input-group">
                     <label>นามสกุล</label>
-                    <input type="text" id="reg-lastname" placeholder="นามสกุล">
+                    <div class="input-wrapper"><input type="text" id="reg-lastname" placeholder="นามสกุล"></div>
                 </div>
 
                 <div class="input-group">
-                    <label>เบอร์โทรศัพท์ (ตัวเลขเท่านั้น)</label>
-                    <input type="tel" id="reg-phone" placeholder="08XXXXXXXX" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    <label>เบอร์โทรศัพท์ (ใช้เข้าสู่ระบบ)</label>
+                    <div class="input-wrapper">
+                        <input type="tel" id="reg-phone" placeholder="08XXXXXXXX" maxlength="10" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <span class="char-counter" id="phone-counter">0/10</span>
+                    </div>
                 </div>
                 
                 <div class="input-group">
                     <label>ตั้งรหัสผ่าน</label>
-                    <input type="password" id="reg-password" placeholder="อย่างน้อย 6 ตัวอักษร">
+                    <div class="input-wrapper">
+                        <input type="password" id="reg-password" placeholder="ตั้งรหัสผ่านของคุณ">
+                    </div>
+                    <div class="strength-meter">
+                        <div class="strength-bar" id="str-1"></div>
+                        <div class="strength-bar" id="str-2"></div>
+                        <div class="strength-bar" id="str-3"></div>
+                    </div>
+                    <div class="strength-text" id="str-text">รหัสผ่านคาดเดาง่าย</div>
                 </div>
 
-                <button class="btn-primary" id="btn-register">ยืนยันการสมัคร</button>
-                
+                <div class="input-group">
+                    <label>ยืนยันรหัสผ่าน</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="reg-confirm-password" placeholder="พิมพ์รหัสผ่านอีกครั้ง">
+                    </div>
+                    <div class="match-msg" id="match-msg"></div>
+                </div>
+
+                <button class="btn-primary" id="btn-register">
+                    <span class="spinner" id="reg-spinner"></span>
+                    <span id="reg-btn-text">ยืนยันการสมัคร</span>
+                </button>
                 <p class="switch-text">มีบัญชีอยู่แล้ว? <span id="go-to-login">กลับไปเข้าสู่ระบบ</span></p>
             </div>
+        </div>
+    </div>
 
+    <div class="modal-overlay" id="custom-modal">
+        <div class="modal-box">
+            <div class="modal-icon" id="modal-icon">✓</div>
+            <h3 class="modal-title" id="modal-title">สำเร็จ</h3>
+            <p class="modal-message" id="modal-message">ข้อความแจ้งเตือน</p>
+            <button class="btn-modal" id="modal-btn" onclick="closeModal()">ตกลง</button>
         </div>
     </div>
 
@@ -323,111 +303,187 @@
         const supabaseKey = 'sb_publishable_w7A_BOSi0r1r4t93exl1gg_j1jPRU_E'
         const supabase = createClient(supabaseUrl, supabaseKey)
 
+        let autoLoginData = null; // เก็บข้อมูลรอ Login หลังสมัครเสร็จ
+
+        // ================= Popup =================
+        window.showModal = (type, title, message, isAutoLogin = false) => {
+            const modal = document.getElementById('custom-modal');
+            const icon = document.getElementById('modal-icon');
+            
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+
+            if(type === 'success') {
+                icon.className = 'modal-icon success'; icon.innerHTML = '✓';
+            } else {
+                icon.className = 'modal-icon error'; icon.innerHTML = '✕';
+            }
+            
+            // ถ้าสมัครเสร็จให้พุ่งเข้าระบบเลยตอนกดตกลง
+            const btn = document.getElementById('modal-btn');
+            btn.onclick = () => {
+                closeModal();
+                if(isAutoLogin && autoLoginData) {
+                    // จำลองการเปลี่ยนหน้า
+                    alert(`กำลังพาเข้าสู่ระบบในชื่อ: ${autoLoginData.first_name}\n(เดี๋ยวทำหน้า Dashboard มารับตรงนี้)`);
+                    // window.location.href = "dashboard.html";
+                }
+            };
+
+            modal.classList.add('active');
+        };
+        window.closeModal = () => document.getElementById('custom-modal').classList.remove('active');
+
+        // ================= สลับหน้า & เปลี่ยนสี Theme =================
         const loginForm = document.getElementById('login-form');
         const registerForm = document.getElementById('register-form');
-        const body = document.body;
-
-        // สลับหน้า ฟอร์ม
+        
         document.getElementById('go-to-register').addEventListener('click', () => {
-            loginForm.classList.remove('active');
-            loginForm.classList.add('slide-left');
-            registerForm.classList.remove('slide-left');
-            registerForm.classList.add('active');
-            body.classList.add('register-mode');
+            loginForm.classList.remove('active'); registerForm.classList.add('active');
+            document.body.classList.add('register-mode');
+            document.querySelector('.form-section').scrollTop = 0; // เลื่อนขึ้นบนสุด
         });
-
         document.getElementById('go-to-login').addEventListener('click', () => {
-            registerForm.classList.remove('active');
-            registerForm.classList.add('slide-left');
-            loginForm.classList.remove('slide-left');
-            loginForm.classList.add('active');
-            body.classList.remove('register-mode');
+            registerForm.classList.remove('active'); loginForm.classList.add('active');
+            document.body.classList.remove('register-mode');
         });
 
-        // ================= ฟังก์ชัน: เข้าสู่ระบบ (เช็คจากตารางตรงๆ) =================
+        // ================= ระบบ Loading Spinner =================
+        function setLoading(btnId, spinnerId, textId, isLoading) {
+            const btn = document.getElementById(btnId);
+            const spinner = document.getElementById(spinnerId);
+            const text = document.getElementById(textId);
+            if(isLoading) {
+                btn.disabled = true; spinner.style.display = 'block'; text.innerText = 'กำลังดำเนินการ...';
+            } else {
+                btn.disabled = false; spinner.style.display = 'none'; 
+                text.innerText = btnId === 'btn-login' ? 'เข้าสู่ระบบ' : 'ยืนยันการสมัคร';
+            }
+        }
+
+        // ================= ฟังก์ชันรันเลข NT อัตโนมัติ (เช่น NT100001) =================
+        async function getNextCustomerId() {
+            // ดึงไอดีล่าสุดที่สร้าง
+            const { data, error } = await supabase
+                .from('customers')
+                .select('customer_id')
+                .order('created_at', { ascending: false })
+                .limit(1);
+
+            if (data && data.length > 0 && data[0].customer_id) {
+                const lastId = data[0].customer_id; // ได้มาเช่น "NT100005"
+                const numPart = parseInt(lastId.replace('NT', '')); // ตัดคำว่า NT ออกเหลือ 100005
+                if (!isNaN(numPart)) {
+                    return 'NT' + (numPart + 1); // บวก 1 เป็น NT100006
+                }
+            }
+            return 'NT100001'; // ถ้ายังไม่มีลูกค้าเลยให้เริ่มที่เบอร์นี้
+        }
+
+        // ================= ระบบลูกเล่น Real-time =================
+        const regPhone = document.getElementById('reg-phone');
+        const phoneCounter = document.getElementById('phone-counter');
+        regPhone.addEventListener('input', () => {
+            const len = regPhone.value.length;
+            phoneCounter.innerText = `${len}/10`;
+            if(len === 10) phoneCounter.classList.add('complete'); else phoneCounter.classList.remove('complete');
+        });
+
+        const regPassword = document.getElementById('reg-password');
+        const str1 = document.getElementById('str-1'), str2 = document.getElementById('str-2'), str3 = document.getElementById('str-3');
+        const strText = document.getElementById('str-text');
+        regPassword.addEventListener('input', () => {
+            const val = regPassword.value;
+            let strength = 0;
+            if(val.length >= 6) strength++;
+            if(val.match(/[0-9]/) && val.match(/[a-zA-Z]/)) strength++;
+            if(val.length >= 8 && val.match(/[^a-zA-Z0-9]/)) strength++;
+
+            str1.style.background = '#E5E7EB'; str2.style.background = '#E5E7EB'; str3.style.background = '#E5E7EB';
+            if(val.length === 0) { strText.innerText = "รหัสผ่านคาดเดาง่าย"; strText.style.color = "var(--text-light)"; } 
+            else if(strength <= 1) { str1.style.background = "var(--error)"; strText.innerText = "ความปลอดภัย: ต่ำ"; strText.style.color = "var(--error)"; } 
+            else if(strength === 2) { str1.style.background = "var(--warning)"; str2.style.background = "var(--warning)"; strText.innerText = "ความปลอดภัย: ปานกลาง"; strText.style.color = "var(--warning)"; } 
+            else { str1.style.background = "var(--success)"; str2.style.background = "var(--success)"; str3.style.background = "var(--success)"; strText.innerText = "ความปลอดภัย: สูงมาก"; strText.style.color = "var(--success)"; }
+            checkPasswordMatch();
+        });
+
+        const regConfirm = document.getElementById('reg-confirm-password'), matchMsg = document.getElementById('match-msg');
+        function checkPasswordMatch() {
+            if(regConfirm.value.length === 0) { matchMsg.className = 'match-msg'; return; }
+            if(regPassword.value === regConfirm.value) { matchMsg.className = 'match-msg show success'; matchMsg.innerHTML = '✓ รหัสผ่านตรงกัน'; } 
+            else { matchMsg.className = 'match-msg show error'; matchMsg.innerHTML = '✕ รหัสผ่านไม่ตรงกัน'; }
+        }
+        regConfirm.addEventListener('input', checkPasswordMatch);
+
+        // ================= เข้าสู่ระบบ =================
         document.getElementById('btn-login').addEventListener('click', async () => {
             const phone = document.getElementById('login-phone').value;
             const password = document.getElementById('login-password').value;
 
-            if(phone.length !== 10) return alert("กรุณากรอกเบอร์โทร 10 หลัก");
-            if(!password) return alert("กรุณากรอกรหัสผ่าน");
+            if(phone.length !== 10) return showModal('error', 'ข้อมูลไม่ครบ', 'กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก');
+            if(!password) return showModal('error', 'ข้อมูลไม่ครบ', 'กรุณากรอกรหัสผ่าน');
 
-            // ค้นหาในตาราง customers ว่ามีเบอร์และรหัสผ่านตรงกันไหม
-            const { data, error } = await supabase
-                .from('customers')
-                .select('*')
-                .eq('phone', phone)
-                .eq('password', password);
+            setLoading('btn-login', 'login-spinner', 'login-btn-text', true); // โหลดดิ้งหมุน
 
-            if (error) {
-                console.error(error);
-                return alert("เกิดข้อผิดพลาดในการเชื่อมต่อ");
-            }
+            const { data, error } = await supabase.from('customers').select('*').eq('phone', phone).eq('password', password);
+            setLoading('btn-login', 'login-spinner', 'login-btn-text', false); // หยุดหมุน
+
+            if (error) return showModal('error', 'ระบบขัดข้อง', 'ไม่สามารถเชื่อมต่อฐานข้อมูลได้');
 
             if (data && data.length > 0) {
                 const user = data[0];
-                alert(`เข้าสู่ระบบสำเร็จ!\nยินดีต้อนรับคุณ ${user.first_name}\nรหัสประจำตัวลูกค้า: ${user.customer_id}`);
-                
-                // เก็บข้อมูลลงเครื่อง เพื่อเอาไว้ใช้ในหน้าอื่นๆ ต่อไป
                 localStorage.setItem('customer_id', user.customer_id);
                 localStorage.setItem('customer_name', user.first_name);
-                
-                // window.location.href = "dashboard.html"; // เปลี่ยนไปหน้าร้านค้า
+                showModal('success', 'เข้าสู่ระบบสำเร็จ', `ยินดีต้อนรับคุณ ${user.first_name}\nรหัสลูกค้า: ${user.customer_id}`);
+                // วางโค้ดเด้งไป Dashboard ตรงนี้ได้เลย
             } else {
-                alert("เข้าสู่ระบบไม่สำเร็จ: เบอร์โทรหรือรหัสผ่านไม่ถูกต้อง");
+                showModal('error', 'เข้าสู่ระบบไม่สำเร็จ', 'เบอร์โทรหรือรหัสผ่านไม่ถูกต้อง');
             }
         });
 
-        // ================= ฟังก์ชัน: สมัครสมาชิก =================
+        // ================= สมัครสมาชิก =================
         document.getElementById('btn-register').addEventListener('click', async () => {
             const prefix = document.getElementById('reg-prefix').value;
             const firstName = document.getElementById('reg-firstname').value;
             const lastName = document.getElementById('reg-lastname').value;
             const phone = document.getElementById('reg-phone').value;
             const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-confirm-password').value;
 
-            if(!firstName || !lastName) return alert("กรุณากรอกชื่อและนามสกุล");
-            if(phone.length !== 10) return alert("กรุณากรอกเบอร์โทรให้ครบ 10 หลัก");
-            if(password.length < 4) return alert("รหัสผ่านต้องมีอย่างน้อย 4 ตัว");
+            if(!firstName || !lastName) return showModal('error', 'ข้อมูลไม่ครบ', 'กรุณากรอกชื่อและนามสกุล');
+            if(phone.length !== 10) return showModal('error', 'ข้อมูลไม่ถูกต้อง', 'กรุณากรอกเบอร์โทรให้ครบ 10 หลัก');
+            if(password.length < 6) return showModal('error', 'ความปลอดภัยต่ำ', 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
+            if(password !== confirmPassword) return showModal('error', 'รหัสผ่านไม่ตรงกัน', 'กรุณายืนยันรหัสผ่านให้ถูกต้อง');
 
-            // 1. เช็คก่อนว่าเบอร์นี้มีคนใช้ไปหรือยัง
-            const { data: checkPhone } = await supabase
-                .from('customers')
-                .select('phone')
-                .eq('phone', phone);
+            setLoading('btn-register', 'reg-spinner', 'reg-btn-text', true); // โหลดดิ้งหมุน
 
+            // เช็คเบอร์ซ้ำ
+            const { data: checkPhone } = await supabase.from('customers').select('phone').eq('phone', phone);
             if (checkPhone && checkPhone.length > 0) {
-                return alert("เบอร์โทรศัพท์นี้ถูกลงทะเบียนไปแล้ว กรุณาเข้าสู่ระบบ");
+                setLoading('btn-register', 'reg-spinner', 'reg-btn-text', false);
+                return showModal('error', 'ลงทะเบียนซ้ำ', 'เบอร์โทรศัพท์นี้ถูกใช้งานแล้ว กรุณาเข้าสู่ระบบ');
             }
 
-            // 2. สุ่มรหัสประจำตัวลูกค้า 8 หลัก (เช่น 10543218)
-            const newCustomerId = Math.floor(10000000 + Math.random() * 90000000).toString();
+            // รันเลขลูกค้าต่อกัน (เช่น NT100001, NT100002)
+            const newCustomerId = await getNextCustomerId();
 
-            // 3. บันทึกข้อมูลลงตาราง
-            const { error: insertError } = await supabase
-                .from('customers')
-                .insert([{ 
-                    customer_id: newCustomerId, // รหัส 8 หลัก
-                    phone: phone,               // เบอร์โทรข้อความธรรมดา
-                    password: password,         // รหัสผ่านข้อความธรรมดา
-                    prefix: prefix, 
-                    first_name: firstName, 
-                    last_name: lastName,
-                    role: 'buyer' 
-                }]);
+            const { error: insertError } = await supabase.from('customers').insert([{ 
+                customer_id: newCustomerId, phone: phone, password: password, prefix: prefix, first_name: firstName, last_name: lastName, role: 'buyer' 
+            }]);
+
+            setLoading('btn-register', 'reg-spinner', 'reg-btn-text', false); // หยุดหมุน
 
             if (insertError) {
-                console.error(insertError);
-                alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+                showModal('error', 'เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่');
             } else {
-                alert(`สมัครสมาชิกสำเร็จ!\nรหัสประจำตัวลูกค้าของคุณคือ: ${newCustomerId}\n(กรุณาจำเบอร์โทรและรหัสผ่านเพื่อเข้าสู่ระบบ)`);
-                
-                // ล้างค่าในฟอร์มและสลับกลับไปหน้าล็อกอิน
-                document.getElementById('reg-firstname').value = '';
-                document.getElementById('reg-lastname').value = '';
-                document.getElementById('reg-phone').value = '';
-                document.getElementById('reg-password').value = '';
-                document.getElementById('go-to-login').click();
+                // เซ็ตข้อมูลเตรียม Auto Login
+                autoLoginData = { customer_id: newCustomerId, first_name: firstName, role: 'buyer' };
+                localStorage.setItem('customer_id', newCustomerId);
+                localStorage.setItem('customer_name', firstName);
+                localStorage.setItem('customer_role', 'buyer');
+
+                // โชว์ความสำเร็จและเมื่อกดตกลงจะเข้าสู่ระบบทันที
+                showModal('success', 'สร้างบัญชีสำเร็จ!', `รหัสประจำตัวลูกค้าของคุณคือ\n\n[ ${newCustomerId} ]\n\nระบบจะพาท่านเข้าสู่หน้าร้านค้าทันที`, true);
             }
         });
     </script>
