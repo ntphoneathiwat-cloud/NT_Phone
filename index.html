@@ -314,10 +314,20 @@
                 localStorage.setItem('emp_name', emp.name); 
                 localStorage.setItem('emp_role', emp.role);
 
-                let roleName = emp.role === 'admin' ? 'ผู้จัดการ (Admin)' : 'พนักงานขาย (POS)';
+                // กำหนดชื่อตำแหน่งที่จะโชว์ในป๊อปอัพ
+                let roleName = 'พนักงานขาย (POS)';
+                if (emp.role === 'ceo') roleName = 'ประธานบริษัท (CEO)';
+                else if (emp.role === 'admin') roleName = 'ผู้จัดการสาขา (Admin)';
+                
                 return showModal('success', 'ยืนยันตัวตนสำเร็จ', `ยินดีต้อนรับคุณ ${emp.name}\n${roleName}`, () => {
-                    if (emp.role === 'admin') window.location.href = "admin.html";
-                    else window.location.href = "pos.html";
+                    // แยกว่าใครต้องไปหน้าไหน!
+                    if (emp.role === 'ceo') {
+                        window.location.href = "ceo.html";    // CEO ไปหน้าควบคุมสูงสุด
+                    } else if (emp.role === 'admin') {
+                        window.location.href = "admin.html";  // ผจก. ไปหน้าหลังบ้านสาขา
+                    } else {
+                        window.location.href = "pos.html";    // พนักงานขาย ไปหน้าเครื่องคิดเงิน
+                    }
                 });
             }
 
