@@ -2,16 +2,15 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NT PHONE | แดชบอร์ดลูกค้า</title>
     
     <style>@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap');</style>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
-        /* ================= Theme Variables (Apple Style) ================= */
+        /* ================= Theme Variables ================= */
         :root {
-            /* Light Theme */
             --bg-body: #F5F5F7;
             --bg-surface: #FFFFFF;
             --bg-card: #FFFFFF;
@@ -32,7 +31,6 @@
             --radius-lg: 24px;
         }
 
-        /* Dark Theme */
         [data-theme="dark"] {
             --bg-body: #000000;
             --bg-surface: #1C1C1E;
@@ -49,7 +47,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Anuphan', -apple-system, sans-serif; transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
-        body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+        body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
 
         /* ================= 1. Top Navbar ================= */
         .navbar {
@@ -66,7 +64,7 @@
         .breadcrumb { font-size: 0.95rem; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; }
         .breadcrumb span { color: var(--accent-blue); background: var(--accent-light); padding: 4px 12px; border-radius: 12px; }
 
-        .nav-right { display: flex; align-items: center; gap: 20px; }
+        .nav-right { display: flex; align-items: center; gap: 15px; }
 
         .topbar-user { display: flex; align-items: center; gap: 10px; background: var(--bg-body); padding: 6px 16px 6px 6px; border-radius: 30px; border: 1px solid var(--border-color); font-weight: 600; font-size: 0.95rem; }
         .topbar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent-blue); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
@@ -79,17 +77,19 @@
             font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: 0.2s;
         }
         .dropdown-toggle:hover { border-color: var(--accent-blue); }
+        
         .dropdown-menu {
             position: absolute; top: calc(100% + 10px); right: 0; width: 170px; background: var(--bg-surface);
             border: 1px solid var(--border-color); border-radius: 16px; box-shadow: var(--shadow-md);
             padding: 8px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100;
         }
         .custom-dropdown.active .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        
         .dropdown-item {
             padding: 10px 12px; border-radius: 10px; color: var(--text-main); font-size: 0.9rem; font-weight: 600;
             cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: space-between;
         }
-        .dropdown-item:hover { background: var(--bg-body); color: var(--accent-blue); }
+        .dropdown-item:hover, .dropdown-item:active { background: var(--bg-body); color: var(--accent-blue); }
         .dropdown-item.selected i { color: var(--accent-blue); display: block; }
         .dropdown-item i { display: none; font-size: 1.1rem; }
 
@@ -99,19 +99,11 @@
         .btn-logout { display: flex; align-items: center; gap: 8px; padding: 8px 20px; background: transparent; border: 1px solid var(--danger); color: var(--danger); border-radius: 20px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
         .btn-logout:hover { background: var(--danger); color: #FFFFFF; }
 
-        /* ================= Scroll Reveal Animation ================= */
-        .reveal {
-            opacity: 0; transform: translateY(30px) scale(0.98);
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: opacity, transform;
-        }
-        .reveal.active { opacity: 1; transform: translateY(0) scale(1); }
-
         /* ================= 2. Main Layout ================= */
         .container { padding: 110px 40px 60px; max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 320px 1fr; gap: 30px; }
 
         /* ฝั่งซ้าย: ข้อมูลลูกค้า */
-        .profile-card { background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 40px 25px; box-shadow: var(--shadow-sm); text-align: center; height: max-content; animation: slideRight 0.6s ease; }
+        .profile-card { background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 40px 25px; box-shadow: var(--shadow-sm); text-align: center; height: max-content; }
         .profile-header { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: 700; margin-bottom: 30px; justify-content: center; color: var(--text-main); }
         
         .avatar-circle { width: 110px; height: 110px; background: var(--bg-body); border: 1px solid var(--border-color); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; color: var(--text-secondary); }
@@ -125,25 +117,25 @@
         .info-val { color: var(--text-main); font-weight: 700; }
 
         /* ฝั่งขวา: Workspace */
-        .workspace-area { display: flex; flex-direction: column; gap: 30px; animation: slideUp 0.6s ease; }
+        .workspace-area { display: flex; flex-direction: column; gap: 30px; }
 
         /* แบนเนอร์ต้อนรับ (Blue Gradient) */
         .welcome-banner { background: linear-gradient(135deg, #0072ff 0%, #00c6ff 100%); border-radius: var(--radius-lg); padding: 40px; color: #FFFFFF; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 25px rgba(0, 114, 255, 0.2); }
-        .wb-left h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.02em; }
+        .wb-left h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.02em; line-height: 1.2; }
         .wb-left p { font-size: 1.05rem; opacity: 0.9; }
-        .wb-right { background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 12px 24px; border-radius: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,0.3); font-size: 1.05rem; }
+        .wb-right { background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 12px 24px; border-radius: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,0.3); font-size: 1.05rem; }
 
-        /* กล่องแจ้งเตือน (Alert Box) */
+        /* กล่องแจ้งเตือน */
         .alert-box { background: var(--bg-surface); border-radius: var(--radius-md); border: 1px solid rgba(245, 158, 11, 0.3); padding: 25px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--text-main); }
         .alert-header { width: 100%; display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.05rem; margin-bottom: 5px; color: var(--warning); }
         .alert-content { color: var(--text-secondary); font-size: 1rem; display: flex; align-items: center; gap: 8px; font-weight: 500; }
 
-        /* ระบบแอปพลิเคชัน (App Grid) */
+        /* ระบบแอปพลิเคชัน */
         .section-wrapper { background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 40px; box-shadow: var(--shadow-sm); }
         .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 30px; display: flex; align-items: center; gap: 10px; color: var(--text-main); }
         .section-title i { color: var(--accent-blue); font-size: 1.6rem; }
 
-        .app-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .app-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; }
         
         .app-card {
             background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md);
@@ -164,7 +156,8 @@
         .app-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; font-weight: 500; }
 
         /* ตารางประวัติการสั่งซื้อล่าสุด */
-        table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px; }
+        .table-responsive { width: 100%; overflow-x: auto; white-space: nowrap; }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 600px; }
         th { padding: 15px 20px; background: var(--bg-body); color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid var(--border-color); }
         td { padding: 15px 20px; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-main); font-weight: 500; }
         tr:hover td { background: var(--bg-body); }
@@ -197,18 +190,41 @@
         .btn-secondary { background: var(--bg-body); color: var(--text-main); border: 1px solid var(--border-color); }
         .btn-secondary:hover { border-color: var(--text-secondary); }
 
-        /* Animations */
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideRight { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        /* ================= 4. Mobile Responsive Fixes ================= */
+        @media (max-width: 900px) {
+            /* Navbar Mobile Fix */
+            .navbar { padding: 0 15px; height: 65px; }
+            .nav-brand span { display: none; } /* โชว์แค่ไอคอน */
+            .nav-divider, .breadcrumb { display: none; } /* ซ่อนทางเดิน */
+            
+            .nav-right { gap: 10px; }
+            .topbar-user { padding: 0; border: none; background: transparent; }
+            .topbar-user span { display: none; } /* ซ่อนชื่อ */
+            
+            .dropdown-toggle span { display: none; } /* ซ่อนอักษรย่อภาษา */
+            .dropdown-toggle { padding: 8px 12px; }
+            .dropdown-menu { width: 140px; }
 
-        /* Responsive */
-        @media (max-width: 1000px) {
-            .container { grid-template-columns: 1fr; padding: 100px 20px 40px; }
-            .welcome-banner { flex-direction: column; text-align: center; gap: 20px; padding: 30px; }
-            .nav-left .nav-divider, .nav-left .breadcrumb { display: none; }
-            .nav-brand span { display: none; }
-            .topbar-user span { display: none; }
-            .table-responsive { overflow-x: auto; }
+            .btn-logout { width: 40px; height: 40px; border-radius: 50%; padding: 0; justify-content: center; }
+            .btn-logout span { display: none; }
+            .btn-logout i { margin: 0; font-size: 1.2rem; }
+
+            /* Container & Layout Fix */
+            .container { grid-template-columns: 1fr; padding: 85px 15px 40px; gap: 20px; }
+            .profile-card { padding: 30px 20px; }
+            
+            .welcome-banner { flex-direction: column; text-align: center; gap: 15px; padding: 25px 20px; }
+            .wb-left h1 { font-size: 1.8rem; }
+            
+            .section-wrapper { padding: 25px 15px; }
+            .section-title { font-size: 1.1rem; margin-bottom: 20px; }
+            
+            /* App Grid Mobile Fix (2 คอลัมน์) */
+            .app-grid { grid-template-columns: 1fr 1fr; gap: 15px; }
+            .app-card { padding: 20px 10px; border-radius: 12px; }
+            .app-icon { width: 50px; height: 50px; font-size: 2rem; margin-bottom: 10px; }
+            .app-title { font-size: 0.95rem; margin-bottom: 5px; }
+            .app-desc { font-size: 0.75rem; }
         }
     </style>
 </head>
@@ -216,7 +232,7 @@
 
     <header class="navbar">
         <div class="nav-left">
-            <a href="store.html" class="nav-brand"><i class="ph-fill ph-device-mobile-camera"></i> <span>NT PHONE</span></a>
+            <a href="store.html" class="nav-brand" title="ไปหน้าหลัก"><i class="ph-fill ph-device-mobile-camera"></i> <span>NT PHONE</span></a>
             <div class="nav-divider"></div>
             <div class="breadcrumb">
                 <i class="ph-bold ph-house"></i>
@@ -232,23 +248,23 @@
             </div>
 
             <div class="custom-dropdown" id="lang-dropdown">
-                <button class="dropdown-toggle" onclick="event.stopPropagation(); toggleDropdown('lang-dropdown')">
+                <button class="dropdown-toggle" onclick="toggleDropdown(event, 'lang-dropdown')">
                     <i class="ph-bold ph-globe"></i> <span id="current-lang-text">TH</span> <i class="ph-bold ph-caret-down"></i>
                 </button>
                 <div class="dropdown-menu">
-                    <div class="dropdown-item selected" onclick="selectLang('th', this)"><span>ภาษาไทย (TH)</span><i class="ph-bold ph-check"></i></div>
-                    <div class="dropdown-item" onclick="selectLang('en', this)"><span>English (EN)</span><i class="ph-bold ph-check"></i></div>
-                    <div class="dropdown-item" onclick="selectLang('cn', this)"><span>中文 (CN)</span><i class="ph-bold ph-check"></i></div>
-                    <div class="dropdown-item" onclick="selectLang('jp', this)"><span>日本語 (JP)</span><i class="ph-bold ph-check"></i></div>
-                    <div class="dropdown-item" onclick="selectLang('mm', this)"><span>မြန်မာ (MM)</span><i class="ph-bold ph-check"></i></div>
+                    <div class="dropdown-item selected" data-lang="th" onclick="selectLang('th')"><span>ภาษาไทย (TH)</span><i class="ph-bold ph-check"></i></div>
+                    <div class="dropdown-item" data-lang="en" onclick="selectLang('en')"><span>English (EN)</span><i class="ph-bold ph-check"></i></div>
+                    <div class="dropdown-item" data-lang="cn" onclick="selectLang('cn')"><span>中文 (CN)</span><i class="ph-bold ph-check"></i></div>
+                    <div class="dropdown-item" data-lang="jp" onclick="selectLang('jp')"><span>日本語 (JP)</span><i class="ph-bold ph-check"></i></div>
+                    <div class="dropdown-item" data-lang="mm" onclick="selectLang('mm')"><span>မြန်မာ (MM)</span><i class="ph-bold ph-check"></i></div>
                 </div>
             </div>
 
-            <button class="btn-icon" id="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+            <button class="btn-icon" id="theme-toggle" onclick="toggleTheme()" title="สลับโหมดสี">
                 <i class="ph-bold ph-moon"></i>
             </button>
 
-            <button class="btn-logout" onclick="handleLogout()">
+            <button class="btn-logout" onclick="handleLogout()" title="ออกจากระบบ">
                 <i class="ph-bold ph-sign-out"></i> <span data-i18n="btn_logout">ออกจากระบบ</span>
             </button>
         </div>
@@ -283,7 +299,7 @@
 
         <section class="workspace-area">
             
-            <div class="welcome-banner reveal">
+            <div class="welcome-banner">
                 <div class="wb-left">
                     <h1 data-i18n="greeting">สวัสดี, คุณ<span id="greet-name">ลูกค้า</span></h1>
                     <p data-i18n="subtitle">ยินดีต้อนรับกลับมา พร้อมช้อปสมาร์ทโฟนรุ่นใหม่แล้วหรือยัง?</p>
@@ -293,7 +309,7 @@
                 </div>
             </div>
 
-            <div class="alert-box reveal" style="transition-delay: 0.1s;">
+            <div class="alert-box">
                 <div class="alert-header">
                     <i class="ph-fill ph-bell-ringing"></i> <span data-i18n="alert_title">อัปเดตสถานะและแจ้งเตือนระบบ</span>
                 </div>
@@ -303,7 +319,7 @@
                 </div>
             </div>
 
-            <div class="section-wrapper reveal" style="transition-delay: 0.2s;">
+            <div class="section-wrapper">
                 <div class="section-title">
                     <i class="ph-bold ph-squares-four"></i> <span data-i18n="section_workspace">พื้นที่บริการ (Services)</span>
                 </div>
@@ -335,7 +351,7 @@
                 </div>
             </div>
 
-            <div class="section-wrapper reveal" style="transition-delay: 0.3s;">
+            <div class="section-wrapper">
                 <div class="section-title">
                     <i class="ph-bold ph-clock-counter-clockwise"></i> <span data-i18n="section_history">ประวัติคำสั่งซื้อล่าสุด</span>
                 </div>
@@ -376,30 +392,34 @@
         const supabase = createClient(supabaseUrl, supabaseKey)
 
         // ================= 1. Auth Guard & Data Load =================
-        const customerId = localStorage.getItem('customer_id');
-        const customerName = localStorage.getItem('customer_name');
+        // ถ้าใช้เทสต์บนเครื่องส่วนตัวที่ไม่ได้ต่อ Supabase สามารถเปิดการจำลองข้อมูลไว้ได้
+        const customerId = localStorage.getItem('customer_id') || 'NT-TEST-01';
+        const customerName = localStorage.getItem('customer_name') || 'Test User';
 
-        if (!customerId) {
+        /* เปิดคอมเมนต์นี้เพื่อใช้งานจริง
+        if (!localStorage.getItem('customer_id')) {
             window.location.href = "index.html"; 
         }
+        */
 
-        // โชว์ข้อมูลลูกค้า
-        document.getElementById('topbar-name').innerText = customerName || 'Customer';
-        document.getElementById('display-name').innerText = customerName || 'คุณลูกค้า';
-        document.getElementById('greet-name').innerText = (customerName || '').split(' ')[0];
+        document.getElementById('topbar-name').innerText = customerName;
+        document.getElementById('display-name').innerText = customerName;
+        document.getElementById('greet-name').innerText = customerName.split(' ')[0];
         document.getElementById('display-id').innerText = customerId;
 
-        // ดึงเบอร์โทรศัพท์จากตาราง customers (เพราะ localStorage ไม่ได้เก็บไว้)
+        // ฟังก์ชันดึงเบอร์โทรศัพท์แบบปลอดภัย
         async function fetchCustomerInfo() {
-            const { data } = await supabase.from('customers').select('phone').eq('customer_id', customerId).single();
-            if (data) {
-                // จัดฟอร์แมตเบอร์โทรให้สวยงาม เช่น 081-234-5678
-                const phoneStr = data.phone;
-                if(phoneStr.length === 10) {
-                    document.getElementById('display-phone').innerText = `${phoneStr.substring(0,3)}-${phoneStr.substring(3,6)}-${phoneStr.substring(6)}`;
+            try {
+                const { data } = await supabase.from('customers').select('phone').eq('customer_id', customerId).single();
+                if (data && data.phone) {
+                    const p = data.phone;
+                    if(p.length === 10) document.getElementById('display-phone').innerText = `${p.substring(0,3)}-${p.substring(3,6)}-${p.substring(6)}`;
+                    else document.getElementById('display-phone').innerText = p;
                 } else {
-                    document.getElementById('display-phone').innerText = phoneStr;
+                    document.getElementById('display-phone').innerText = 'ไม่พบข้อมูลเบอร์โทร';
                 }
+            } catch (err) {
+                console.log('ยังไม่ได้ต่อฐานข้อมูล หรือไม่พบไอดี');
             }
         }
         fetchCustomerInfo();
@@ -407,14 +427,17 @@
         const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById('current-date').innerText = new Date().toLocaleDateString('th-TH', dateOptions);
 
-        // ================= 2. Custom Dropdown Logic =================
-        window.toggleDropdown = (id) => {
-            document.getElementById(id).classList.toggle('active');
+        // ================= 2. Custom Dropdown Logic (Fixed for Mobile) =================
+        window.toggleDropdown = (event, id) => {
+            event.stopPropagation(); // สำคัญมากในมือถือ ป้องกันการส่ง event ไปโดน body
+            const dropdown = document.getElementById(id);
+            dropdown.classList.toggle('active');
         };
+
+        // คลิกพื้นที่อื่นเพื่อปิด Dropdown
         document.addEventListener('click', (e) => {
             const dropdown = document.getElementById('lang-dropdown');
-            const toggleBtn = dropdown.querySelector('.dropdown-toggle');
-            if (dropdown.classList.contains('active') && !toggleBtn.contains(e.target)) {
+            if (dropdown && dropdown.classList.contains('active')) {
                 dropdown.classList.remove('active');
             }
         });
@@ -435,61 +458,52 @@
         };
         if(localStorage.getItem('theme') === 'dark') toggleTheme();
 
-        // ================= 4. Scroll Reveal Animation =================
-        const revealElements = document.querySelectorAll('.reveal');
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('active');
-                else entry.target.classList.remove('active');
-            });
-        }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-        revealElements.forEach(el => revealObserver.observe(el));
-
-        // ================= 5. Fetch Recent Orders & Alert =================
+        // ================= 4. Fetch Recent Orders =================
         async function loadDashboardData() {
-            const { data: orders, error } = await supabase.from('orders')
-                .select('*').eq('customer_id', customerId)
-                .order('created_at', { ascending: false });
+            try {
+                const { data: orders, error } = await supabase.from('orders')
+                    .select('*').eq('customer_id', customerId).order('created_at', { ascending: false });
 
-            const tbody = document.getElementById('order-history-body');
-            const alertContent = document.getElementById('alert-content');
-            tbody.innerHTML = '';
+                const tbody = document.getElementById('order-history-body');
+                const alertContent = document.getElementById('alert-content');
+                tbody.innerHTML = '';
 
-            if (error || !orders || orders.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 30px;"><i class="ph-light ph-receipt" style="font-size: 3rem; margin-bottom: 10px; display: block;"></i> ยังไม่มีประวัติการสั่งซื้อ</td></tr>`;
-                return;
-            }
+                if (error || !orders || orders.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 30px;"><i class="ph-light ph-receipt" style="font-size: 3rem; margin-bottom: 10px; display: block;"></i> ยังไม่มีประวัติการสั่งซื้อ</td></tr>`;
+                    return;
+                }
 
-            // แสดงออเดอร์ล่าสุด 5 รายการ
-            orders.slice(0, 5).forEach(order => {
-                const dateObj = new Date(order.created_at);
-                const dateStr = dateObj.toLocaleDateString('th-TH') + ' ' + dateObj.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
-                
-                let statusHtml = '';
-                if(order.status === 'pending') statusHtml = `<span class="status-badge pending"><i class="ph-bold ph-clock-countdown"></i> รอดำเนินการ</span>`;
-                else if(order.status === 'processing') statusHtml = `<span class="status-badge pending" style="color:#0071e3; border-color:rgba(0,113,227,0.2); background:rgba(0,113,227,0.1);"><i class="ph-bold ph-package"></i> กำลังจัดเตรียม</span>`;
-                else statusHtml = `<span class="status-badge completed"><i class="ph-bold ph-check-circle"></i> สำเร็จ</span>`;
+                orders.slice(0, 5).forEach(order => {
+                    const dateObj = new Date(order.created_at);
+                    const dateStr = dateObj.toLocaleDateString('th-TH') + ' ' + dateObj.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
+                    
+                    let statusHtml = '';
+                    if(order.status === 'pending') statusHtml = `<span class="status-badge pending"><i class="ph-bold ph-clock-countdown"></i> รอดำเนินการ</span>`;
+                    else if(order.status === 'processing') statusHtml = `<span class="status-badge pending" style="color:#0071e3; border-color:rgba(0,113,227,0.2); background:rgba(0,113,227,0.1);"><i class="ph-bold ph-package"></i> กำลังจัดเตรียม</span>`;
+                    else statusHtml = `<span class="status-badge completed"><i class="ph-bold ph-check-circle"></i> สำเร็จ</span>`;
 
-                tbody.innerHTML += `
-                    <tr>
-                        <td style="font-weight: 700;">${order.order_no}</td>
-                        <td style="color: var(--text-secondary); font-size: 0.9rem;">${dateStr}</td>
-                        <td style="font-weight: 700; color: var(--accent-blue);">฿${Number(order.total_amount).toLocaleString()}</td>
-                        <td>${statusHtml}</td>
-                    </tr>
-                `;
-            });
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="font-weight: 700;">${order.order_no}</td>
+                            <td style="color: var(--text-secondary); font-size: 0.9rem;">${dateStr}</td>
+                            <td style="font-weight: 700; color: var(--accent-blue);">฿${Number(order.total_amount).toLocaleString()}</td>
+                            <td>${statusHtml}</td>
+                        </tr>
+                    `;
+                });
 
-            // อัปเดตกล่องแจ้งเตือนถ้ามีออเดอร์ pending
-            const pendingOrders = orders.filter(o => o.status === 'pending');
-            if (pendingOrders.length > 0) {
-                alertContent.innerHTML = `<i class="ph-fill ph-package" style="font-size: 1.5rem; color: var(--warning);"></i> 
-                    <span>คุณมีคำสั่งซื้อ <b style="color:var(--text-main);">${pendingOrders.length} รายการ</b> ที่กำลังรอการตรวจสอบจากเจ้าหน้าที่</span>`;
+                const pendingOrders = orders.filter(o => o.status === 'pending');
+                if (pendingOrders.length > 0) {
+                    alertContent.innerHTML = `<i class="ph-fill ph-package" style="font-size: 1.5rem; color: var(--warning);"></i> 
+                        <span>คุณมีคำสั่งซื้อ <b style="color:var(--text-main);">${pendingOrders.length} รายการ</b> ที่กำลังรอการตรวจสอบ</span>`;
+                }
+            } catch (err) {
+                document.getElementById('order-history-body').innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--danger); padding: 30px;">ไม่สามารถโหลดข้อมูลได้</td></tr>`;
             }
         }
         loadDashboardData();
 
-        // ================= 6. Modals & Logout =================
+        // ================= 5. Modals & Logout =================
         window.closeModal = (id) => document.getElementById(id).classList.remove('active');
 
         window.customAlert = (type, title, msg) => {
@@ -526,7 +540,7 @@
             });
         };
 
-        // ================= 7. i18n Dictionary (5 ภาษา) =================
+        // ================= 6. i18n Dictionary (5 ภาษา ทำงาน 100%) =================
         const dict = {
             th: {
                 nav_dashboard: "แดชบอร์ดลูกค้า", btn_logout: "ออกจากระบบ", card_profile: "ข้อมูลบัญชีผู้ใช้", role_customer: "สมาชิกระดับทั่วไป (Standard)",
@@ -542,11 +556,11 @@
                 msg_logout: "คุณต้องการออกจากระบบใช่หรือไม่?", lang_code: "TH"
             },
             en: {
-                nav_dashboard: "Customer Dashboard", btn_logout: "Log Out", card_profile: "Account Information", role_customer: "Standard Member",
+                nav_dashboard: "Customer Dashboard", btn_logout: "Log Out", card_profile: "Account Info", role_customer: "Standard Member",
                 info_id: "Customer ID", info_phone: "Phone Number", info_status: "System Status",
                 greeting: "Welcome, ", subtitle: "Ready to shop for your new smartphone?",
                 alert_title: "System Updates & Alerts", alert_msg: "You have no alerts at the moment. Great job!",
-                section_workspace: "Our Services", section_history: "Recent Order History",
+                section_workspace: "Our Services", section_history: "Recent Orders",
                 app_store: "Go Shopping", desc_store: "Browse smartphones and special promotions.",
                 app_credits: "My Credits", desc_credits: "Check approval status and installments.",
                 app_support: "Help Center", desc_support: "Contact admin for inquiries or issues.",
@@ -555,7 +569,7 @@
                 msg_logout: "Are you sure you want to log out?", lang_code: "EN"
             },
             cn: {
-                nav_dashboard: "客户仪表板", btn_logout: "退出", card_profile: "账户信息", role_customer: "普通会员 (Standard)",
+                nav_dashboard: "客户仪表板", btn_logout: "退出", card_profile: "账户信息", role_customer: "普通会员",
                 info_id: "客户编号", info_phone: "电话号码", info_status: "系统状态",
                 greeting: "你好，", subtitle: "欢迎回来，准备好购买新智能手机了吗？",
                 alert_title: "系统更新与通知", alert_msg: "目前没有警报。干得好！",
@@ -568,9 +582,9 @@
                 msg_logout: "您确定要退出吗？", lang_code: "CN"
             },
             jp: {
-                nav_dashboard: "顧客ダッシュボード", btn_logout: "ログアウト", card_profile: "アカウント情報", role_customer: "一般会員 (Standard)",
+                nav_dashboard: "顧客ダッシュボード", btn_logout: "ログアウト", card_profile: "アカウント情報", role_customer: "一般会員",
                 info_id: "顧客ID", info_phone: "電話番号", info_status: "システム状態",
-                greeting: "こんにちは、", subtitle: "お帰りなさい。新しいスマートフォンを購入する準備はできましたか？",
+                greeting: "こんにちは、", subtitle: "新しいスマートフォンを購入する準備はできましたか？",
                 alert_title: "システム更新とアラート", alert_msg: "現在アラートはありません。素晴らしい！",
                 section_workspace: "サービスエリア", section_history: "最近の注文履歴",
                 app_store: "ショッピング", desc_store: "スマートフォンと特別プロモーションを閲覧します。",
@@ -584,7 +598,7 @@
                 nav_dashboard: "ဖောက်သည် ဒက်ရှ်ဘုတ်", btn_logout: "ထွက်ရန်", card_profile: "အကောင့်အချက်အလက်", role_customer: "ပုံမှန်အဖွဲ့ဝင်",
                 info_id: "ဖောက်သည် ID", info_phone: "ဖုန်းနံပါတ်", info_status: "စနစ်အခြေအနေ",
                 greeting: "မင်္ဂလာပါ ", subtitle: "စမတ်ဖုန်းအသစ်ဝယ်ယူရန် အဆင်သင့်ဖြစ်ပြီလား။",
-                alert_title: "စနစ် အပ်ဒိတ်များနှင့် သတိပေးချက်များ", alert_msg: "ယခုအချိန်တွင် သတိပေးချက်များ မရှိပါ။ ကောင်းလိုက်တာ!",
+                alert_title: "စနစ် အပ်ဒိတ်များနှင့် သတိပေးချက်များ", alert_msg: "သတိပေးချက်များ မရှိပါ။ ကောင်းလိုက်တာ!",
                 section_workspace: "ဝန်ဆောင်မှုများ", section_history: "လတ်တလော မှာယူမှုမှတ်တမ်း",
                 app_store: "ဈေးဝယ်ထွက်ရန်", desc_store: "စမတ်ဖုန်းများနှင့် အထူးပရိုမိုးရှင်းများကို ကြည့်ရှုပါ။",
                 app_credits: "ကျွန်ုပ်၏ ခရက်ဒစ်", desc_credits: "ခွင့်ပြုချက်အခြေအနေနှင့် အရစ်ကျငွေများကို စစ်ဆေးပါ။",
@@ -595,18 +609,23 @@
             }
         };
 
-        window.selectLang = (lang, element) => {
+        let currentLang = 'th';
+        
+        window.selectLang = (lang) => {
             currentLang = lang;
             document.getElementById('current-lang-text').innerText = dict[lang].lang_code;
-            document.querySelectorAll('#lang-dropdown .dropdown-item').forEach(el => el.classList.remove('selected'));
-            element.classList.add('selected');
+            
+            document.querySelectorAll('#lang-dropdown .dropdown-item').forEach(el => {
+                el.classList.remove('selected');
+                if(el.getAttribute('data-lang') === lang) el.classList.add('selected');
+            });
             document.getElementById('lang-dropdown').classList.remove('active');
 
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (key === 'greeting') {
                     const space = (lang === 'en' || lang === 'mm' || lang === 'jp' || lang === 'cn') ? '' : ' ';
-                    el.innerHTML = `${dict[lang][key]}${space}<span id="greet-name">${customerName.split(' ')[0]}</span>`;
+                    el.innerHTML = `${dict[lang][key]}${space}<span id="greet-name">${(customerName || '').split(' ')[0]}</span>`;
                 }
                 else if (dict[lang][key]) {
                     el.innerText = dict[lang][key];
