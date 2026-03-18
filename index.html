@@ -322,7 +322,7 @@
                 return showModal('success', 'ยืนยันตัวตนสำเร็จ', `ยินดีต้อนรับคุณ ${emp.name}\n${roleName}`, () => {
                     // แยกว่าใครต้องไปหน้าไหน!
                     if (emp.role === 'ceo') {
-                        window.location.href = "ceo.html";    // CEO ไปหน้าควบคุมสูงสุด
+                        window.location.href = "ceo_dashboard.html";    // CEO ไปหน้าควบคุมสูงสุด
                     } else if (emp.role === 'admin') {
                         window.location.href = "admin.html";  // ผจก. ไปหน้าหลังบ้านสาขา
                     } else {

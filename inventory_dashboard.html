@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NT PHONE | Inventory Dashboard</title>
+    
+    <style>@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap');</style>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* ================= Premium Variables ================= */
+        :root {
+            --bg-body: #F5F5F7; --bg-surface: #FFFFFF; --bg-card: #FFFFFF;
+            --text-main: #1D1D1F; --text-muted: #86868B; --border-color: #E5E5EA;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            
+            --accent-blue: #0071E3; --bg-blue: rgba(0, 113, 227, 0.08);
+            --accent-indigo: #5856D6; --bg-indigo: rgba(88, 86, 214, 0.08);
+            --accent-teal: #00C7BE; --bg-teal: rgba(0, 199, 190, 0.08);
+            
+            --danger: #FF3B30; --success: #34C759; --warning: #F59E0B;
+            --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.04); --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --radius-md: 16px; --radius-lg: 24px;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #000000; --bg-surface: #1C1C1E; --bg-card: #1C1C1E;
+            --text-main: #F5F5F7; --text-muted: #A1A1A6; --border-color: #38383A;
+            --glass-bg: rgba(28, 28, 30, 0.75);
+            --accent-blue: #2997FF; --accent-light: rgba(41, 151, 255, 0.15);
+            --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.3); --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Anuphan', sans-serif; transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding-top: 110px; padding-bottom: 60px; overflow-x: hidden; }
+
+        /* ================= Floating Navbar ================= */
+        .nav-wrapper { position: fixed; top: 20px; left: 0; width: 100%; z-index: 1000; display: flex; justify-content: center; padding: 0 20px; }
+        .navbar { width: 100%; max-width: 1400px; height: 70px; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 35px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 15px 0 25px; }
+        .nav-left, .nav-right { display: flex; align-items: center; gap: 12px; }
+        .nav-brand { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 700; color: var(--text-main); text-decoration: none; }
+        .nav-brand i { color: var(--accent-blue); font-size: 1.6rem; }
+        .nav-divider { width: 1px; height: 20px; background: var(--border-color); margin: 0 5px; }
+        .breadcrumb { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+        .user-pill { display: flex; align-items: center; gap: 10px; background: var(--bg-body); padding: 6px 16px 6px 6px; border-radius: 30px; font-weight: 600; font-size: 0.95rem; border: 1px solid var(--border-color); }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--text-main); color: var(--bg-surface); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .btn-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); cursor: pointer; font-size: 1.2rem; }
+        .btn-icon:hover { border-color: var(--accent-blue); color: var(--accent-blue); background: var(--bg-body); }
+
+        /* ================= Layout & Hero Banner ================= */
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+        
+        .hero-banner { background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(88, 86, 214, 0.08) 100%); border-radius: var(--radius-lg); padding: 40px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .hero-title { font-size: 2.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+        .hero-title i { color: var(--accent-indigo); }
+        .hero-desc { font-size: 1.05rem; color: var(--text-muted); }
+        
+        .btn-outline { background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 14px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; font-size: 0.95rem; }
+        .btn-outline:hover { background: var(--bg-body); border-color: var(--text-muted); }
+
+        /* ================= KPI Cards ================= */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .kpi-card { background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 25px; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 20px; transition: 0.3s; }
+        .kpi-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+        .kpi-icon { width: 65px; height: 65px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; flex-shrink: 0; }
+        .kpi-info { display: flex; flex-direction: column; gap: 5px; }
+        .kpi-label { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .kpi-value { font-size: 1.8rem; font-weight: 700; color: var(--text-main); line-height: 1.1; }
+
+        /* Colors for KPI */
+        .kpi-blue .kpi-icon { background: var(--bg-blue); color: var(--accent-blue); }
+        .kpi-indigo .kpi-icon { background: var(--bg-indigo); color: var(--accent-indigo); }
+        .kpi-success .kpi-icon { background: rgba(52, 199, 89, 0.1); color: var(--success); }
+        .kpi-danger .kpi-icon { background: rgba(255, 59, 48, 0.1); color: var(--danger); }
+
+        /* ================= Quick Actions (Menu Cards) ================= */
+        .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; color: var(--text-main); }
+        .section-title i { color: var(--accent-blue); }
+        
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-bottom: 50px; }
+        .menu-card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 30px; box-shadow: var(--shadow-sm); cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 15px; }
+        .menu-card:hover { border-color: var(--accent-blue); box-shadow: var(--shadow-md); transform: translateY(-4px); }
+        .menu-card::after { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--border-color); transition: 0.3s; }
+        .menu-card:hover::after { background: var(--accent-blue); }
+        
+        .menu-icon { font-size: 2.8rem; color: var(--text-main); transition: 0.3s; }
+        .menu-card:hover .menu-icon { color: var(--accent-blue); transform: scale(1.1) translateX(5px); }
+        .menu-title { font-size: 1.3rem; font-weight: 700; color: var(--text-main); }
+        .menu-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
+
+        /* ================= Low Stock Table ================= */
+        .content-card { background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 35px; box-shadow: var(--shadow-sm); margin-bottom: 30px; }
+        .card-header { font-size: 1.2rem; font-weight: 700; color: var(--danger); margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th { padding: 15px 20px; background: var(--bg-body); color: var(--text-muted); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid var(--border-color); text-align: left; }
+        td { padding: 15px 20px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        tr:hover td { background: var(--bg-body); }
+        
+        .variant-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-body); padding: 6px 12px; border-radius: 10px; font-weight: 600; font-size: 0.85rem; border: 1px solid var(--border-color); }
+        .color-dot { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); }
+        .btn-view { background: var(--bg-body); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.85rem; }
+        .btn-view:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+
+        @media (max-width: 800px) {
+            .navbar { padding: 0 15px; border-radius: 20px; height: 65px; }
+            .nav-brand span, .nav-divider, .breadcrumb { display: none; }
+            .user-name { display: inline-block; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .hero-banner { flex-direction: column; align-items: flex-start; }
+            .menu-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-wrapper">
+        <nav class="navbar">
+            <div class="nav-left">
+                <a href="ceo_dashboard.html" class="nav-brand"><i class="ph-bold ph-device-mobile-camera"></i> <span>NT PHONE</span></a>
+                <div class="nav-divider"></div>
+                <div class="breadcrumb"><span>แดชบอร์ดคลังสินค้า</span></div>
+            </div>
+            <div class="nav-right">
+                <button class="btn-icon" onclick="toggleTheme()"><i class="ph-bold ph-moon" id="theme-icon"></i></button>
+                <div class="user-pill">
+                    <div class="user-avatar"><i class="ph-bold ph-user"></i></div>
+                    <span class="user-name" id="topbar-name">Admin</span>
+                </div>
+                <button class="btn-icon" style="color:var(--danger); border-color:transparent;" onclick="handleLogout()"><i class="ph-bold ph-sign-out"></i></button>
+            </div>
+        </nav>
+    </div>
+
+    <main class="container">
+        <div class="hero-banner">
+            <div>
+                <h1 class="hero-title"><i class="ph-fill ph-squares-four"></i> ศูนย์บัญชาการคลังสินค้า (Inventory Hub)</h1>
+                <p class="hero-desc">ดูภาพรวมมูลค่าสต็อก แจ้งเตือนสินค้าใกล้หมด และเข้าถึงเครื่องมือจัดการคลังสินค้าทั้งหมด</p>
+            </div>
+            <button class="btn-outline" onclick="window.location.href='ceo_dashboard.html'">
+                <i class="ph-bold ph-house"></i> กลับเมนูหลัก (Home)
+            </button>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card kpi-blue">
+                <div class="kpi-icon"><i class="ph-fill ph-package"></i></div>
+                <div class="kpi-info">
+                    <div class="kpi-label">จำนวนสินค้ารวม (SKUs)</div>
+                    <div class="kpi-value" id="kpi-total-sku">
+                        <i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite; font-size:1.5rem;"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="kpi-card kpi-success">
+                <div class="kpi-icon"><i class="ph-fill ph-money"></i></div>
+                <div class="kpi-info">
+                    <div class="kpi-label">มูลค่าสต็อกรวม (บาท)</div>
+                    <div class="kpi-value" id="kpi-total-value">
+                        <i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite; font-size:1.5rem;"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kpi-card kpi-danger">
+                <div class="kpi-icon"><i class="ph-fill ph-warning-circle"></i></div>
+                <div class="kpi-info">
+                    <div class="kpi-label">สินค้าใกล้หมด (ต่ำกว่า 5 ชิ้น)</div>
+                    <div class="kpi-value" id="kpi-low-stock">
+                        <i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite; font-size:1.5rem;"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kpi-card kpi-indigo">
+                <div class="kpi-icon"><i class="ph-fill ph-tag"></i></div>
+                <div class="kpi-info">
+                    <div class="kpi-label">จำนวนแบรนด์ในระบบ</div>
+                    <div class="kpi-value" id="kpi-brands">
+                        <i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite; font-size:1.5rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title"><i class="ph-fill ph-circles-four"></i> เมนูการจัดการ (Management Tools)</h2>
+        <div class="menu-grid">
+            <div class="menu-card" onclick="window.location.href='inventory_master.html'">
+                <i class="ph-fill ph-database menu-icon" style="color: var(--accent-indigo);"></i>
+                <div>
+                    <h3 class="menu-title">1. จัดการข้อมูลหลัก (Master Data)</h3>
+                    <p class="menu-desc">เพิ่มหรือลบ หมวดหมู่, แบรนด์, รุ่นโทรศัพท์ และดาวน์โหลดเทมเพลต CSV</p>
+                </div>
+            </div>
+
+            <div class="menu-card" onclick="window.location.href='inventory_add.html'">
+                <i class="ph-fill ph-magic-wand menu-icon" style="color: var(--accent-blue);"></i>
+                <div>
+                    <h3 class="menu-title">2. สร้างสินค้าใหม่ (SKU Generator)</h3>
+                    <p class="menu-desc">เพิ่มสินค้ารุ่นใหม่ กำหนดความจุ สี และสร้างรหัสบาร์โค้ดอัตโนมัติ</p>
+                </div>
+            </div>
+
+            <div class="menu-card" onclick="window.location.href='inventory_list.html'">
+                <i class="ph-fill ph-table menu-icon" style="color: var(--accent-teal);"></i>
+                <div>
+                    <h3 class="menu-title">3. ตารางคลังสินค้า (Inventory List)</h3>
+                    <p class="menu-desc">ดูสต็อกทั้งหมด ค้นหาบาร์โค้ด แก้ไขราคาลด และพิมพ์รายงาน PDF</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header">
+                <div style="display: flex; align-items: center; gap: 10px;"><i class="ph-fill ph-warning" style="background: rgba(255,59,48,0.1); color: var(--danger); padding: 8px; border-radius: 10px;"></i> แจ้งเตือนสินค้าใกล้หมด (Low Stock Alerts)</div>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>แบรนด์ / รุ่น</th>
+                            <th>รายละเอียด (ความจุ / สี)</th>
+                            <th>รหัสบาร์โค้ด</th>
+                            <th>สต็อกคงเหลือรวม</th>
+                            <th style="text-align: center;">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="low-stock-tbody">
+                        <tr><td colspan="5" style="text-align: center; padding: 40px;"><i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite; font-size: 2rem; color: var(--text-muted);"></i></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+        const supabaseUrl = 'https://xjjcnlzynzsvopmcooky.supabase.co'
+        const supabaseKey = 'sb_publishable_w7A_BOSi0r1r4t93exl1gg_j1jPRU_E'
+        const supabase = createClient(supabaseUrl, supabaseKey)
+
+        // UI Setup
+        document.getElementById('topbar-name').innerText = localStorage.getItem('emp_name') || 'Admin / CEO';
+        window.toggleTheme = () => {
+            const body = document.body; const icon = document.getElementById('theme-icon');
+            if (body.getAttribute('data-theme') === 'dark') { body.removeAttribute('data-theme'); icon.className = 'ph-bold ph-moon'; localStorage.setItem('theme', 'light'); } 
+            else { body.setAttribute('data-theme', 'dark'); icon.className = 'ph-bold ph-sun'; localStorage.setItem('theme', 'dark'); }
+        };
+        if(localStorage.getItem('theme') === 'dark') toggleTheme();
+        window.handleLogout = () => { localStorage.clear(); window.location.href = "index.html"; };
+
+        // Fetch Dashboard Data
+        async function loadDashboardData() {
+            try {
+                // 1. Fetch Total Brands
+                const { count: brandCount } = await supabase.from('sys_brands').select('*', { count: 'exact', head: true });
+                document.getElementById('kpi-brands').innerText = brandCount || 0;
+
+                // 2. Fetch Products & SKUs
+                const { data: products, error } = await supabase.from('products').select(`*, product_skus(*)`).order('created_at', { ascending: false });
+                if(error) throw error;
+
+                let totalSKUs = 0;
+                let totalValue = 0;
+                let lowStockItems = [];
+
+                if(products) {
+                    products.forEach(p => {
+                        if(p.product_skus) {
+                            p.product_skus.forEach(sku => {
+                                totalSKUs++;
+                                
+                                // คำนวณสต็อกรวมของ SKU นี้
+                                let skuStock = 0;
+                                if(sku.branch_stocks) {
+                                    Object.values(sku.branch_stocks).forEach(qty => { skuStock += parseInt(qty) || 0; });
+                                }
+
+                                // มูลค่า = สต็อกรวม * ราคาสด
+                                const price = sku.sale_price > 0 ? sku.sale_price : (sku.price_cash || 0);
+                                totalValue += (skuStock * price);
+
+                                // เช็ค Low Stock (เหลือน้อยกว่า 5)
+                                if(skuStock <= 5) {
+                                    lowStockItems.push({
+                                        product_id: p.product_id,
+                                        brand: p.brand,
+                                        model: p.model || p.name,
+                                        capacity: sku.capacity,
+                                        color_name: sku.color_name,
+                                        color_hex: sku.color_hex,
+                                        barcode: sku.barcode,
+                                        stock: skuStock,
+                                        image_url: sku.image_url || p.image_url || 'https://via.placeholder.com/40'
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+
+                // Update KPIs
+                document.getElementById('kpi-total-sku').innerText = totalSKUs.toLocaleString();
+                document.getElementById('kpi-total-value').innerText = '฿' + totalValue.toLocaleString();
+                document.getElementById('kpi-low-stock').innerText = lowStockItems.length;
+
+                // Render Low Stock Table
+                const tbody = document.getElementById('low-stock-tbody');
+                tbody.innerHTML = '';
+
+                if(lowStockItems.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 30px; color: var(--text-muted);">ไม่มีสินค้าใกล้หมดสต็อก ยอดเยี่ยมมาก! 🎉</td></tr>`;
+                    return;
+                }
+
+                // เรียงจากน้อยไปมาก
+                lowStockItems.sort((a,b) => a.stock - b.stock);
+
+                lowStockItems.forEach(item => {
+                    const stockHtml = item.stock === 0 
+                        ? `<span style="color:var(--danger); font-weight:700;">หมด (0)</span>` 
+                        : `<span style="color:var(--warning); font-weight:700;">เหลือ ${item.stock}</span>`;
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>
+                                <div style="display:flex; align-items:center; gap:12px;">
+                                    <img src="${item.image_url}" style="width:40px; height:40px; border-radius:8px; object-fit:contain; border:1px solid var(--border-color); background:white;">
+                                    <div><div style="font-weight:700;">${item.model}</div><div style="font-size:0.8rem; color:var(--text-muted);">${item.brand}</div></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="variant-badge"><div class="color-dot" style="background-color:${item.color_hex};"></div> ${item.color_name}</div>
+                                <div class="variant-badge" style="border-color:var(--accent-indigo); color:var(--text-main);">${item.capacity}</div>
+                            </td>
+                            <td><b style="font-size:0.9rem;">${item.barcode}</b></td>
+                            <td>${stockHtml}</td>
+                            <td style="text-align:center;">
+                                <button class="btn-view" onclick="window.location.href='inventory_edit.html?id=${item.product_id}'">อัปเดตสต็อก</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+            } catch (err) {
+                console.error(err);
+                document.querySelectorAll('.kpi-value').forEach(el => el.innerHTML = '<span style="color:var(--danger); font-size:1rem;">Error</span>');
+            }
+        }
+
+        loadDashboardData(); // <--- เปลี่ยนเป็นชื่อนี้ เลขมาแน่นอน!
+    </script>
+</body>
+</html>

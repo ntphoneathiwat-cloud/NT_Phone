@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NT PHONE | Master Data</title>
+    
+    <style>@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap');</style>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* ================= Premium Variables ================= */
+        :root {
+            --bg-body: #F5F5F7; --bg-surface: #FFFFFF; --text-main: #1D1D1F; --text-muted: #86868B;
+            --border-color: #E5E5EA; --glass-bg: rgba(255, 255, 255, 0.75);
+            
+            /* Theme Colors (Cohesive Apple Tones) */
+            --accent-blue: #0071E3; --bg-blue: rgba(0, 113, 227, 0.08);
+            --accent-indigo: #5856D6; --bg-indigo: rgba(88, 86, 214, 0.08);
+            --accent-teal: #00C7BE; --bg-teal: rgba(0, 199, 190, 0.08);
+            
+            --danger: #FF3B30; --success: #34C759;
+            --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.04); --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --radius-md: 16px; --radius-lg: 24px;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #000000; --bg-surface: #1C1C1E; --text-main: #F5F5F7; --text-muted: #A1A1A6;
+            --border-color: #38383A; --glass-bg: rgba(28, 28, 30, 0.75);
+            --bg-blue: rgba(0, 113, 227, 0.15); --bg-indigo: rgba(88, 86, 214, 0.15); --bg-teal: rgba(0, 199, 190, 0.15);
+            --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.3); --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Anuphan', sans-serif; transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding-top: 110px; padding-bottom: 60px; }
+
+        /* ================= Floating Navbar ================= */
+        .nav-wrapper { position: fixed; top: 20px; left: 0; width: 100%; z-index: 1000; display: flex; justify-content: center; padding: 0 20px; }
+        .navbar { width: 100%; max-width: 1400px; height: 70px; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 35px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 15px 0 25px; }
+        .nav-left, .nav-right { display: flex; align-items: center; gap: 12px; }
+        .nav-brand { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 700; color: var(--text-main); text-decoration: none; }
+        .nav-brand i { color: var(--accent-blue); font-size: 1.6rem; }
+        .user-pill { display: flex; align-items: center; gap: 10px; background: var(--bg-body); padding: 6px 16px 6px 6px; border-radius: 30px; font-weight: 600; font-size: 0.95rem; border: 1px solid var(--border-color); }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--text-main); color: var(--bg-surface); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .btn-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); cursor: pointer; font-size: 1.2rem; }
+        .btn-icon:hover { border-color: var(--accent-blue); color: var(--accent-blue); background: var(--bg-body); }
+
+        /* ================= Layout & Banners ================= */
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+        
+        /* Hero Banner (เด่นชัดตามที่ขอ) */
+        .hero-banner { background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-blue) 100%); border-radius: var(--radius-lg); padding: 40px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .hero-title { font-size: 2.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+        .hero-title i { color: var(--accent-blue); }
+        .hero-desc { font-size: 1.05rem; color: var(--text-muted); }
+
+        .btn-primary { background: var(--text-main); color: var(--bg-surface); border: none; padding: 14px 24px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .btn-outline { background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 14px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-outline:hover { background: var(--bg-body); border-color: var(--text-muted); }
+
+        /* ================= Batch Entry Section (Inline Form) ================= */
+        .entry-section { background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 30px; box-shadow: var(--shadow-sm); margin-bottom: 40px; }
+        .entry-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); }
+        .entry-header h3 { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .entry-header h3 i { color: var(--accent-indigo); font-size: 1.5rem; }
+
+        .entry-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
+        .entry-row { display: flex; gap: 15px; align-items: center; background: var(--bg-body); padding: 15px; border-radius: 16px; border: 1px solid var(--border-color); flex-wrap: wrap; }
+        
+        .e-select, .e-input { padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-size: 0.95rem; outline: none; }
+        .e-select:focus, .e-input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px var(--accent-light); }
+        .e-input { flex: 1; min-width: 200px; }
+        
+        /* ปุ่มจัดการในแต่ละแถว */
+        .e-actions { display: flex; gap: 8px; }
+        .btn-row { width: 40px; height: 40px; border-radius: 10px; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.2rem; transition: 0.2s; }
+        .btn-row.copy { background: var(--bg-teal); color: var(--accent-teal); }
+        .btn-row.copy:hover { background: var(--accent-teal); color: #FFFFFF; }
+        .btn-row.del { background: rgba(255, 59, 48, 0.1); color: var(--danger); }
+        .btn-row.del:hover { background: var(--danger); color: #FFFFFF; }
+
+        /* ================= 3 Columns Master Data Display ================= */
+        .master-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        
+        .master-card { background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; overflow: hidden; }
+        .mc-header { padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
+        .mc-title { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        
+        /* แยกสี Header */
+        .card-cat .mc-header { background: var(--bg-blue); } .card-cat .mc-title i { color: var(--accent-blue); }
+        .card-brand .mc-header { background: var(--bg-indigo); } .card-brand .mc-title i { color: var(--accent-indigo); }
+        .card-model .mc-header { background: var(--bg-teal); } .card-model .mc-title i { color: var(--accent-teal); }
+        
+        .data-list { padding: 15px 25px; overflow-y: auto; max-height: 400px; display: flex; flex-direction: column; gap: 10px; }
+        .data-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-body); font-weight: 500; }
+        .data-item span { flex: 1; }
+        .data-sub { font-size: 0.8rem; color: var(--text-main); font-weight: 700; background: var(--bg-surface); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border-color); margin-right: 10px; }
+
+        /* ================= Modals ================= */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; visibility: hidden; transition: 0.3s ease; padding: 20px; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        
+        .modal-alert { background: var(--bg-surface); width: 100%; max-width: 400px; border-radius: var(--radius-lg); border: 1px solid var(--border-color); transform: scale(0.9); transition: 0.3s; box-shadow: var(--shadow-md); text-align: center; overflow: hidden; }
+        .modal-overlay.active .modal-alert { transform: scale(1); }
+        .modal-alert .m-header { padding: 30px 20px; font-size: 4rem; display: flex; justify-content: center; }
+        .modal-alert .m-body { padding: 30px 25px; }
+        .modal-alert h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; }
+        .modal-alert p { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 25px; line-height: 1.5; }
+        .modal-alert .btn-group { display: flex; gap: 10px; width: 100%; }
+        .modal-alert button { flex: 1; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; border: none; font-size: 1rem; }
+
+        @media (max-width: 800px) {
+            .navbar { padding: 0 15px; border-radius: 20px; height: 65px; }
+            .nav-brand span { display: none; } 
+            .nav-divider, .breadcrumb { display: none; }
+            .user-name { display: inline-block; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .hero-banner { flex-direction: column; align-items: flex-start; }
+            .entry-row { flex-direction: column; align-items: stretch; }
+            .e-actions { justify-content: flex-end; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-wrapper">
+        <nav class="navbar">
+            <div class="nav-left">
+                <a href="#" class="nav-brand"><i class="ph-bold ph-device-mobile-camera"></i> <span>NT PHONE</span></a>
+                <div class="nav-divider"></div>
+                <div class="breadcrumb">
+                    <i class="ph-bold ph-circles-four"></i>
+                    <i class="ph-bold ph-caret-right" style="color:var(--border-color);"></i>
+                    <span>จัดการข้อมูลหลัก</span>
+                </div>
+            </div>
+            <div class="nav-right">
+                <button class="btn-icon" onclick="toggleTheme()"><i class="ph-bold ph-moon" id="theme-icon"></i></button>
+                <div class="user-pill">
+                    <div class="user-avatar"><i class="ph-bold ph-user"></i></div>
+                    <span class="user-name" id="topbar-name">Admin</span>
+                </div>
+                <button class="btn-icon" style="color:var(--danger); border-color:transparent;" onclick="handleLogout()"><i class="ph-bold ph-sign-out"></i></button>
+            </div>
+        </nav>
+    </div>
+
+    <main class="container">
+        
+        <div class="hero-banner">
+            <div>
+                <h1 class="hero-title"><i class="ph-fill ph-database"></i> ฐานข้อมูลตัวเลือก (Master Data)</h1>
+                <p class="hero-desc">เพิ่มและจัดการหมวดหมู่ แบรนด์ และรุ่นสินค้า เพื่อนำไปใช้เป็นตัวเลือกในระบบคลังสินค้า</p>
+            </div>
+            <button class="btn-outline" style="background: var(--bg-surface);" onclick="window.location.href='inventory_add.html'">
+                <i class="ph-bold ph-arrow-right"></i> ถัดไป: หน้าเพิ่มสินค้าแบบ SKU
+            </button>
+        </div>
+
+        <div class="entry-section">
+            <div class="entry-header">
+                <h3><i class="ph-fill ph-keyboard"></i> เพิ่มข้อมูลใหม่ (พิมพ์เรียงบรรทัดได้เลย)</h3>
+                <button class="btn-outline" style="padding: 8px 16px; font-size: 0.9rem;" onclick="addNewRow()">
+                    <i class="ph-bold ph-plus"></i> เพิ่มบรรทัด
+                </button>
+            </div>
+            
+            <div class="entry-list" id="batch-entry-list">
+                <div class="entry-row">
+                    <select class="e-select type-select" onchange="handleTypeChange(this)">
+                        <option value="category">หมวดหมู่สินค้า (Category)</option>
+                        <option value="brand">แบรนด์ (Brand)</option>
+                        <option value="model">รุ่นโทรศัพท์ (Model)</option>
+                    </select>
+                    <select class="e-select parent-select" style="display: none;">
+                        <option value="">-- อ้างอิงแบรนด์ --</option>
+                    </select>
+                    
+                    <input type="text" class="e-input name-input" placeholder="ระบุชื่อข้อมูล (เช่น โทรศัพท์มือถือ, Apple, iPhone 17)">
+                    
+                    <div class="e-actions">
+                        <button class="btn-row copy" onclick="copyRow(this)" title="คัดลอกแถวนี้"><i class="ph-bold ph-copy"></i></button>
+                        <button class="btn-row del" onclick="deleteRow(this)" title="ลบแถวนี้"><i class="ph-bold ph-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                <button class="btn-primary" id="btn-save-batch" onclick="saveBatchEntries()">
+                    <i class="ph-bold ph-floppy-disk"></i> บันทึกข้อมูลทั้งหมดรวดเดียว
+                </button>
+            </div>
+        </div>
+
+        <div class="master-grid">
+            <div class="master-card card-cat">
+                <div class="mc-header">
+                    <div class="mc-title"><i class="ph-fill ph-folders"></i> หมวดหมู่สินค้า</div>
+                    <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;" id="count-cat">0 รายการ</span>
+                </div>
+                <div class="data-list" id="list-cat">
+                    <div style="text-align:center; padding:20px; color:var(--text-muted);"><i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite; font-size:1.5rem;"></i></div>
+                </div>
+            </div>
+
+            <div class="master-card card-brand">
+                <div class="mc-header">
+                    <div class="mc-title"><i class="ph-fill ph-tag"></i> แบรนด์ (ยี่ห้อ)</div>
+                    <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;" id="count-brand">0 รายการ</span>
+                </div>
+                <div class="data-list" id="list-brand"></div>
+            </div>
+
+            <div class="master-card card-model">
+                <div class="mc-header">
+                    <div class="mc-title"><i class="ph-fill ph-devices"></i> รุ่นโทรศัพท์ / สินค้า</div>
+                    <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;" id="count-model">0 รายการ</span>
+                </div>
+                <div class="data-list" id="list-model"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="modal-overlay" id="sys-modal">
+        <div class="modal-alert">
+            <div class="m-header" id="sys-header"><i id="sys-icon" class="ph-fill ph-info"></i></div>
+            <div class="m-body">
+                <h3 id="sys-title">Title</h3>
+                <p id="sys-msg">Message</p>
+                <div class="btn-group" id="sys-actions"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+        const supabaseUrl = 'https://xjjcnlzynzsvopmcooky.supabase.co'
+        const supabaseKey = 'sb_publishable_w7A_BOSi0r1r4t93exl1gg_j1jPRU_E'
+        const supabase = createClient(supabaseUrl, supabaseKey)
+
+        // ================= Setup =================
+        document.getElementById('topbar-name').innerText = localStorage.getItem('emp_name') || 'Admin / CEO';
+        
+        window.toggleTheme = () => {
+            const body = document.body; const icon = document.getElementById('theme-icon');
+            if (body.getAttribute('data-theme') === 'dark') { body.removeAttribute('data-theme'); icon.className = 'ph-bold ph-moon'; } 
+            else { body.setAttribute('data-theme', 'dark'); icon.className = 'ph-bold ph-sun'; }
+        };
+
+        window.handleLogout = () => { localStorage.clear(); window.location.href = "index.html"; };
+        window.closeModal = (id) => document.getElementById(id).classList.remove('active');
+
+        window.customAlert = (type, title, msg) => {
+            const modal = document.getElementById('sys-modal'); const header = document.getElementById('sys-header');
+            document.getElementById('sys-title').innerText = title; document.getElementById('sys-msg').innerText = msg;
+            
+            header.className = `m-header ${type}`;
+            document.getElementById('sys-icon').className = type === 'success' ? 'ph-fill ph-check-circle' : type === 'error' ? 'ph-fill ph-warning-circle' : 'ph-fill ph-info';
+            if(type === 'success') header.style.background = 'rgba(52, 199, 89, 0.1)';
+            else if(type === 'error') header.style.background = 'rgba(255, 59, 48, 0.1)';
+            
+            document.getElementById('sys-actions').innerHTML = `<button style="background:var(--text-main); color:var(--bg-surface);" onclick="closeModal('sys-modal')">ตกลง</button>`;
+            modal.classList.add('active');
+        };
+
+        window.customConfirm = (title, msg, onConfirm) => {
+            const modal = document.getElementById('sys-modal'); const header = document.getElementById('sys-header');
+            document.getElementById('sys-title').innerText = title; document.getElementById('sys-msg').innerText = msg;
+            
+            header.className = `m-header error`; header.style.background = 'rgba(255, 59, 48, 0.1)';
+            document.getElementById('sys-icon').className = 'ph-fill ph-warning-circle';
+            
+            document.getElementById('sys-actions').innerHTML = `
+                <button style="background:var(--bg-body); color:var(--text-main); border:1px solid var(--border-color);" onclick="closeModal('sys-modal')">ยกเลิก</button>
+                <button style="background:var(--danger); color:white;" id="confirm-yes">ยืนยัน</button>
+            `;
+            document.getElementById('confirm-yes').onclick = () => { closeModal('sys-modal'); onConfirm(); };
+            modal.classList.add('active');
+        };
+
+        let currentBrands = [];
+
+        // ================= Display Data =================
+        async function loadDisplayData() {
+            // โหลด Category
+            const { data: cats } = await supabase.from('sys_categories').select('*').order('name');
+            document.getElementById('count-cat').innerText = `${cats?.length || 0} รายการ`;
+            const listCat = document.getElementById('list-cat'); listCat.innerHTML = '';
+            if(cats) cats.forEach(c => listCat.innerHTML += `<div class="data-item"><span>${c.name}</span> <button class="btn-icon" style="width:30px; height:30px; border:none; color:var(--danger);" onclick="deleteData('sys_categories', '${c.id}')"><i class="ph-bold ph-trash"></i></button></div>`);
+
+            // โหลด Brand
+            const { data: brands } = await supabase.from('sys_brands').select('*').order('name');
+            currentBrands = brands || [];
+            document.getElementById('count-brand').innerText = `${brands?.length || 0} รายการ`;
+            const listBrand = document.getElementById('list-brand'); listBrand.innerHTML = '';
+            if(brands) brands.forEach(b => listBrand.innerHTML += `<div class="data-item"><span>${b.name}</span> <button class="btn-icon" style="width:30px; height:30px; border:none; color:var(--danger);" onclick="deleteData('sys_brands', '${b.id}')"><i class="ph-bold ph-trash"></i></button></div>`);
+
+            // โหลด Model
+            const { data: models } = await supabase.from('sys_models').select('*').order('brand_name');
+            document.getElementById('count-model').innerText = `${models?.length || 0} รายการ`;
+            const listModel = document.getElementById('list-model'); listModel.innerHTML = '';
+            if(models) models.forEach(m => listModel.innerHTML += `<div class="data-item"><span class="data-sub">${m.brand_name}</span><span>${m.name}</span> <button class="btn-icon" style="width:30px; height:30px; border:none; color:var(--danger);" onclick="deleteData('sys_models', '${m.id}')"><i class="ph-bold ph-trash"></i></button></div>`);
+
+            updateAllParentDropdowns();
+        }
+
+        window.deleteData = (table, id) => {
+            customConfirm('ยืนยันลบข้อมูล', 'หากลบไปแล้วจะไม่สามารถนำข้อมูลนี้มาอ้างอิงได้อีก ยืนยันหรือไม่?', async () => {
+                await supabase.from(table).delete().eq('id', id);
+                loadDisplayData();
+            });
+        };
+
+        // ================= Inline Batch Entry Logic =================
+        
+        // อัปเดตรายชื่อแบรนด์ใน dropdown อ้างอิง
+        function updateAllParentDropdowns() {
+            const selects = document.querySelectorAll('.parent-select');
+            selects.forEach(select => {
+                const currentVal = select.value;
+                select.innerHTML = '<option value="">-- อ้างอิงแบรนด์ --</option>';
+                currentBrands.forEach(b => {
+                    select.innerHTML += `<option value="${b.name}">${b.name}</option>`;
+                });
+                select.value = currentVal; // พยายามรักษาค่าเดิมถ้ามี
+            });
+        }
+
+        window.handleTypeChange = (selectEl) => {
+            const row = selectEl.closest('.entry-row');
+            const parentSel = row.querySelector('.parent-select');
+            if(selectEl.value === 'model') {
+                parentSel.style.display = 'block';
+            } else {
+                parentSel.style.display = 'none';
+                parentSel.value = '';
+            }
+        };
+
+        window.addNewRow = () => {
+            const container = document.getElementById('batch-entry-list');
+            const newRow = document.createElement('div');
+            newRow.className = 'entry-row';
+            
+            // Generate brand options HTML
+            let brandOptions = '<option value="">-- อ้างอิงแบรนด์ --</option>';
+            currentBrands.forEach(b => brandOptions += `<option value="${b.name}">${b.name}</option>`);
+
+            newRow.innerHTML = `
+                <select class="e-select type-select" onchange="handleTypeChange(this)">
+                    <option value="category">หมวดหมู่สินค้า (Category)</option>
+                    <option value="brand">แบรนด์ (Brand)</option>
+                    <option value="model">รุ่นโทรศัพท์ (Model)</option>
+                </select>
+                <select class="e-select parent-select" style="display: none;">
+                    ${brandOptions}
+                </select>
+                <input type="text" class="e-input name-input" placeholder="ระบุชื่อข้อมูล...">
+                <div class="e-actions">
+                    <button class="btn-row copy" onclick="copyRow(this)" title="คัดลอกแถวนี้"><i class="ph-bold ph-copy"></i></button>
+                    <button class="btn-row del" onclick="deleteRow(this)" title="ลบแถวนี้"><i class="ph-bold ph-trash"></i></button>
+                </div>
+            `;
+            container.appendChild(newRow);
+        };
+
+        window.copyRow = (btn) => {
+            const rowToCopy = btn.closest('.entry-row');
+            const container = document.getElementById('batch-entry-list');
+            
+            const newRow = rowToCopy.cloneNode(true);
+            // โคลน node มันไม่ก๊อปปี้ value ของ select/input ไปด้วย ต้องเซ็ตมือ
+            newRow.querySelector('.type-select').value = rowToCopy.querySelector('.type-select').value;
+            newRow.querySelector('.parent-select').value = rowToCopy.querySelector('.parent-select').value;
+            newRow.querySelector('.name-input').value = rowToCopy.querySelector('.name-input').value;
+            
+            container.appendChild(newRow);
+        };
+
+        window.deleteRow = (btn) => {
+            const rows = document.querySelectorAll('.entry-row');
+            if(rows.length > 1) {
+                btn.closest('.entry-row').remove();
+            } else {
+                // ถ้าเหลือแถวเดียว แค่เคลียร์ข้อมูล
+                const row = btn.closest('.entry-row');
+                row.querySelector('.name-input').value = '';
+            }
+        };
+
+        // Batch Save
+        window.saveBatchEntries = async () => {
+            const rows = document.querySelectorAll('.entry-row');
+            const btn = document.getElementById('btn-save-batch');
+            
+            let categories = [];
+            let brands = [];
+            let models = [];
+            let hasError = false;
+
+            rows.forEach(row => {
+                const type = row.querySelector('.type-select').value;
+                const name = row.querySelector('.name-input').value.trim();
+                const parent = row.querySelector('.parent-select').value;
+
+                if(name) {
+                    if(type === 'category') categories.push({ name });
+                    if(type === 'brand') brands.push({ name });
+                    if(type === 'model') {
+                        if(!parent) hasError = true;
+                        else models.push({ name, brand_name: parent });
+                    }
+                }
+            });
+
+            if(categories.length === 0 && brands.length === 0 && models.length === 0) {
+                return customAlert('info', 'ไม่มีข้อมูล', 'กรุณากรอกชื่อข้อมูลอย่างน้อย 1 รายการ');
+            }
+
+            if(hasError) {
+                return customAlert('error', 'ข้อมูลไม่สมบูรณ์', 'คุณเลือกว่าจะเพิ่ม "รุ่น" แต่ไม่ได้เลือกว่าเป็นของ "แบรนด์" อะไรครับ');
+            }
+
+            btn.innerHTML = '<i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite;"></i> กำลังบันทึก...';
+            btn.disabled = true;
+
+            try {
+                // Supabase รองรับ Array Insert โคตรไว
+                if(categories.length > 0) await supabase.from('sys_categories').upsert(categories, { onConflict: 'name' });
+                if(brands.length > 0) await supabase.from('sys_brands').upsert(brands, { onConflict: 'name' });
+                if(models.length > 0) await supabase.from('sys_models').upsert(models, { onConflict: 'name' });
+
+                customAlert('success', 'บันทึกข้อมูลสำเร็จ', 'อัปเดตข้อมูลหลักลงระบบเรียบร้อยแล้ว');
+                
+                // เคลียร์ฟอร์มให้เหลือแถวเดียว
+                const container = document.getElementById('batch-entry-list');
+                container.innerHTML = '';
+                addNewRow();
+                
+                // โหลดตารางใหม่
+                loadDisplayData();
+
+            } catch (err) {
+                console.error(err);
+                customAlert('error', 'ระบบขัดข้อง', 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่');
+            } finally {
+                btn.innerHTML = '<i class="ph-bold ph-floppy-disk"></i> บันทึกข้อมูลทั้งหมดรวดเดียว';
+                btn.disabled = false;
+            }
+        };
+
+        // Init
+        loadDisplayData();
+
+    </script>
+</body>
+</html>

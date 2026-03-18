@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NT PHONE | Inventory List</title>
+    
+    <style>@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap');</style>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+    <style>
+        /* ================= Premium Variables ================= */
+        :root {
+            --bg-body: #F5F5F7; --bg-surface: #FFFFFF; --bg-card: #FFFFFF;
+            --text-main: #1D1D1F; --text-muted: #86868B; --border-color: #E5E5EA;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            
+            --accent-blue: #0071E3; --bg-blue: rgba(0, 113, 227, 0.08);
+            --accent-indigo: #5856D6; --bg-indigo: rgba(88, 86, 214, 0.08);
+            --accent-teal: #00C7BE; --bg-teal: rgba(0, 199, 190, 0.08);
+            
+            --danger: #FF3B30; --success: #34C759; --warning: #F59E0B;
+            --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.04); --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --radius-md: 16px; --radius-lg: 24px;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #000000; --bg-surface: #1C1C1E; --bg-card: #1C1C1E;
+            --text-main: #F5F5F7; --text-muted: #A1A1A6; --border-color: #38383A;
+            --glass-bg: rgba(28, 28, 30, 0.75);
+            --bg-blue: rgba(0, 113, 227, 0.15); --bg-indigo: rgba(88, 86, 214, 0.15); --bg-teal: rgba(0, 199, 190, 0.15);
+            --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.3); --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Anuphan', sans-serif; transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding-top: 110px; padding-bottom: 60px; overflow-x: hidden; }
+
+        /* ================= Floating Navbar ================= */
+        .nav-wrapper { position: fixed; top: 20px; left: 0; width: 100%; z-index: 1000; display: flex; justify-content: center; padding: 0 20px; }
+        .navbar { width: 100%; max-width: 1400px; height: 70px; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 35px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 15px 0 25px; }
+        .nav-left, .nav-right { display: flex; align-items: center; gap: 12px; }
+        .nav-brand { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 700; color: var(--text-main); text-decoration: none; }
+        .nav-brand i { color: var(--accent-blue); font-size: 1.6rem; }
+        .nav-divider { width: 1px; height: 20px; background: var(--border-color); margin: 0 5px; }
+        .breadcrumb { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+        .user-pill { display: flex; align-items: center; gap: 10px; background: var(--bg-body); padding: 6px 16px 6px 6px; border-radius: 30px; font-weight: 600; font-size: 0.95rem; border: 1px solid var(--border-color); }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--text-main); color: var(--bg-surface); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .btn-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); cursor: pointer; font-size: 1.2rem; }
+        .btn-icon:hover { border-color: var(--accent-blue); color: var(--accent-blue); background: var(--bg-body); }
+
+        /* ================= Container & Hero Banner ================= */
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+        
+        .hero-banner { background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-teal) 100%); border-radius: var(--radius-lg); padding: 40px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .hero-title { font-size: 2.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+        .hero-title i { color: var(--accent-teal); }
+        .hero-desc { font-size: 1.05rem; color: var(--text-muted); }
+
+        .btn-primary { background: var(--text-main); color: var(--bg-surface); border: none; padding: 14px 24px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .btn-outline { background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 14px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-outline:hover { background: var(--bg-body); border-color: var(--text-muted); }
+
+        /* ================= Filter Toolbar ================= */
+        .toolbar { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 25px; box-shadow: var(--shadow-sm); display: flex; flex-wrap: wrap; gap: 15px; align-items: center; }
+        .search-box { flex: 1; min-width: 250px; position: relative; }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1.2rem; }
+        .search-box input { width: 100%; padding: 12px 15px 12px 45px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); outline: none; font-size: 0.95rem; transition: 0.2s; }
+        .search-box input:focus { border-color: var(--accent-teal); background: var(--bg-surface); box-shadow: 0 0 0 3px var(--bg-teal); }
+        .filter-select { padding: 12px 15px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); outline: none; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .filter-select:focus { border-color: var(--accent-teal); }
+
+        /* ================= Nested Table (ตารางซ้อนตาราง) ================= */
+        .table-wrapper { background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); overflow-x: auto; }
+        .main-table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+        .main-table th { padding: 18px 20px; background: var(--bg-body); color: var(--text-muted); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid var(--border-color); text-align: left; }
+        
+        /* Parent Row (Level 1) */
+        .parent-row { transition: 0.2s; cursor: pointer; }
+        .parent-row td { padding: 18px 20px; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-main); font-weight: 600; }
+        .parent-row:hover td { background: var(--bg-body); }
+        .parent-row.expanded td { background: var(--bg-teal); border-bottom-color: transparent; }
+        
+        .expand-icon { transition: 0.3s; color: var(--text-muted); font-size: 1.2rem; }
+        .parent-row.expanded .expand-icon { transform: rotate(90deg); color: var(--accent-teal); }
+
+        .prod-info { display: flex; align-items: center; gap: 15px; }
+        .prod-img-main { width: 55px; height: 55px; border-radius: 12px; object-fit: contain; background: white; border: 1px solid var(--border-color); padding: 4px; }
+        .cond-badge { padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; display: inline-block; border: 1px solid transparent; }
+        .cond-badge.new { background: rgba(52, 199, 89, 0.1); color: var(--success); border-color: rgba(52, 199, 89, 0.2); }
+        .cond-badge.used { background: rgba(245, 158, 11, 0.1); color: var(--warning); border-color: rgba(245, 158, 11, 0.2); }
+
+        /* Child Row (Level 2 - SKUs) */
+        .child-row { display: none; background: var(--bg-body); }
+        .child-row.active { display: table-row; }
+        .child-row td { padding: 0; border-bottom: 1px solid var(--border-color); }
+        
+        .sub-table-container { padding: 20px 40px 30px 80px; } /* Indent ให้ดูซ้อนกัน */
+        .sub-table { width: 100%; border-collapse: collapse; background: var(--bg-surface); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); }
+        .sub-table th { background: var(--bg-body); padding: 12px 15px; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color); }
+        .sub-table td { padding: 15px; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; font-weight: 500; vertical-align: middle; }
+        .sub-table tr:last-child td { border-bottom: none; }
+        .sub-table tr:hover td { background: var(--bg-body); }
+
+        /* Price & Variant Styling */
+        .variant-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-body); padding: 6px 12px; border-radius: 12px; font-weight: 600; font-size: 0.85rem; border: 1px solid var(--border-color); }
+        .color-dot { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); }
+        
+        .price-box { display: flex; flex-direction: column; gap: 4px; }
+        .price-row { display: flex; align-items: center; gap: 8px; }
+        .price-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); width: 35px; }
+        .strike-price { text-decoration: line-through; color: var(--text-muted); font-size: 0.85rem; font-weight: 500; }
+        .sale-price { color: var(--danger); font-weight: 700; font-size: 1.05rem; }
+        .badge-sale { background: rgba(255, 59, 48, 0.1); color: var(--danger); font-size: 0.65rem; padding: 2px 6px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(255, 59, 48, 0.2); }
+        
+        .barcode-mini { width: 140px; height: 35px; background: white; padding: 2px; border-radius: 6px; border: 1px solid var(--border-color); display: block; margin-top: 5px; }
+
+        /* Action Buttons */
+        .action-btns { display: flex; gap: 8px; }
+        .btn-act { width: 36px; height: 36px; border-radius: 10px; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; font-size: 1.2rem; }
+        .btn-act.edit { background: var(--accent-light); color: var(--accent-blue); } .btn-act.edit:hover { background: var(--accent-blue); color: white; }
+        .btn-act.del { background: rgba(255, 59, 48, 0.1); color: var(--danger); } .btn-act.del:hover { background: var(--danger); color: white; }
+
+        /* ================= Modals ================= */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; visibility: hidden; transition: 0.3s ease; padding: 20px; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-alert { background: var(--bg-surface); width: 100%; max-width: 400px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-color); transform: scale(0.9); transition: 0.3s; box-shadow: var(--shadow-md); text-align: center; }
+        .modal-overlay.active .modal-alert { transform: scale(1); }
+        .modal-alert .m-header { padding: 30px 20px; font-size: 4rem; display: flex; justify-content: center; }
+        .modal-alert .m-body { padding: 30px 25px; }
+        .modal-alert h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
+        .modal-alert p { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 25px; line-height: 1.5; }
+        .modal-alert .btn-group { display: flex; gap: 10px; width: 100%; }
+        .modal-alert button { flex: 1; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; border: none; font-size: 1rem; }
+
+        /* Hidden PDF Template */
+        #pdf-container { display:none; background:white; color:black; padding:40px; font-family:sans-serif; }
+        #pdf-container h1 { margin:0; font-size:24px; text-transform:uppercase; text-align:center; }
+        #pdf-container h2 { margin:5px 0 20px; font-size:18px; color:#555; text-align:center; border-bottom:2px solid #000; padding-bottom:15px; }
+        .pdf-table { width:100%; border-collapse:collapse; font-size:11px; }
+        .pdf-table th, .pdf-table td { border:1px solid #ddd; padding:8px; text-align:left; }
+        .pdf-table th { background:#f0f0f0; font-weight:bold; }
+
+        @media (max-width: 800px) {
+            .navbar { padding: 0 15px; border-radius: 20px; height: 65px; }
+            .nav-brand span, .nav-divider, .breadcrumb { display: none; }
+            .user-name { display: inline-block; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .hero-banner { flex-direction: column; align-items: flex-start; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .sub-table-container { padding: 15px; } /* ลดระยะร่นในมือถือ */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-wrapper">
+        <nav class="navbar">
+            <div class="nav-left">
+                <a href="ceo_dashboard.html" class="nav-brand"><i class="ph-bold ph-device-mobile-camera"></i> <span>NT PHONE</span></a>
+                <div class="nav-divider"></div>
+                <div class="breadcrumb"><span>ตารางคลังสินค้า</span></div>
+            </div>
+            <div class="nav-right">
+                <button class="btn-icon" onclick="toggleTheme()"><i class="ph-bold ph-moon" id="theme-icon"></i></button>
+                <div class="user-pill">
+                    <div class="user-avatar"><i class="ph-bold ph-user"></i></div>
+                    <span class="user-name" id="topbar-name">Admin</span>
+                </div>
+                <button class="btn-icon" style="color:var(--danger); border-color:transparent;" onclick="handleLogout()"><i class="ph-bold ph-sign-out"></i></button>
+            </div>
+        </nav>
+    </div>
+
+    <main class="container">
+        <div class="hero-banner">
+            <div>
+                <h1 class="hero-title"><i class="ph-fill ph-package"></i> ศูนย์รวมคลังสินค้า (Smart Inventory)</h1>
+                <p class="hero-desc">จัดการสต็อก ตรวจสอบบาร์โค้ด และพิมพ์รายงานได้อย่างมืออาชีพ</p>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn-outline" onclick="exportPDF()"><i class="ph-bold ph-printer"></i> พิมพ์รายงาน PDF</button>
+                <button class="btn-outline" onclick="exportCSV()"><i class="ph-bold ph-file-csv"></i> โหลดข้อมูล CSV</button>
+                <button class="btn-primary" onclick="window.location.href='inventory_add.html'"><i class="ph-bold ph-plus"></i> เพิ่มสินค้าใหม่</button>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div class="search-box">
+                <i class="ph-bold ph-magnifying-glass"></i>
+                <input type="text" id="search-input" placeholder="ค้นหารุ่นสินค้า, แบรนด์ หรือสแกนบาร์โค้ด..." oninput="applyFilters()">
+            </div>
+            <select class="filter-select" id="filter-brand" onchange="applyFilters()">
+                <option value="all">ทุกแบรนด์</option>
+            </select>
+            <select class="filter-select" id="filter-stock" onchange="applyFilters()">
+                <option value="all">สถานะสต็อกทั้งหมด</option>
+                <option value="instock">มีสินค้า (In Stock)</option>
+                <option value="outstock">สินค้าหมด (Out of Stock)</option>
+            </select>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="main-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;"></th>
+                        <th style="width: 35%;">สินค้า (Product Base)</th>
+                        <th style="width: 20%;">หมวดหมู่ / แบรนด์</th>
+                        <th style="width: 15%;">รุ่นย่อย (SKUs)</th>
+                        <th style="width: 15%;">สต็อกรวมทั้งหมด</th>
+                        <th style="width: 10%; text-align: center;">จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="inventory-tbody">
+                    <tr><td colspan="6" style="text-align: center; padding: 50px;"><i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite; font-size: 2.5rem; color: var(--text-muted);"></i></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="sys-modal">
+        <div class="modal-alert">
+            <div class="m-header" id="sys-header"><i id="sys-icon" class="ph-fill ph-info"></i></div>
+            <div class="m-body">
+                <h3 id="sys-title">Title</h3>
+                <p id="sys-msg">Message</p>
+                <div class="btn-group" id="sys-actions"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pdf-container">
+        <h1>บริษัท เอ็นที โฟน จำกัด (NT PHONE)</h1>
+        <h2>รายงานคลังสินค้าและสต็อกรายสาขา (Inventory Report)</h2>
+        <p id="pdf-date" style="font-size:12px; color:#555; margin-bottom:10px;"></p>
+        <table class="pdf-table">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">แบรนด์ / รุ่น</th>
+                    <th style="width: 15%;">บาร์โค้ด</th>
+                    <th style="width: 15%;">สี / ความจุ</th>
+                    <th style="width: 15%;">ราคาขาย</th>
+                    <th style="width: 30%;">สต็อกแยกสาขา</th>
+                </tr>
+            </thead>
+            <tbody id="pdf-tbody"></tbody>
+        </table>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+        const supabaseUrl = 'https://xjjcnlzynzsvopmcooky.supabase.co'
+        const supabaseKey = 'sb_publishable_w7A_BOSi0r1r4t93exl1gg_j1jPRU_E'
+        const supabase = createClient(supabaseUrl, supabaseKey)
+
+        // ================= Core Setup =================
+        document.getElementById('topbar-name').innerText = localStorage.getItem('emp_name') || 'Admin / CEO';
+        window.toggleTheme = () => {
+            const body = document.body; const icon = document.getElementById('theme-icon');
+            if (body.getAttribute('data-theme') === 'dark') { body.removeAttribute('data-theme'); icon.className = 'ph-bold ph-moon'; localStorage.setItem('theme', 'light'); } 
+            else { body.setAttribute('data-theme', 'dark'); icon.className = 'ph-bold ph-sun'; localStorage.setItem('theme', 'dark'); }
+        };
+        if(localStorage.getItem('theme') === 'dark') toggleTheme();
+        window.handleLogout = () => { localStorage.clear(); window.location.href = "index.html"; };
+
+        window.customAlert = (type, title, msg) => {
+            const modal = document.getElementById('sys-modal'); const header = document.getElementById('sys-header');
+            document.getElementById('sys-title').innerText = title; document.getElementById('sys-msg').innerText = msg;
+            header.className = `m-header ${type}`;
+            document.getElementById('sys-icon').className = type === 'success' ? 'ph-fill ph-check-circle' : type === 'error' ? 'ph-fill ph-warning-circle' : 'ph-fill ph-info';
+            if(type === 'success') header.style.background = 'rgba(52, 199, 89, 0.1)';
+            else if(type === 'error') header.style.background = 'rgba(255, 59, 48, 0.1)';
+            else header.style.background = 'var(--bg-teal)';
+            document.getElementById('sys-actions').innerHTML = `<button style="background:var(--text-main); color:var(--bg-surface);" onclick="document.getElementById('sys-modal').classList.remove('active')">ตกลง</button>`;
+            modal.classList.add('active');
+        };
+
+        window.customConfirm = (title, msg, onConfirm) => {
+            const modal = document.getElementById('sys-modal'); const header = document.getElementById('sys-header');
+            document.getElementById('sys-title').innerText = title; document.getElementById('sys-msg').innerText = msg;
+            header.className = `m-header error`; header.style.background = 'rgba(255, 59, 48, 0.1)';
+            document.getElementById('sys-icon').className = 'ph-fill ph-warning-circle';
+            document.getElementById('sys-actions').innerHTML = `
+                <button style="background:var(--bg-body); color:var(--text-main); border:1px solid var(--border-color);" onclick="document.getElementById('sys-modal').classList.remove('active')">ยกเลิก</button>
+                <button style="background:var(--danger); color:white; border:none;" id="confirm-yes">ยืนยันลบ</button>
+            `;
+            document.getElementById('confirm-yes').onclick = () => { document.getElementById('sys-modal').classList.remove('active'); onConfirm(); };
+            modal.classList.add('active');
+        };
+
+        let allProducts = [];
+        let activeBranches = [];
+
+        // ================= Fetch Data & Render =================
+        async function initData() {
+            // โหลดสาขา
+            const { data: branches } = await supabase.from('branches').select('*').order('created_at', { ascending: true });
+            activeBranches = branches || [{ branch_id: 'b1', branch_name: 'สาขา 1' }, { branch_id: 'b2', branch_name: 'สาขา 2' }];
+
+            // โหลดแบรนด์ใส่ Filter
+            const { data: brands } = await supabase.from('sys_brands').select('*').order('name');
+            const filterBrand = document.getElementById('filter-brand');
+            if(brands) brands.forEach(b => filterBrand.innerHTML += `<option value="${b.name}">${b.name}</option>`);
+
+            loadInventory();
+        }
+
+        async function loadInventory() {
+            // ดึง Products พร้อมกับ SKUs ของมัน (Relational Query โคตรเทพของ Supabase)
+            const { data, error } = await supabase.from('products').select(`*, product_skus(*)`).order('created_at', { ascending: false });
+            
+            if (error || !data) {
+                document.getElementById('inventory-tbody').innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--danger);">ไม่สามารถดึงข้อมูลได้</td></tr>`;
+                return;
+            }
+
+            allProducts = data;
+            applyFilters();
+        }
+
+        window.applyFilters = () => {
+            const keyword = document.getElementById('search-input').value.toLowerCase();
+            const brandFilter = document.getElementById('filter-brand').value;
+            const stockFilter = document.getElementById('filter-stock').value;
+
+            let filtered = allProducts.filter(p => {
+                // หาจากชื่อรุ่น, แบรนด์ หรือ หาว่ามีบาร์โค้ดใน SKUs ตรงกับที่ค้นหาไหม
+                const matchKeyword = (p.model || p.name).toLowerCase().includes(keyword) || (p.brand).toLowerCase().includes(keyword) || 
+                                     (p.product_skus && p.product_skus.some(s => s.barcode.toLowerCase().includes(keyword)));
+                const matchBrand = brandFilter === 'all' || p.brand === brandFilter;
+                
+                // คำนวณสต็อกรวมของ Product นี้
+                let totalStock = 0;
+                if(p.product_skus) {
+                    p.product_skus.forEach(sku => {
+                        if(sku.branch_stocks) { Object.values(sku.branch_stocks).forEach(qty => totalStock += parseInt(qty)||0); }
+                    });
+                }
+                
+                const matchStock = stockFilter === 'all' || (stockFilter === 'instock' && totalStock > 0) || (stockFilter === 'outstock' && totalStock <= 0);
+
+                return matchKeyword && matchBrand && matchStock;
+            });
+
+            renderNestedTable(filtered);
+        };
+
+        function renderNestedTable(items) {
+            const tbody = document.getElementById('inventory-tbody');
+            tbody.innerHTML = '';
+            
+            if(items.length === 0) { tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">ไม่พบข้อมูลสินค้าที่ค้นหา</td></tr>`; return; }
+
+            items.forEach((p, index) => {
+                const skus = p.product_skus || [];
+                const skuCount = skus.length;
+                
+                // คำนวณสต็อกรวมทุกสาขา ทุกสี
+                let grandTotalStock = 0;
+                skus.forEach(sku => { if(sku.branch_stocks) { Object.values(sku.branch_stocks).forEach(qty => grandTotalStock += parseInt(qty)||0); } });
+
+                const condBadge = p.condition === 'used' ? '<span class="cond-badge used">มือสอง</span>' : '<span class="cond-badge new">มือหนึ่ง</span>';
+                
+                // ดึงรูปปกจาก SKU ตัวแรก (ถ้ามี) ไม่งั้นใช้รูปรวม (ถ้าระบบเก่ามี)
+                const coverImg = (skus.length > 0 && skus[0].image_url) ? skus[0].image_url : (p.image_url || 'https://via.placeholder.com/60');
+                
+                const parentId = `parent_${p.product_id}`;
+                const childId = `child_${p.product_id}`;
+
+                // --- 1. สร้างแถวหลัก (Parent Row) ---
+                const parentHtml = `
+                    <tr class="parent-row" id="${parentId}" onclick="toggleExpand('${p.product_id}')">
+                        <td style="text-align: center;"><i class="ph-bold ph-caret-right expand-icon" id="icon_${p.product_id}"></i></td>
+                        <td>
+                            <div class="prod-info">
+                                <img src="${coverImg}" class="prod-img-main">
+                                <div><div style="font-size:1.1rem; font-weight:700;">${p.model || p.name}</div>${condBadge}</div>
+                            </div>
+                        </td>
+                        <td><div style="font-size:0.85rem; color:var(--text-muted);">${p.category}</div><b style="color:var(--text-main);">${p.brand}</b></td>
+                        <td><div class="variant-pill"><i class="ph-fill ph-stack"></i> ${skuCount} ตัวเลือก</div></td>
+                        <td>
+                            ${grandTotalStock > 0 ? `<span style="font-size:1.2rem; font-weight:700; color:var(--success);">${grandTotalStock}</span> เครื่อง` : `<span style="font-size:1.1rem; font-weight:700; color:var(--danger);">หมด (0)</span>`}
+                        </td>
+                        <td style="text-align: center;" onclick="event.stopPropagation()">
+                            <div class="action-btns" style="justify-content: center;">
+                                <button class="btn-act edit" title="แก้ไข/ดูรายละเอียด" onclick="editProduct('${p.product_id}')"><i class="ph-bold ph-pencil-simple"></i></button>
+                                <button class="btn-act del" title="ลบสินค้านี้" onclick="deleteProduct('${p.product_id}')"><i class="ph-bold ph-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+
+                // --- 2. สร้างแถวย่อย (Child Row - SKUs) ---
+                let skuRows = '';
+                skus.forEach(sku => {
+                    const cPrice = sku.price_cash || 0;
+                    const sPrice = sku.sale_price || 0;
+                    let priceHtml = '';
+                    if(sPrice > 0 && sPrice < cPrice) {
+                        priceHtml = `<div class="price-row"><span class="price-label">สด:</span><span class="strike-price">฿${cPrice.toLocaleString()}</span> <span class="badge-sale">SALE</span></div>
+                                     <div class="price-row"><span class="price-label"></span><span class="sale-price">฿${sPrice.toLocaleString()}</span></div>`;
+                    } else {
+                        priceHtml = `<div class="price-row"><span class="price-label">สด:</span><span style="font-weight:700; color:var(--success);">฿${cPrice.toLocaleString()}</span></div>`;
+                    }
+
+                    let branchStockHtml = '';
+                    if(sku.branch_stocks) {
+                        for(const [bName, qty] of Object.entries(sku.branch_stocks)) {
+                            branchStockHtml += `<div style="font-size:0.85rem; margin-bottom:2px;"><span style="color:var(--text-muted);">${bName}:</span> <b>${qty}</b></div>`;
+                        }
+                    }
+
+                    skuRows += `
+                        <tr>
+                            <td>
+                                <img src="${sku.image_url || 'https://via.placeholder.com/40'}" style="width:40px; height:40px; object-fit:contain; border-radius:8px; border:1px solid var(--border-color); background:white; float:left; margin-right:10px;">
+                                <div class="variant-pill" style="margin-bottom:4px; padding:4px 8px; font-size:0.8rem;"><div class="color-dot" style="background-color:${sku.color_hex};"></div> ${sku.color_name}</div><br>
+                                <div class="variant-pill" style="padding:4px 8px; font-size:0.8rem; border-color:var(--accent-teal); color:var(--accent-teal);">${sku.capacity}</div>
+                            </td>
+                            <td>
+                                <b style="font-size:0.9rem;">${sku.barcode}</b>
+                                <svg id="bc_${sku.sku_id}" class="barcode-mini"></svg>
+                            </td>
+                            <td>
+                                <div class="price-box">
+                                    ${priceHtml}
+                                    <div class="price-row"><span class="price-label">ออม:</span><span style="font-size:0.85rem; color:var(--warning);">฿${(sku.price_save||0).toLocaleString()}</span></div>
+                                </div>
+                            </td>
+                            <td>${branchStockHtml}</td>
+                        </tr>
+                    `;
+                });
+
+                const childHtml = `
+                    <tr class="child-row" id="${childId}">
+                        <td colspan="6" class="sub-table-container">
+                            <table class="sub-table">
+                                <thead><tr><th style="width:30%;">สี / ความจุ</th><th style="width:30%;">บาร์โค้ด</th><th style="width:20%;">ราคา</th><th style="width:20%;">สต็อกสาขา</th></tr></thead>
+                                <tbody>${skuRows || '<tr><td colspan="4" style="text-align:center;">ไม่มีข้อมูลรุ่นย่อย</td></tr>'}</tbody>
+                            </table>
+                        </td>
+                    </tr>
+                `;
+
+                tbody.innerHTML += parentHtml + childHtml;
+
+                // วาดบาร์โค้ดของจริงเข้าไปใน Sub-table
+                skus.forEach(sku => {
+                    setTimeout(() => {
+                        try { JsBarcode(`#bc_${sku.sku_id}`, sku.barcode, { width: 1, height: 25, displayValue: false, margin: 0, background: "transparent", lineColor: "#1D1D1F" }); } catch(e){}
+                    }, 50);
+                });
+            });
+        }
+
+        window.toggleExpand = (productId) => {
+            const parent = document.getElementById(`parent_${productId}`);
+            const child = document.getElementById(`child_${productId}`);
+            const icon = document.getElementById(`icon_${productId}`);
+            
+            if(parent.classList.contains('expanded')) {
+                parent.classList.remove('expanded'); child.classList.remove('active');
+            } else {
+                parent.classList.add('expanded'); child.classList.add('active');
+            }
+        };
+
+        // ================= Actions =================
+        window.editProduct = (id) => {
+            // ส่งไอดีสินค้าแนบไปกับ URL เพื่อให้หน้า Edit รู้ว่าต้องดึงตัวไหนมาโชว์
+            window.location.href = `inventory_edit.html?id=${id}`; 
+        };
+
+        window.deleteProduct = (id) => {
+            customConfirm('ยืนยันลบสินค้า', 'คุณแน่ใจหรือไม่ที่จะลบสินค้านี้? รหัสบาร์โค้ด (SKUs) ที่เกี่ยวข้องทั้งหมดจะถูกลบไปด้วย!', async () => {
+                // เนื่องจากใน SQL เราตั้ง ON DELETE CASCADE ไว้ ลบตัวหลัก ตัวลูกจะหายหมดอัตโนมัติ
+                await supabase.from('products').delete().eq('product_id', id);
+                customAlert('success', 'ลบสำเร็จ', 'ลบสินค้าและรุ่นย่อยทั้งหมดออกจากคลังเรียบร้อยแล้ว');
+                loadInventory();
+            });
+        };
+
+        // ================= Exports =================
+        window.exportCSV = () => {
+            let csvData = [];
+            allProducts.forEach(p => {
+                if(p.product_skus) {
+                    p.product_skus.forEach(sku => {
+                        let row = { แบรนด์: p.brand, รุ่น: p.model, สภาพ: p.condition, สี: sku.color_name, ความจุ: sku.capacity, บาร์โค้ด: sku.barcode, ราคาสด: sku.price_cash, ราคาลด: sku.sale_price };
+                        if(sku.branch_stocks) { for(const [bName, qty] of Object.entries(sku.branch_stocks)) { row[`สต็อก_${bName}`] = qty; } }
+                        csvData.push(row);
+                    });
+                }
+            });
+            if(csvData.length === 0) return customAlert('error', 'ไม่มีข้อมูล', 'ไม่มีข้อมูลสำหรับดาวน์โหลด');
+            
+            const csv = Papa.unparse(csvData);
+            const blob = new Blob(["\uFEFF"+csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
+            link.download = `NT_Inventory_Export_${new Date().toISOString().slice(0,10)}.csv`; link.click();
+        };
+
+        window.exportPDF = () => {
+            const tbody = document.getElementById('pdf-tbody');
+            tbody.innerHTML = '';
+            
+            allProducts.forEach(p => {
+                if(p.product_skus && p.product_skus.length > 0) {
+                    p.product_skus.forEach(sku => {
+                        let stockStr = '';
+                        if(sku.branch_stocks) { for(const [bName, qty] of Object.entries(sku.branch_stocks)) { stockStr += `${bName}: ${qty}<br>`; } }
+                        const price = sku.sale_price > 0 ? sku.sale_price : sku.price_cash;
+                        
+                        tbody.innerHTML += `<tr>
+                            <td><b>${p.brand}</b><br>${p.model}</td>
+                            <td>${sku.barcode}</td>
+                            <td>${sku.color_name}<br>${sku.capacity}</td>
+                            <td style="text-align:right;">${price.toLocaleString()}</td>
+                            <td>${stockStr}</td>
+                        </tr>`;
+                    });
+                }
+            });
+            
+            document.getElementById('pdf-date').innerText = 'ข้อมูลอัปเดตล่าสุด ณ วันที่: ' + new Date().toLocaleString('th-TH');
+            customAlert('info', 'กำลังสร้าง PDF...', 'กรุณารอสักครู่ ระบบกำลังสร้างไฟล์รายงาน');
+            
+            const element = document.getElementById('pdf-container'); element.style.display = 'block';
+            html2pdf().from(element).set({ margin: 10, filename: `NT_Stock_Report.pdf`, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).save().then(()=> { element.style.display='none'; closeModal('sys-modal'); });
+        };
+
+        initData();
+    </script>
+</body>
+</html>
