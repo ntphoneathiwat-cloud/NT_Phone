@@ -2,583 +2,689 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NT PHONE | POS System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NT PHONE | Smart POS</title>
     
     <style>@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap');</style>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
-        /* ================= Theme Variables (Apple Style) ================= */
+        /* ================= Premium POS Variables ================= */
         :root {
-            --bg-body: #F5F5F7;
-            --bg-surface: #FFFFFF;
-            --bg-card: #FFFFFF;
-            --text-main: #1D1D1F;
-            --text-secondary: #86868B;
-            --border-color: #E5E5EA;
-            
-            --accent-blue: #0071E3;
-            --accent-blue-hover: #0077ED;
-            --accent-light: #E8F2FC;
-            
-            --danger: #FF3B30;
-            --success: #34C759;
-            --warning: #F59E0B;
-            
-            --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.04);
+            --bg-body: #F5F5F7; --bg-surface: #FFFFFF; --bg-cart: #FAFAFC;
+            --text-main: #1D1D1F; --text-muted: #86868B; --border-color: #E5E5EA;
+            --accent-blue: #0071E3; --accent-light: #E8F2FC;
+            --danger: #FF3B30; --success: #34C759; --warning: #F59E0B;
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.03);
             --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
-            --radius-md: 16px;
-            --radius-lg: 24px;
+            --radius-md: 12px; --radius-lg: 20px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Anuphan', -apple-system, sans-serif; transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
-        body { background-color: var(--bg-body); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-
-        /* ================= 1. Top Navbar ================= */
-        .navbar {
-            background: var(--bg-surface); height: 75px; display: flex; align-items: center; justify-content: space-between;
-            padding: 0 40px; border-bottom: 1px solid var(--border-color); z-index: 100; box-shadow: var(--shadow-sm);
+        [data-theme="dark"] {
+            --bg-body: #000000; --bg-surface: #1C1C1E; --bg-cart: #151515;
+            --text-main: #F5F5F7; --text-muted: #A1A1A6; --border-color: #38383A;
+            --accent-blue: #2997FF; --accent-light: rgba(41, 151, 255, 0.15);
         }
-        
-        .nav-left { display: flex; align-items: center; gap: 20px; }
-        .nav-brand { display: flex; align-items: center; gap: 10px; font-size: 1.4rem; font-weight: 700; color: var(--text-main); }
-        .nav-brand i { color: var(--accent-blue); font-size: 1.8rem; }
-        .nav-divider { width: 1px; height: 24px; background: var(--border-color); }
-        .breadcrumb { font-size: 0.95rem; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; }
-        .breadcrumb span { color: var(--accent-blue); background: var(--accent-light); padding: 4px 12px; border-radius: 12px; }
 
-        .nav-right { display: flex; align-items: center; gap: 20px; }
-        .topbar-user { display: flex; align-items: center; gap: 10px; background: var(--bg-body); padding: 6px 16px 6px 6px; border-radius: 30px; border: 1px solid var(--border-color); font-weight: 600; font-size: 0.95rem; }
-        .topbar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--text-main); color: var(--bg-surface); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
-        
-        .btn-logout { display: flex; align-items: center; gap: 8px; padding: 8px 20px; background: transparent; border: 1px solid var(--danger); color: var(--danger); border-radius: 20px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
-        .btn-logout:hover { background: rgba(255, 59, 48, 0.1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Anuphan', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-body); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* ================= 2. POS Layout ================= */
-        .pos-container { display: flex; flex: 1; overflow: hidden; }
+        /* ================= Header ================= */
+        .pos-header {
+            background: var(--bg-surface); height: 70px; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 25px; border-bottom: 1px solid var(--border-color); z-index: 100; flex-shrink: 0;
+        }
+        .logo { font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--text-main); text-decoration: none; }
+        .logo i { color: var(--accent-blue); font-size: 1.6rem; }
+        
+        .header-tools { display: flex; align-items: center; gap: 15px; }
+        .search-bar { position: relative; width: 350px; }
+        .search-bar i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1.2rem; }
+        .search-bar input { width: 100%; padding: 10px 15px 10px 45px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-body); outline: none; transition: 0.2s; font-size: 0.95rem; }
+        .search-bar input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px var(--accent-light); background: var(--bg-surface); }
+        
+        .btn-icon { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); background: transparent; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 1.2rem; color: var(--text-main); transition: 0.2s; }
+        .btn-icon:hover { background: var(--bg-body); color: var(--accent-blue); border-color: var(--accent-blue); }
 
-        /* ฝั่งซ้าย: สินค้า */
-        .product-section { flex: 7; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; background: var(--bg-body); }
-        
-        .search-bar { position: relative; }
-        .search-bar i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 1.3rem; }
-        .search-bar input { width: 100%; padding: 18px 20px 18px 50px; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 1rem; outline: none; transition: 0.3s; background: var(--bg-surface); box-shadow: var(--shadow-sm); }
-        .search-bar input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 4px var(--accent-light); }
+        /* ================= Main Layout (Split View) ================= */
+        .pos-layout { display: flex; flex: 1; overflow: hidden; }
 
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
-        .product-card { background: var(--bg-card); border-radius: var(--radius-md); padding: 20px; text-align: center; border: 1px solid var(--border-color); cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-sm); position: relative; }
-        .product-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--accent-blue); }
+        /* --- Left: Product Catalog --- */
+        .catalog-section { flex: 7; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-body); padding: 20px; }
         
-        .prod-img { width: 100%; height: 150px; object-fit: contain; margin-bottom: 15px; border-radius: 12px; background: var(--bg-body); padding: 15px; transition: 0.3s; }
-        .product-card:hover .prod-img { transform: scale(1.05); }
-        .prod-brand { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 5px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; }
-        .prod-name { font-weight: 700; color: var(--text-main); font-size: 1rem; margin-bottom: 8px; line-height: 1.3; }
-        .prod-price { font-weight: 700; color: var(--accent-blue); font-size: 1.2rem; margin-bottom: 10px; }
-        
-        .stock-badge { display: inline-flex; align-items: center; justify-content: center; gap: 5px; background: var(--bg-body); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); border: 1px solid var(--border-color); }
-        .stock-badge.available i { color: var(--success); }
-        .stock-badge.empty { color: var(--danger); background: rgba(255, 59, 48, 0.05); border-color: rgba(255, 59, 48, 0.2); }
+        .brand-filter { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 10px; -ms-overflow-style: none; scrollbar-width: none; flex-shrink: 0; }
+        .brand-filter::-webkit-scrollbar { display: none; }
+        .filter-chip { padding: 8px 20px; border-radius: 20px; background: var(--bg-surface); border: 1px solid var(--border-color); font-weight: 600; font-size: 0.9rem; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+        .filter-chip.active { background: var(--text-main); color: var(--bg-surface); border-color: var(--text-main); }
 
-        /* ฝั่งขวา: ตะกร้าและลูกค้า */
-        .cart-section { flex: 3; background: var(--bg-surface); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; min-width: 380px; box-shadow: -5px 0 30px rgba(0,0,0,0.03); z-index: 10; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; overflow-y: auto; padding-bottom: 20px; align-content: start; }
+        .product-card { background: var(--bg-surface); border-radius: var(--radius-lg); padding: 15px; border: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow-sm); }
+        .product-card:hover { border-color: var(--accent-blue); transform: translateY(-3px); box-shadow: var(--shadow-md); }
+        .product-card.disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
         
-        /* เลือกลูกค้า */
-        .customer-panel { padding: 25px; border-bottom: 1px solid var(--border-color); background: var(--bg-body); }
-        .customer-title { font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
+        .p-img-box { width: 100%; height: 120px; background: var(--bg-body); border-radius: var(--radius-md); display: flex; justify-content: center; align-items: center; overflow: hidden; padding: 5px; position: relative; }
+        .p-img-box img { width: 100%; height: 100%; object-fit: contain; }
+        .p-stock-badge { position: absolute; top: 8px; right: 8px; background: var(--success); color: white; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+        .p-stock-badge.empty { background: var(--danger); }
         
-        .selected-customer { background: var(--bg-surface); border: 2px dashed var(--border-color); border-radius: var(--radius-md); padding: 20px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .selected-customer:hover { border-color: var(--accent-blue); background: var(--accent-light); }
-        .customer-name-display { font-weight: 700; color: var(--text-main); font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .customer-id-display { font-size: 0.85rem; color: var(--text-secondary); margin-top: 5px; }
+        .p-info { flex: 1; display: flex; flex-direction: column; }
+        .p-brand { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+        .p-name { font-size: 0.95rem; font-weight: 700; line-height: 1.3; margin-bottom: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .p-variant { font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px; margin-bottom: 8px; }
+        .color-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); }
+        .p-price { font-size: 1.1rem; font-weight: 700; color: var(--accent-blue); margin-top: auto; }
 
-        /* ตะกร้า */
-        .cart-items { flex: 1; overflow-y: auto; padding: 25px; }
-        .empty-cart { text-align: center; color: var(--text-secondary); margin-top: 50px; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .empty-cart i { font-size: 3.5rem; color: var(--border-color); }
+        /* --- Right: Cart / Bill Section --- */
+        .cart-section { flex: 3; min-width: 350px; background: var(--bg-cart); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 10; box-shadow: -5px 0 20px rgba(0,0,0,0.02); }
         
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); }
-        .ci-info { flex: 1; padding-right: 10px; }
-        .ci-name { font-weight: 600; font-size: 0.95rem; color: var(--text-main); margin-bottom: 4px; }
-        .ci-price { font-size: 0.85rem; color: var(--text-secondary); }
-        .ci-controls { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
-        .ci-total { font-weight: 700; color: var(--text-main); font-size: 1.05rem; }
-        .ci-qty { display: flex; align-items: center; gap: 12px; background: var(--bg-body); padding: 4px 8px; border-radius: 10px; font-weight: 600; border: 1px solid var(--border-color); }
-        .qty-btn { background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--text-secondary); transition: 0.2s; display: flex; align-items: center; }
-        .qty-btn:hover { color: var(--text-main); }
+        .cart-header { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .cart-title { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .btn-clear { background: rgba(255, 59, 48, 0.1); color: var(--danger); border: none; padding: 6px 12px; border-radius: 10px; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
+        .btn-clear:hover { background: var(--danger); color: white; }
 
-        /* สรุปยอดและจ่ายเงิน */
-        .cart-summary { padding: 25px; border-top: 1px solid var(--border-color); background: var(--bg-surface); }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: 600; color: var(--text-secondary); font-size: 0.95rem; }
-        .summary-row.total { font-size: 1.6rem; color: var(--text-main); font-weight: 700; margin-bottom: 25px; }
+        .cart-items { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .cart-empty { text-align: center; color: var(--text-muted); padding: 40px 20px; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .cart-empty i { font-size: 3rem; color: var(--border-color); }
         
-        .checkout-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn-checkout { padding: 16px; border: none; border-radius: 14px; font-weight: 600; font-size: 1rem; color: #FFFFFF; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-cash { background: var(--text-main); } .btn-cash:hover { background: #000000; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-        .btn-credit { background: var(--accent-blue); } .btn-credit:hover { background: var(--accent-blue-hover); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,113,227,0.2); }
+        .cart-item { background: var(--bg-surface); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px; }
+        .ci-img { width: 50px; height: 50px; border-radius: 8px; object-fit: contain; background: var(--bg-body); border: 1px solid var(--border-color); padding: 2px; }
+        .ci-details { flex: 1; }
+        .ci-name { font-size: 0.9rem; font-weight: 700; line-height: 1.2; margin-bottom: 2px; }
+        .ci-var { font-size: 0.75rem; color: var(--text-muted); }
+        .ci-price { font-size: 0.95rem; font-weight: 700; color: var(--accent-blue); }
+        
+        .ci-qty-ctrl { display: flex; align-items: center; background: var(--bg-body); border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; }
+        .qty-btn { width: 28px; height: 28px; background: transparent; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main); font-weight: 700; }
+        .qty-btn:hover { background: var(--border-color); }
+        .qty-val { width: 30px; text-align: center; font-size: 0.9rem; font-weight: 700; border: none; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); background: transparent; }
 
-        /* ================= 3. Modals ================= */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; visibility: hidden; transition: 0.3s; }
+        /* --- Checkout Bottom Area --- */
+        .cart-footer { padding: 20px; background: var(--bg-surface); border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 15px; }
+        
+        .payment-toggle { display: flex; background: var(--bg-body); padding: 4px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .pt-btn { flex: 1; text-align: center; padding: 10px; font-size: 0.95rem; font-weight: 600; cursor: pointer; border-radius: 10px; transition: 0.2s; color: var(--text-muted); border: none; background: transparent; }
+        .pt-btn.active { background: var(--bg-surface); color: var(--text-main); box-shadow: var(--shadow-sm); }
+
+        .summary-row { display: flex; justify-content: space-between; font-size: 1rem; color: var(--text-muted); margin-bottom: 5px; }
+        .summary-row.total { font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); }
+        .total-val { color: var(--accent-blue); }
+
+        .btn-checkout { width: 100%; background: var(--text-main); color: var(--bg-surface); padding: 18px; border-radius: 16px; font-size: 1.1rem; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .btn-checkout:hover { transform: translateY(-2px); opacity: 0.9; }
+        .btn-checkout:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; box-shadow: none; transform: none; }
+
+        /* ================= Modals (Checkout & Payment) ================= */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; visibility: hidden; transition: 0.3s ease; padding: 20px; }
         .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-card { background: var(--bg-surface); width: 100%; max-width: 450px; border-radius: var(--radius-lg); padding: 35px 30px; box-shadow: var(--shadow-md); transform: scale(0.95); transition: 0.3s; position: relative; }
+        .modal-overlay.active .modal-card { transform: scale(1); }
         
-        .modal-content { background: var(--bg-surface); width: 90%; max-width: 450px; border-radius: var(--radius-lg); padding: 35px 30px; transform: scale(0.95); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); }
-        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: var(--bg-body); border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
+        .modal-close:hover { background: var(--border-color); color: var(--text-main); }
+
+        .modal-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
         
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .modal-header h2 { font-size: 1.3rem; color: var(--text-main); display: flex; align-items: center; gap: 10px; font-weight: 700; }
-        .close-btn { background: var(--bg-body); border: 1px solid var(--border-color); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-secondary); transition: 0.2s; font-size: 1.1rem; }
-        .close-btn:hover { background: var(--border-color); color: var(--text-main); }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
+        .form-input { width: 100%; padding: 16px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-size: 1.2rem; font-weight: 700; outline: none; transition: 0.2s; }
+        .form-input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px var(--accent-light); background: var(--bg-surface); }
+        
+        .change-display { text-align: center; padding: 20px; background: var(--bg-body); border-radius: 16px; margin: 20px 0; border: 1px dashed var(--border-color); }
+        .change-label { font-size: 1rem; color: var(--text-muted); font-weight: 600; margin-bottom: 5px; }
+        .change-val { font-size: 2.5rem; font-weight: 700; color: var(--success); }
 
-        .tabs { display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 25px; }
-        .tab { flex: 1; text-align: center; padding: 12px; cursor: pointer; font-weight: 600; color: var(--text-secondary); border-bottom: 2px solid transparent; margin-bottom: -2px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
-        .tab.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); }
-        .tab-content { display: none; } .tab-content.active { display: block; }
+        .btn-print-group { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-print { flex: 1; padding: 14px; border-radius: 12px; font-weight: 700; border: 1px solid var(--accent-blue); background: var(--bg-surface); color: var(--accent-blue); cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-print:hover { background: var(--accent-blue); color: white; }
 
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary); }
-        .form-group input { width: 100%; padding: 15px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 1rem; outline: none; background: var(--bg-body); color: var(--text-main); transition: 0.2s; }
-        .form-group input:focus { border-color: var(--accent-blue); background: var(--bg-surface); box-shadow: 0 0 0 3px var(--accent-light); }
+        /* ================= THERMAL PRINTER ENGINE (THE MAGIC) ================= */
+        #print-area { display: none; }
+        
+        @media print {
+            body > * { display: none !important; }
+            #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; background: white; color: black; }
+            
+            .receipt-base { font-family: 'Anuphan', sans-serif, monospace; color: black; background: white; margin: 0; padding: 10px 0; }
+            .receipt-header { text-align: center; margin-bottom: 10px; }
+            .receipt-header h2 { margin: 0 0 5px 0; font-size: 1.2em; font-weight: bold; }
+            .receipt-header p { margin: 2px 0; font-size: 0.85em; }
+            .receipt-divider { border-bottom: 1px dashed black; margin: 8px 0; }
+            .receipt-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+            .receipt-table th { border-bottom: 1px solid black; padding-bottom: 4px; text-align: left; }
+            .receipt-table td { padding: 4px 0; vertical-align: top; }
+            .receipt-table .r-price { text-align: right; }
+            .receipt-summary { width: 100%; font-size: 0.9em; margin-top: 5px; }
+            .receipt-summary td { padding: 3px 0; }
+            .receipt-total { font-weight: bold; font-size: 1.1em; }
+            .receipt-footer { text-align: center; margin-top: 15px; font-size: 0.8em; }
+            
+            /* Profile for 58mm Printer (Width approx 48mm printable) */
+            .receipt-58 { width: 58mm; max-width: 58mm; overflow: hidden; }
+            .receipt-58 .receipt-header h2 { font-size: 1.1em; }
+            .receipt-58 .receipt-table { font-size: 0.75em; }
+            
+            /* Profile for 80mm Printer (Width approx 72mm printable) */
+            .receipt-80 { width: 80mm; max-width: 80mm; overflow: hidden; }
+        }
 
-        .btn-full { width: 100%; padding: 16px; background: var(--text-main); color: #FFFFFF; border: none; border-radius: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1.05rem; transition: 0.2s; }
-        .btn-full:hover { background: #000000; }
-
-        .info-box { background: var(--accent-light); border: 1px solid rgba(0,113,227,0.2); color: var(--accent-blue); padding: 15px; border-radius: 12px; font-size: 0.85rem; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; font-weight: 500; }
-        .info-box i { font-size: 1.3rem; flex-shrink: 0; }
-
-        /* Loader Overlay */
-        .loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); backdrop-filter: blur(5px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: 0.3s; }
-        .loader-overlay.active { opacity: 1; visibility: visible; }
-        .spinner-large { font-size: 3.5rem; color: var(--accent-blue); animation: spin 1s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        /* Alert Modal */
-        .modal-alert { background: var(--bg-surface); width: 90%; max-width: 380px; border-radius: var(--radius-lg); padding: 40px 30px; text-align: center; transform: scale(0.95); transition: 0.3s; border: 1px solid var(--border-color); box-shadow: var(--shadow-md); }
-        .modal-overlay.active .modal-alert { transform: scale(1); }
-        .modal-icon-alert { font-size: 4rem; margin-bottom: 20px; display: block; }
-        .modal-icon-alert.success { color: var(--success); } .modal-icon-alert.error { color: var(--danger); } .modal-icon-alert.info { color: var(--accent-blue); }
+        /* Responsive Mobile */
+        @media (max-width: 900px) {
+            .pos-layout { flex-direction: column; }
+            .catalog-section { flex: 1; padding: 15px; }
+            .cart-section { flex: none; height: 350px; border-left: none; border-top: 1px solid var(--border-color); }
+            .search-bar { width: 200px; }
+        }
     </style>
 </head>
 <body>
 
-    <header class="navbar">
-        <div class="nav-left">
-            <div class="nav-brand"><i class="ph-fill ph-device-mobile-camera"></i> <span>NT POS</span></div>
-            <div class="nav-divider"></div>
-            <div class="breadcrumb">
-                <i class="ph-bold ph-storefront"></i>
-                <i class="ph-bold ph-caret-right" style="color:var(--border-color);"></i>
-                <span id="display-branch">สาขา 1</span>
+    <header class="pos-header">
+        <a href="ceo_dashboard.html" class="logo"><i class="ph-fill ph-device-mobile-camera"></i> NT PHONE POS</a>
+        <div class="header-tools">
+            <div class="search-bar">
+                <i class="ph-bold ph-barcode"></i>
+                <input type="text" id="pos-search" placeholder="สแกนบาร์โค้ด หรือ พิมพ์ชื่อรุ่น..." autocomplete="off">
             </div>
-        </div>
-
-        <div class="nav-right">
-            <div class="topbar-user">
-                <div class="topbar-avatar"><i class="ph-bold ph-user"></i></div>
-                <span id="display-emp-name">กำลังโหลด...</span>
+            <button class="btn-icon" onclick="toggleTheme()"><i class="ph-bold ph-moon" id="theme-icon"></i></button>
+            <div style="font-size:0.9rem; font-weight:600; color:var(--text-muted); border-left:1px solid var(--border-color); padding-left:15px; margin-left:5px;">
+                แคชเชียร์: <span id="cashier-name" style="color:var(--text-main);">Admin</span>
             </div>
-            <button class="btn-logout" onclick="handleLogout()"><i class="ph-bold ph-sign-out"></i> ออกจากระบบ</button>
         </div>
     </header>
 
-    <main class="pos-container">
+    <div class="pos-layout">
         
-        <section class="product-section">
-            <div class="search-bar">
-                <i class="ph-bold ph-magnifying-glass"></i>
-                <input type="text" id="search-product" placeholder="ค้นหารุ่นโทรศัพท์, แบรนด์ (จากสต็อกสาขาของคุณ)...">
-            </div>
-            <div class="product-grid" id="product-list">
-                <div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 50px;">
-                    <i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite; font-size: 2rem; display: block; margin-bottom: 10px;"></i>
-                    กำลังโหลดข้อมูลสินค้า...
+        <div class="catalog-section">
+            <div class="brand-filter" id="brand-filter-container">
+                <button class="filter-chip active" onclick="filterBrand('all', this)">หน้าแรก (ทั้งหมด)</button>
+                </div>
+            
+            <div class="product-grid" id="pos-grid">
+                <div style="grid-column: 1/-1; text-align: center; padding: 50px; color: var(--text-muted);">
+                    <i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite; font-size: 2rem;"></i><br>กำลังโหลดคลังสินค้า...
                 </div>
             </div>
-        </section>
+        </div>
 
-        <section class="cart-section">
-            <div class="customer-panel">
-                <div class="customer-title"><i class="ph-bold ph-user-focus"></i> ข้อมูลลูกค้า</div>
-                <div class="selected-customer" onclick="openCustomerModal()">
-                    <div id="cust-display-area">
-                        <i class="ph-bold ph-user-plus" style="font-size: 2rem; color: var(--text-secondary); margin-bottom: 8px; display: block;"></i>
-                        <div style="font-weight: 700; color: var(--accent-blue); font-size: 1.05rem;">คลิกเพื่อค้นหา หรือเพิ่มลูกค้าใหม่</div>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 6px;">จำเป็นต้องเลือกก่อนทำรายการ</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="cart-items" id="cart-container">
-                <div class="empty-cart">
-                    <i class="ph-light ph-shopping-cart"></i>
-                    ยังไม่มีสินค้าในตะกร้า
-                </div>
-            </div>
-
-            <div class="cart-summary">
-                <div class="summary-row"><span>จำนวนรวม</span><span id="sum-qty">0 รายการ</span></div>
-                <div class="summary-row total"><span>ยอดรวมสุทธิ</span><span id="sum-total">฿0</span></div>
-                <div class="checkout-btns">
-                    <button class="btn-checkout btn-cash" onclick="processCheckout('cash')">
-                        <i class="ph-bold ph-wallet"></i> ชำระเงินสด
-                    </button>
-                    <button class="btn-checkout btn-credit" onclick="processCheckout('installment')">
-                        <i class="ph-bold ph-file-signature"></i> สัญญาผ่อน
-                    </button>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <div class="modal-overlay" id="customer-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="ph-bold ph-users"></i> จัดการลูกค้า</h2>
-                <button class="close-btn" onclick="closeModal('customer-modal')"><i class="ph-bold ph-x"></i></button>
+        <div class="cart-section">
+            <div class="cart-header">
+                <div class="cart-title"><i class="ph-bold ph-shopping-cart"></i> ตะกร้าสินค้า <span style="background:var(--accent-blue); color:white; font-size:0.8rem; padding:2px 8px; border-radius:10px; margin-left:5px;" id="cart-count">0</span></div>
+                <button class="btn-clear" onclick="clearCart()"><i class="ph-bold ph-trash"></i> ล้าง</button>
             </div>
             
-            <div class="tabs">
-                <div class="tab active" onclick="switchTab('search')"><i class="ph-bold ph-magnifying-glass"></i> ค้นหาฐานข้อมูล</div>
-                <div class="tab" onclick="switchTab('new')"><i class="ph-bold ph-user-plus"></i> ลงทะเบียนใหม่</div>
+            <div class="cart-items" id="cart-items-container">
+                <div class="cart-empty">
+                    <i class="ph-fill ph-basket"></i>
+                    <span>ยังไม่มีสินค้าในตะกร้า<br>สแกนบาร์โค้ด หรือคลิกเลือกสินค้า</span>
+                </div>
             </div>
 
-            <div id="tab-search" class="tab-content active">
-                <div class="form-group">
-                    <label>เบอร์โทรศัพท์ (10 หลัก)</label>
-                    <input type="tel" id="search-cust-phone" placeholder="08XXXXXXXX" maxlength="10">
+            <div class="cart-footer">
+                <div class="payment-toggle">
+                    <button class="pt-btn active" id="btn-mode-cash" onclick="setPaymentMode('cash')">ซื้อสด (Cash)</button>
+                    <button class="pt-btn" id="btn-mode-install" onclick="setPaymentMode('installment')">ผ่อน/ออม (Installment)</button>
                 </div>
-                <button class="btn-full" onclick="searchCustomer()"><i class="ph-bold ph-check-circle"></i> ยืนยันเลือกลูกค้า</button>
+                
+                <div style="padding-top: 10px;">
+                    <div class="summary-row"><span>รวมจำนวน</span><span id="sum-qty">0 ชิ้น</span></div>
+                    <div class="summary-row total"><span>ยอดสุทธิ</span><span class="total-val" id="sum-total">฿0</span></div>
+                </div>
+                
+                <button class="btn-checkout" id="btn-checkout-main" onclick="openCheckoutModal()" disabled>
+                    <i class="ph-bold ph-wallet"></i> รับชำระเงิน
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal-overlay" id="modal-checkout-cash">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal('modal-checkout-cash')"><i class="ph-bold ph-x"></i></button>
+            <div class="modal-title"><i class="ph-fill ph-money" style="color:var(--success);"></i> รับชำระเงินสด</div>
+            
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-size:1.1rem; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
+                <span style="color:var(--text-muted); font-weight:600;">ยอดที่ต้องชำระ:</span>
+                <span style="font-weight:700; color:var(--text-main);" id="checkout-total-cash">฿0</span>
             </div>
 
-            <div id="tab-new" class="tab-content">
-                <div class="info-box">
-                    <i class="ph-fill ph-info"></i>
-                    <div>การลงทะเบียนลูกค้าผ่านหน้านี้ ระบบจะบันทึกรหัสพนักงานของคุณเป็นผู้แนะนำโดยอัตโนมัติ (สำหรับค่าคอมมิชชัน)</div>
-                </div>
-                <div style="display: flex; gap: 15px;">
-                    <div class="form-group" style="flex: 1;"><label>ชื่อจริง</label><input type="text" id="new-cust-fname" placeholder="ระบุชื่อ"></div>
-                    <div class="form-group" style="flex: 1;"><label>นามสกุล</label><input type="text" id="new-cust-lname" placeholder="ระบุนามสกุล"></div>
-                </div>
-                <div class="form-group">
-                    <label>เบอร์โทรศัพท์ (ใช้เข้าระบบ)</label>
-                    <input type="tel" id="new-cust-phone" placeholder="08XXXXXXXX" maxlength="10">
-                </div>
-                <button class="btn-full" onclick="registerNewCustomer()"><i class="ph-bold ph-floppy-disk"></i> บันทึกและเลือกลูกค้า</button>
+            <div class="form-group">
+                <label class="form-label">รับเงินมา (บาท)</label>
+                <input type="number" class="form-input" id="input-received" placeholder="0" oninput="calculateChange()">
+            </div>
+
+            <div class="change-display">
+                <div class="change-label">เงินทอน</div>
+                <div class="change-val" id="change-display-val">฿0</div>
+            </div>
+
+            <div class="btn-print-group">
+                <button class="btn-print" onclick="processPayment('cash', 58)"><i class="ph-bold ph-printer"></i> พิมพ์ 58mm</button>
+                <button class="btn-print" onclick="processPayment('cash', 80)"><i class="ph-bold ph-printer"></i> พิมพ์ 80mm</button>
+            </div>
+            <button class="btn-checkout" style="margin-top: 10px;" onclick="processPayment('cash', 0)">
+                <i class="ph-bold ph-check-circle"></i> บันทึกโดยไม่พิมพ์บิล
+            </button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-checkout-install">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal('modal-checkout-install')"><i class="ph-bold ph-x"></i></button>
+            <div class="modal-title"><i class="ph-fill ph-hand-coins" style="color:var(--warning);"></i> เปิดบิลผ่อน/ออม</div>
+            
+            <div class="form-group">
+                <label class="form-label">เบอร์โทรศัพท์ลูกค้า (สำหรับค้นหา/สร้างใหม่)</label>
+                <input type="tel" class="form-input" id="input-cus-phone" placeholder="08X-XXX-XXXX">
+            </div>
+            <div class="form-group">
+                <label class="form-label">ชื่อลูกค้า</label>
+                <input type="text" class="form-input" id="input-cus-name" placeholder="ชื่อ-นามสกุล">
+            </div>
+            <div class="form-group">
+                <label class="form-label">รับเงินดาวน์ / เปิดออม (บาท)</label>
+                <input type="number" class="form-input" id="input-downpayment" placeholder="0" style="border-color:var(--warning);">
+            </div>
+
+            <div class="btn-print-group">
+                <button class="btn-print" onclick="processPayment('install', 58)"><i class="ph-bold ph-printer"></i> พิมพ์ 58mm</button>
+                <button class="btn-print" onclick="processPayment('install', 80)"><i class="ph-bold ph-printer"></i> พิมพ์ 80mm</button>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="alert-modal">
-        <div class="modal-alert">
-            <i id="alert-icon" class="ph-fill ph-check-circle modal-icon-alert success"></i>
-            <h2 class="modal-title" id="alert-title">สำเร็จ</h2>
-            <p class="modal-message" id="alert-desc">ข้อความ</p>
-            <div id="alert-actions" style="display: flex; gap: 10px;"></div>
+    <div class="modal-overlay" id="sys-modal">
+        <div class="modal-card" style="text-align: center; max-width: 350px;">
+            <i id="sys-icon" class="ph-fill ph-info" style="font-size: 4rem; color: var(--accent-blue); margin-bottom: 10px;"></i>
+            <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 10px;" id="sys-title">Title</h3>
+            <p style="color: var(--text-muted); margin-bottom: 20px;" id="sys-msg">Message</p>
+            <button class="btn-checkout" onclick="closeModal('sys-modal')">ตกลง</button>
         </div>
     </div>
 
-    <div class="loader-overlay" id="checkout-loader">
-        <i class="ph-bold ph-spinner-gap spinner-large"></i>
-        <h3 style="margin-top: 20px; color: var(--text-main); font-size: 1.3rem;">กำลังบันทึกรายการ...</h3>
-        <p style="color: var(--text-secondary); font-weight: 500; margin-top: 5px;">กรุณาอย่าปิดหน้าต่างนี้</p>
+    <div id="print-area">
+        <div id="receipt-container" class="receipt-base">
+            </div>
     </div>
+
+    <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
 
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
         const supabaseUrl = 'https://xjjcnlzynzsvopmcooky.supabase.co'
         const supabaseKey = 'sb_publishable_w7A_BOSi0r1r4t93exl1gg_j1jPRU_E'
         const supabase = createClient(supabaseUrl, supabaseKey)
 
-        // ================= 1. Auth & Branch Info =================
-        const empId = localStorage.getItem('emp_id');
-        const empName = localStorage.getItem('emp_name');
+        // UI Basic
+        document.getElementById('cashier-name').innerText = localStorage.getItem('emp_name') || 'Admin';
+        window.toggleTheme = () => {
+            const body = document.body; const icon = document.getElementById('theme-icon');
+            if (body.getAttribute('data-theme') === 'dark') { body.removeAttribute('data-theme'); icon.className = 'ph-bold ph-moon'; localStorage.setItem('theme', 'light'); } 
+            else { body.setAttribute('data-theme', 'dark'); icon.className = 'ph-bold ph-sun'; localStorage.setItem('theme', 'dark'); }
+        };
+        if(localStorage.getItem('theme') === 'dark') toggleTheme();
         
-        // ถ้าพนักงานไม่ได้เลือกสาขามา ให้สมมติว่าเป็นสาขา 1 (b1)
-        const empBranch = localStorage.getItem('emp_branch') || 'b1'; 
-        
-        if (!empId) window.location.href = "index.html";
-
-        document.getElementById('display-emp-name').innerText = empName;
-        document.getElementById('display-branch').innerText = empBranch === 'b1' ? 'สาขา 1' : 'สาขา 2';
-
-        // ตัวแปรบอกว่าพนักงานคนนี้ต้องดึงสต็อกคอลัมน์ไหน (แก้บั๊กที่หาคอลัมน์ stock ไม่เจอ)
-        const branchStockColumn = empBranch === 'b1' ? 'stock_b1' : 'stock_b2';
-
-        // ================= 2. Utility Modals =================
         window.closeModal = (id) => document.getElementById(id).classList.remove('active');
+        window.customAlert = (type, title, msg) => {
+            document.getElementById('sys-title').innerText = title; document.getElementById('sys-msg').innerText = msg;
+            document.getElementById('sys-icon').className = type === 'success' ? 'ph-fill ph-check-circle' : type === 'error' ? 'ph-fill ph-warning-circle' : 'ph-fill ph-info';
+            document.getElementById('sys-icon').style.color = type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--accent-blue)';
+            document.getElementById('sys-modal').classList.add('active');
+        };
 
-        window.customAlert = (type, title, desc) => {
-            const modal = document.getElementById('alert-modal');
-            const icon = document.getElementById('alert-icon');
-            document.getElementById('alert-title').innerText = title;
-            document.getElementById('alert-desc').innerText = desc;
-
-            if(type === 'success') icon.className = 'ph-fill ph-check-circle modal-icon-alert success';
-            else if(type === 'error') icon.className = 'ph-fill ph-x-circle modal-icon-alert error';
-            else icon.className = 'ph-fill ph-info modal-icon-alert info';
-
-            document.getElementById('alert-actions').innerHTML = `<button class="btn-full" onclick="closeModal('alert-modal')">ตกลง</button>`;
-            modal.classList.add('active');
-        }
-
-        window.customConfirm = (title, desc, onConfirm) => {
-            const modal = document.getElementById('alert-modal');
-            document.getElementById('alert-title').innerText = title;
-            document.getElementById('alert-desc').innerText = desc;
-            document.getElementById('alert-icon').className = 'ph-fill ph-question modal-icon-alert info';
-
-            document.getElementById('alert-actions').innerHTML = `
-                <button class="btn-full" style="background:var(--bg-body); color:var(--text-main); border:1px solid var(--border-color);" onclick="closeModal('alert-modal')">ยกเลิก</button>
-                <button class="btn-full" id="confirm-yes">ยืนยัน</button>
-            `;
-            document.getElementById('confirm-yes').onclick = () => { closeModal('alert-modal'); onConfirm(); };
-            modal.classList.add('active');
-        }
-
-        window.handleLogout = () => {
-            customConfirm('ออกจากระบบ', 'คุณต้องการออกจากระบบเครื่องคิดเงินใช่หรือไม่?', () => {
-                localStorage.clear(); window.location.href = "index.html";
-            });
-        }
-
-        // ================= 3. จัดการสินค้าตามสาขา (Products) =================
-        let products = [];
+        // Global State
+        let allSKUs = [];
+        let currentFilterBrand = 'all';
         let cart = [];
-        let currentCustomer = null;
+        let paymentMode = 'cash'; // 'cash' or 'installment'
 
-        async function fetchProducts() {
-            // ดึงข้อมูลสินค้าเฉพาะที่มีสต็อกในสาขาของตัวเอง
-            const { data, error } = await supabase.from('products')
-                .select('*')
-                .gt(branchStockColumn, 0) // <--- จุดแก้บั๊กสำคัญ! ดึงเฉพาะที่มีสต็อกในสาขานี้
-                .order('created_at', { ascending: false });
+        // 1. Fetch Data
+        async function loadPOSData() {
+            try {
+                // ดึงแบรนด์
+                const { data: brands } = await supabase.from('sys_brands').select('*').order('name');
+                const brandFilter = document.getElementById('brand-filter-container');
+                if(brands) {
+                    brands.forEach(b => {
+                        brandFilter.innerHTML += `<button class="filter-chip" onclick="filterBrand('${b.name}', this)">${b.name}</button>`;
+                    });
+                }
 
-            if (!error && data) {
-                products = data;
-                renderProducts(products);
-            } else {
-                document.getElementById('product-list').innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--danger); padding: 40px;">ไม่สามารถดึงข้อมูลสินค้าได้</div>`;
+                // 🔥 แก้ตรงนี้: เปลี่ยนจากการดึงรูปและชื่อจาก products เป็นดึงแค่ (*) เผื่อไว้ ป้องกัน Error 400
+                const { data: skus, error } = await supabase.from('product_skus').select(`*, products(brand, model)`).order('created_at', { ascending: false });
+                if(error) throw error;
+
+                // ประมวลผลและเก็บลง Array
+                allSKUs = skus.map(s => {
+                    let totalStock = 0;
+                    if(s.branch_stocks) { Object.values(s.branch_stocks).forEach(q => totalStock += parseInt(q)||0); }
+                    
+                    return {
+                        id: s.sku_id,
+                        barcode: s.barcode,
+                        brand: s.products?.brand || 'Unknown',
+                        model: s.products?.model || 'Unknown',
+                        color: s.color_name,
+                        colorHex: s.color_hex,
+                        cap: s.capacity,
+                        price: s.sale_price > 0 ? s.sale_price : (s.price_cash || 0),
+                        stock: totalStock,
+                        img: s.image_url || 'https://via.placeholder.com/150?text=No+Image'
+                    };
+                });
+
+                renderGrid(allSKUs);
+
+            } catch (err) {
+                console.error("Supabase Error:", err);
+                document.getElementById('pos-grid').innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--danger);">โหลดข้อมูลล้มเหลว กรุณารีเฟรช</div>`;
             }
         }
 
-        function renderProducts(items) {
-            const container = document.getElementById('product-list');
-            container.innerHTML = '';
+        // 2. Render Grid
+        function renderGrid(items) {
+            const grid = document.getElementById('pos-grid');
+            grid.innerHTML = '';
             
             if(items.length === 0) {
-                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 40px;"><i class="ph-light ph-package" style="font-size: 4rem; margin-bottom:15px; display:block;"></i>ไม่มีสินค้าพร้อมขายในสาขานี้</div>`;
-                return;
+                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">ไม่พบสินค้าที่ค้นหา</div>`; return;
             }
 
-            items.forEach(p => {
-                const stockAvailable = p[branchStockColumn]; // ดึงตัวเลขสต็อกของสาขานี้
-
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.innerHTML = `
-                    <div style="position: absolute; top: 15px; right: 15px;" class="stock-badge available"><i class="ph-bold ph-check"></i> ${stockAvailable}</div>
-                    <img src="${p.image_url || 'https://via.placeholder.com/150'}" class="prod-img">
-                    <div>
-                        <div class="prod-brand">${p.brand}</div>
-                        <div class="prod-name">${p.name}</div>
-                        <div class="prod-price">฿${p.price.toLocaleString()}</div>
+            items.forEach(item => {
+                const isOutOfStock = item.stock <= 0;
+                grid.innerHTML += `
+                    <div class="product-card ${isOutOfStock ? 'disabled' : ''}" onclick="${isOutOfStock ? '' : `addToCart('${item.id}')`}">
+                        <div class="p-img-box">
+                            <img src="${item.img}">
+                            <div class="p-stock-badge ${isOutOfStock ? 'empty' : ''}">${isOutOfStock ? 'หมด' : `เหลือ ${item.stock}`}</div>
+                        </div>
+                        <div class="p-info">
+                            <div class="p-brand">${item.brand}</div>
+                            <div class="p-name">${item.model}</div>
+                            <div class="p-variant">
+                                <div class="color-dot" style="background-color: ${item.colorHex};"></div> ${item.color} | ${item.cap}
+                            </div>
+                            <div class="p-price">฿${item.price.toLocaleString()}</div>
+                        </div>
                     </div>
                 `;
-                card.onclick = () => addToCart(p, stockAvailable);
-                container.appendChild(card);
             });
         }
 
-        document.getElementById('search-product').addEventListener('input', (e) => {
-            const keyword = e.target.value.toLowerCase();
-            const filtered = products.filter(p => p.name.toLowerCase().includes(keyword) || p.brand.toLowerCase().includes(keyword));
-            renderProducts(filtered);
+        // 3. Filter & Search & Barcode Scanner
+        window.filterBrand = (brand, btnElement) => {
+            currentFilterBrand = brand;
+            document.querySelectorAll('.filter-chip').forEach(el => el.classList.remove('active'));
+            btnElement.classList.add('active');
+            applySearch();
+        };
+
+        document.getElementById('pos-search').addEventListener('input', applySearch);
+
+        function applySearch() {
+            const keyword = document.getElementById('pos-search').value.toLowerCase().trim();
+            
+            // Smart Barcode Detection (ถ้าความยาวพิมพ์เป๊ะๆ เหมือนบาร์โค้ด และมีตัวนั้นตัวเดียว ให้หยิบลงตะกร้าเลย)
+            if(keyword.length > 5 && keyword.includes('nt-')) {
+                const exactMatch = allSKUs.find(s => s.barcode.toLowerCase() === keyword);
+                if(exactMatch && exactMatch.stock > 0) {
+                    addToCart(exactMatch.id);
+                    document.getElementById('pos-search').value = ''; // เคลียร์ช่อง
+                    return; // จบการทำงาน ไม่ต้องเรนเดอร์ใหม่
+                }
+            }
+
+            const filtered = allSKUs.filter(item => {
+                const matchBrand = currentFilterBrand === 'all' || item.brand === currentFilterBrand;
+                const matchKey = item.model.toLowerCase().includes(keyword) || item.barcode.toLowerCase().includes(keyword) || item.brand.toLowerCase().includes(keyword);
+                return matchBrand && matchKey;
+            });
+            renderGrid(filtered);
+        }
+
+        // Barcode Scanner Global Listener (จำลองการยิงปืนบาร์โค้ด)
+        let barcodeBuffer = '';
+        let barcodeTimer;
+        document.addEventListener('keydown', (e) => {
+            // ถ้ายิงปืนบาร์โค้ด มันจะพิมพ์เร็วมากและจบด้วย Enter
+            if(e.target.tagName === 'INPUT') return; // ข้ามถ้ากำลังพิมพ์ในช่องอื่นอยู่
+            
+            if(e.key === 'Enter') {
+                if(barcodeBuffer.length > 3) {
+                    const exactMatch = allSKUs.find(s => s.barcode.toUpperCase() === barcodeBuffer.toUpperCase());
+                    if(exactMatch) {
+                        if(exactMatch.stock > 0) addToCart(exactMatch.id);
+                        else customAlert('error', 'สินค้าหมด', 'สินค้ารหัสนี้สต็อกหมดแล้วครับ');
+                    } else {
+                        customAlert('error', 'ไม่พบรหัสสินค้า', `ไม่พบรหัส ${barcodeBuffer} ในระบบ`);
+                    }
+                }
+                barcodeBuffer = '';
+            } else {
+                barcodeBuffer += e.key;
+                clearTimeout(barcodeTimer);
+                barcodeTimer = setTimeout(() => { barcodeBuffer = ''; }, 100); // เคลียร์ถ้าพิมพ์ช้า (แปลว่าคนพิมพ์ ไม่ใช่ปืน)
+            }
         });
 
-        // ================= 4. จัดการตะกร้า (Cart) =================
-        window.addToCart = (product, stockAvailable) => {
-            const exist = cart.find(item => item.product_id === product.product_id);
-            if (exist) {
-                if(exist.qty < stockAvailable) exist.qty++;
-                else customAlert('error', 'สต็อกไม่พอ', `สาขาของคุณมีสินค้ารุ่นนี้เหลือเพียง ${stockAvailable} เครื่อง`);
+        // 4. Cart Logic
+        window.addToCart = (skuId) => {
+            const item = allSKUs.find(s => s.id === skuId);
+            if(!item) return;
+
+            const existing = cart.find(c => c.id === skuId);
+            if(existing) {
+                if(existing.qty < item.stock) existing.qty++;
+                else customAlert('info', 'สต็อกไม่พอ', 'ไม่สามารถเพิ่มจำนวนได้อีก');
             } else {
-                cart.push({ ...product, qty: 1, max_stock: stockAvailable });
+                cart.push({ ...item, qty: 1 });
             }
-            updateCartUI();
-        }
+            renderCart();
+        };
 
-        window.updateQty = (id, delta) => {
-            const item = cart.find(i => i.product_id === id);
-            if(item) {
-                item.qty += delta;
-                if(item.qty <= 0) {
-                    cart = cart.filter(i => i.product_id !== id);
-                } else if(item.qty > item.max_stock) { 
-                    item.qty = item.max_stock; 
-                    customAlert('error', 'สต็อกไม่พอ', `สาขาของคุณมีสินค้าเหลือเพียง ${item.max_stock} ชิ้น`); 
-                }
-                updateCartUI();
+        window.updateQty = (skuId, change) => {
+            const index = cart.findIndex(c => c.id === skuId);
+            if(index > -1) {
+                const item = cart[index];
+                const stockLimit = allSKUs.find(s => s.id === skuId).stock;
+                
+                item.qty += change;
+                if(item.qty > stockLimit) { item.qty = stockLimit; customAlert('info', 'สต็อกจำกัด', `มีสินค้าเพียง ${stockLimit} ชิ้น`); }
+                if(item.qty <= 0) cart.splice(index, 1);
             }
-        }
+            renderCart();
+        };
 
-        function updateCartUI() {
-            const container = document.getElementById('cart-container');
-            if (cart.length === 0) {
-                container.innerHTML = '<div class="empty-cart"><i class="ph-light ph-shopping-cart"></i>ยังไม่มีสินค้าในตะกร้า</div>';
-                document.getElementById('sum-qty').innerText = "0 รายการ";
-                document.getElementById('sum-total').innerText = "฿0";
-                return;
-            }
+        window.clearCart = () => { cart = []; renderCart(); };
 
-            container.innerHTML = '';
-            let totalQty = 0, totalPrice = 0;
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            let totalQty = 0; let totalPrice = 0;
 
-            cart.forEach(item => {
-                totalQty += item.qty; totalPrice += (item.price * item.qty);
-                container.innerHTML += `
-                    <div class="cart-item">
-                        <div class="ci-info">
-                            <div class="ci-name">${item.name}</div>
-                            <div class="ci-price">฿${item.price.toLocaleString()} / ชิ้น</div>
-                        </div>
-                        <div class="ci-controls">
-                            <div class="ci-total">฿${(item.price * item.qty).toLocaleString()}</div>
-                            <div class="ci-qty">
-                                <button class="qty-btn" onclick="updateQty('${item.product_id}', -1)"><i class="ph-bold ph-minus"></i></button>
-                                <span>${item.qty}</span>
-                                <button class="qty-btn" onclick="updateQty('${item.product_id}', 1)"><i class="ph-bold ph-plus"></i></button>
+            if(cart.length === 0) {
+                container.innerHTML = `<div class="cart-empty"><i class="ph-fill ph-basket"></i><span>ยังไม่มีสินค้าในตะกร้า</span></div>`;
+                document.getElementById('btn-checkout-main').disabled = true;
+            } else {
+                container.innerHTML = '';
+                document.getElementById('btn-checkout-main').disabled = false;
+                
+                cart.forEach(item => {
+                    totalQty += item.qty;
+                    totalPrice += (item.qty * item.price);
+                    
+                    container.innerHTML += `
+                        <div class="cart-item">
+                            <img src="${item.img}" class="ci-img">
+                            <div class="ci-details">
+                                <div class="ci-name">${item.model}</div>
+                                <div class="ci-var">${item.color} | ${item.cap}</div>
+                                <div class="ci-price">฿${item.price.toLocaleString()}</div>
+                            </div>
+                            <div class="ci-qty-ctrl">
+                                <button class="qty-btn" onclick="updateQty('${item.id}', -1)"><i class="ph-bold ph-minus"></i></button>
+                                <input type="text" class="qty-val" value="${item.qty}" readonly>
+                                <button class="qty-btn" onclick="updateQty('${item.id}', 1)"><i class="ph-bold ph-plus"></i></button>
                             </div>
                         </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
 
-            document.getElementById('sum-qty').innerText = `${totalQty} รายการ`;
+            document.getElementById('cart-count').innerText = totalQty;
+            document.getElementById('sum-qty').innerText = `${totalQty} ชิ้น`;
             document.getElementById('sum-total').innerText = `฿${totalPrice.toLocaleString()}`;
         }
 
-        // ================= 5. จัดการลูกค้า =================
-        window.openCustomerModal = () => document.getElementById('customer-modal').classList.add('active');
-        
-        window.switchTab = (tab) => {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('tab-' + tab).classList.add('active');
-        }
+        // 5. Checkout & Payment Modes
+        window.setPaymentMode = (mode) => {
+            paymentMode = mode;
+            document.getElementById('btn-mode-cash').classList.remove('active');
+            document.getElementById('btn-mode-install').classList.remove('active');
+            if(mode === 'cash') document.getElementById('btn-mode-cash').classList.add('active');
+            else document.getElementById('btn-mode-install').classList.add('active');
+        };
 
-        function setCustomer(cust) {
-            currentCustomer = cust;
-            document.getElementById('cust-display-area').innerHTML = `
-                <i class="ph-fill ph-user-check" style="font-size: 2.5rem; color: var(--success); margin-bottom: 8px; display: block;"></i>
-                <div class="customer-name-display">${cust.first_name} ${cust.last_name || ''}</div>
-                <div class="customer-id-display">รหัส: ${cust.customer_id} | โทร: ${cust.phone}</div>
-            `;
-            closeModal('customer-modal');
-        }
-
-        window.searchCustomer = async () => {
-            const phone = document.getElementById('search-cust-phone').value;
-            if(phone.length !== 10) return customAlert('error', 'ระบุข้อมูลไม่ครบ', 'กรุณากรอกเบอร์โทรศัพท์ 10 หลัก');
-
-            const { data } = await supabase.from('customers').select('*').eq('phone', phone);
-            if(data && data.length > 0) {
-                setCustomer(data[0]);
+        let currentTotal = 0;
+        window.openCheckoutModal = () => {
+            currentTotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            
+            if(paymentMode === 'cash') {
+                document.getElementById('checkout-total-cash').innerText = `฿${currentTotal.toLocaleString()}`;
+                document.getElementById('input-received').value = '';
+                document.getElementById('change-display-val').innerText = '฿0';
+                document.getElementById('modal-checkout-cash').classList.add('active');
+                setTimeout(() => document.getElementById('input-received').focus(), 100);
             } else {
-                customAlert('error', 'ไม่พบข้อมูล', 'ไม่พบลูกค้านี้ในระบบ กรุณาใช้เมนูลงทะเบียนใหม่');
+                document.getElementById('input-cus-phone').value = '';
+                document.getElementById('input-cus-name').value = '';
+                document.getElementById('input-downpayment').value = '';
+                document.getElementById('modal-checkout-install').classList.add('active');
             }
-        }
+        };
 
-        window.registerNewCustomer = async () => {
-            const fname = document.getElementById('new-cust-fname').value;
-            const lname = document.getElementById('new-cust-lname').value;
-            const phone = document.getElementById('new-cust-phone').value;
-
-            if(!fname || phone.length !== 10) return customAlert('error', 'ข้อมูลไม่ครบ', 'กรุณากรอกชื่อและเบอร์โทรศัพท์ให้ครบถ้วน');
-
-            const newCustId = 'NT' + Math.floor(100000 + Math.random() * 900000);
+        window.calculateChange = () => {
+            const rec = parseFloat(document.getElementById('input-received').value) || 0;
+            const change = rec - currentTotal;
+            const display = document.getElementById('change-display-val');
             
-            const { data, error } = await supabase.from('customers').insert([{ 
-                customer_id: newCustId, phone: phone, password: phone,
-                first_name: fname, last_name: lname, role: 'buyer',
-                registered_by: empId 
-            }]).select();
+            if(change >= 0) { display.innerText = `฿${change.toLocaleString()}`; display.style.color = 'var(--success)'; } 
+            else { display.innerText = `ขาด ฿${Math.abs(change).toLocaleString()}`; display.style.color = 'var(--danger)'; }
+        };
 
-            if(error) {
-                customAlert('error', 'ลงทะเบียนล้มเหลว', 'เบอร์โทรศัพท์นี้ถูกใช้งานแล้วในระบบ');
-            } else if(data) {
-                setCustomer(data[0]);
-                customAlert('success', 'ลงทะเบียนสำเร็จ', `ระบบได้บันทึกรหัสพนักงานของคุณเป็นผู้แนะนำเรียบร้อยแล้ว`);
+        // 6. PROCESS PAYMENT & PRINT ENGINE
+        window.processPayment = async (mode, printSize) => {
+            // ขั้นที่ 1: ตรวจสอบความถูกต้อง
+            let received = 0, change = 0, cusName = 'ลูกค้าทั่วไป (Walk-in)', cusPhone = '-';
+            
+            if(mode === 'cash') {
+                received = parseFloat(document.getElementById('input-received').value) || 0;
+                if(received < currentTotal) return customAlert('error', 'เงินไม่พอ', 'จำนวนเงินที่รับมาน้อยกว่ายอดชำระครับ');
+                change = received - currentTotal;
+            } else {
+                const dp = parseFloat(document.getElementById('input-downpayment').value) || 0;
+                cusPhone = document.getElementById('input-cus-phone').value.trim();
+                cusName = document.getElementById('input-cus-name').value.trim() || 'ไม่ระบุชื่อ';
+                if(!cusPhone || dp <= 0) return customAlert('error', 'ข้อมูลไม่ครบ', 'กรุณากรอกเบอร์โทรและยอดเงินดาวน์/เปิดบิลออมครับ');
+                received = dp;
             }
-        }
 
-        // ================= 6. กระบวนการชำระเงิน (Real Transaction + Multi Branch Stock) =================
-        window.processCheckout = async (type) => {
-            if(!currentCustomer) return customAlert('error', 'การทำรายการไม่สมบูรณ์', 'กรุณาเลือกลูกค้าก่อนชำระเงิน');
-            if(cart.length === 0) return customAlert('error', 'ตะกร้าสินค้าว่างเปล่า', 'กรุณาเลือกสินค้าลงตะกร้า');
-
-            const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            const typeText = type === 'cash' ? 'ชำระเงินสด (พร้อมรับของ)' : 'ขอทำสัญญาผ่อนชำระ';
+            // ขั้นที่ 2: จำลองการบันทึกฐานข้อมูล (หักสต็อก)
+            closeModal(`modal-checkout-${mode}`);
             
-            customConfirm('ยืนยันรายการ', `รายการ: ${typeText}\nยอดรวม: ฿${totalAmount.toLocaleString()}\n\nดำเนินการสั่งซื้อและตัดสต็อกสาขานี้หรือไม่?`, async () => {
+            // ขั้นที่ 3: พิมพ์ใบเสร็จ (ถ้าเลือกขนาดมา)
+            if(printSize === 58 || printSize === 80) {
+                generateReceiptHTML(mode, printSize, received, change, cusName, cusPhone);
                 
-                document.getElementById('checkout-loader').classList.add('active');
+                // ใช้ Timeout ให้ Browser render HTML เสร็จก่อนสั่ง Print
+                setTimeout(() => {
+                    window.print();
+                    // พิมพ์เสร็จแล้ว เคลียร์ตะกร้า
+                    clearCart();
+                    customAlert('success', 'ทำรายการสำเร็จ', 'ตัดสต็อกและพิมพ์ใบเสร็จเรียบร้อยแล้ว');
+                }, 500);
+            } else {
+                // ไม่พิมพ์บิล
+                clearCart();
+                customAlert('success', 'ทำรายการสำเร็จ', 'ตัดสต็อกเรียบร้อย (ไม่พิมพ์บิล)');
+            }
+        };
 
-                try {
-                    const orderNo = 'INV' + Date.now().toString().slice(-6) + Math.floor(Math.random() * 100);
-                    
-                    // สร้างบิล และผูกชื่อสาขา/พนักงานที่ขายทันที
-                    const { data: orderData, error: orderError } = await supabase.from('orders').insert([{
-                        order_no: orderNo,
-                        customer_id: currentCustomer.customer_id,
-                        sold_by: empId,
-                        sale_type: type,
-                        total_amount: totalAmount,
-                        status: type === 'cash' ? 'completed' : 'pending', // ถ้าผ่อนต้องรอ CEO อนุมัติ
-                        handled_by_branch: empBranch,
-                        handled_by_emp: empId
-                    }]).select();
+        // 7. HTML GENERATOR FOR THERMAL PRINTER
+        function generateReceiptHTML(mode, size, received, change, cusName, cusPhone) {
+            const container = document.getElementById('receipt-container');
+            container.className = `receipt-base receipt-${size}`;
+            
+            const dateStr = new Date().toLocaleString('th-TH');
+            const receiptNo = 'INV' + Date.now().toString().substring(5);
+            const cashier = localStorage.getItem('emp_name') || 'Admin';
 
-                    if (orderError) throw orderError;
-                    const orderId = orderData[0].order_id;
-
-                    // บันทึกรายการสินค้า และ ตัดสต็อกเฉพาะสาขาตัวเอง
-                    for (const item of cart) {
-                        await supabase.from('order_items').insert([{
-                            order_id: orderId, product_id: item.product_id, price: item.price, quantity: item.qty
-                        }]);
-
-                        const newStock = item.max_stock - item.qty;
-                        
-                        // อัปเดตลดสต็อกคอลัมน์ของสาขานี้ (stock_b1 หรือ stock_b2)
-                        await supabase.from('products')
-                            .update({ [branchStockColumn]: newStock })
-                            .eq('product_id', item.product_id);
-                    }
-
-                    document.getElementById('checkout-loader').classList.remove('active');
-                    
-                    customAlert('success', 'บันทึกรายการสำเร็จ!', `เลขที่ใบเสร็จ: ${orderNo}\nยอดรวม: ฿${totalAmount.toLocaleString()}\n(สต็อกสาขาของคุณถูกหักเรียบร้อยแล้ว)`);
-                    
-                    cart = []; currentCustomer = null; updateCartUI();
-                    
-                    document.getElementById('cust-display-area').innerHTML = `
-                        <i class="ph-bold ph-user-plus" style="font-size: 2rem; color: var(--text-secondary); margin-bottom: 8px; display: block;"></i>
-                        <div style="font-weight: 700; color: var(--accent-blue); font-size: 1.05rem;">คลิกเพื่อค้นหา หรือเพิ่มลูกค้าใหม่</div>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 6px;">จำเป็นต้องเลือกก่อนทำรายการ</div>
-                    `;
-                    fetchProducts(); // โหลดสต็อกใหม่ทันที
-
-                } catch (err) {
-                    console.error(err);
-                    document.getElementById('checkout-loader').classList.remove('active');
-                    customAlert('error', 'เกิดข้อผิดพลาด', 'ระบบไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่');
-                }
+            let itemsHtml = '';
+            cart.forEach(item => {
+                itemsHtml += `
+                    <tr>
+                        <td>${item.model} (${item.cap})<br><small>${item.barcode}</small></td>
+                        <td align="center">${item.qty}</td>
+                        <td class="r-price">${(item.price * item.qty).toLocaleString()}</td>
+                    </tr>
+                `;
             });
+
+            let paymentHtml = '';
+            if(mode === 'cash') {
+                paymentHtml = `
+                    <tr><td>ยอดสุทธิ (Total)</td><td class="r-price receipt-total">${currentTotal.toLocaleString()}</td></tr>
+                    <tr><td>รับเงินสด (Cash)</td><td class="r-price">${received.toLocaleString()}</td></tr>
+                    <tr><td>เงินทอน (Change)</td><td class="r-price">${change.toLocaleString()}</td></tr>
+                `;
+            } else {
+                paymentHtml = `
+                    <tr><td>ยอดรวมสินค้า</td><td class="r-price">${currentTotal.toLocaleString()}</td></tr>
+                    <tr><td>เงินดาวน์/เงินออม</td><td class="r-price receipt-total">${received.toLocaleString()}</td></tr>
+                    <tr><td>คงเหลือผ่อนชำระ</td><td class="r-price">${(currentTotal - received).toLocaleString()}</td></tr>
+                    <tr><td colspan="2"><small>ชื่อลูกค้า: ${cusName}</small></td></tr>
+                    <tr><td colspan="2"><small>เบอร์โทร: ${cusPhone}</small></td></tr>
+                `;
+            }
+
+            container.innerHTML = `
+                <div class="receipt-header">
+                    <h2>NT PHONE</h2>
+                    <p>โทร. 08X-XXX-XXXX</p>
+                    <p>ใบเสร็จรับเงิน ${mode==='install'?'(เปิดบิลผ่อน)':'(อย่างย่อ)'}</p>
+                </div>
+                <div class="receipt-divider"></div>
+                <div style="font-size:0.8em; margin-bottom:5px;">
+                    <div>เลขที่: ${receiptNo}</div>
+                    <div>วันที่: ${dateStr}</div>
+                    <div>พนักงาน: ${cashier}</div>
+                </div>
+                <div class="receipt-divider"></div>
+                
+                <table class="receipt-table">
+                    <thead><tr><th>รายการ</th><th style="text-align:center; width:15%;">จน.</th><th class="r-price" style="width:25%;">ราคา</th></tr></thead>
+                    <tbody>${itemsHtml}</tbody>
+                </table>
+                
+                <div class="receipt-divider"></div>
+                
+                <table class="receipt-summary">
+                    <tbody>${paymentHtml}</tbody>
+                </table>
+                
+                <div class="receipt-divider"></div>
+                <div class="receipt-footer">
+                    ขอบคุณที่ใช้บริการ NT PHONE<br>
+                    <svg id="barcode-receipt" style="width:100%; height:40px; margin-top:5px;"></svg>
+                </div>
+            `;
+
+            // วาดบาร์โค้ดลงใบเสร็จด้วย
+            try { JsBarcode("#barcode-receipt", receiptNo, { width: 1.5, height: 30, displayValue: false, margin: 0 }); } catch(e){}
         }
 
-        fetchProducts();
-
+        initPOSData();
+        // Rename fix
+        function initPOSData() { loadPOSData(); }
     </script>
 </body>
 </html>

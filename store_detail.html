@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NT PHONE | Store</title>
+    
+    <style>@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap');</style>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* ================= Apple-Style Premium Variables ================= */
+        :root {
+            --bg-body: #F5F5F7; --bg-surface: #FFFFFF;
+            --text-main: #1D1D1F; --text-muted: #86868B;
+            --accent-blue: #0071E3; --accent-blue-hover: #005BB5;
+            --border-color: #E5E5EA; --radius-lg: 24px;
+            --danger: #FF3B30; --success: #34C759;
+            --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Anuphan', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding-bottom: 100px; }
+
+        /* ================= Store Header (Frosted Glass) ================= */
+        .store-header { 
+            position: fixed; top: 0; width: 100%; background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            z-index: 1000; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .header-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-body); color: var(--text-main); font-size: 1.2rem; cursor: pointer; border: none; transition: 0.2s; }
+        .header-btn:hover { background: var(--border-color); }
+        .logo { font-weight: 700; font-size: 1.3rem; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; }
+        .logo i { color: var(--accent-blue); font-size: 1.6rem; }
+
+        /* ================= Main Layout ================= */
+        .container { max-width: 1200px; margin: 80px auto 0; padding: 0 20px; display: grid; gap: 40px; }
+        
+        @media (min-width: 900px) {
+            .container { grid-template-columns: 1fr 1fr; align-items: start; }
+            .gallery-section { position: sticky; top: 100px; }
+            body { padding-bottom: 40px; }
+        }
+
+        /* ================= Image Gallery ================= */
+        .gallery-section { background: #fff; border-radius: 32px; padding: 40px 20px; display: flex; justify-content: center; align-items: center; box-shadow: var(--shadow-sm); position: relative; }
+        #main-img { width: 100%; max-width: 350px; height: 400px; object-fit: contain; transition: opacity 0.3s ease; }
+        .badge-cond { position: absolute; top: 25px; left: 25px; background: rgba(0,0,0,0.05); color: var(--text-muted); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+
+        /* ================= Product Details ================= */
+        .detail-section { padding-top: 10px; }
+        .brand-name { color: var(--accent-blue); font-weight: 700; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .product-title { font-size: 2.2rem; font-weight: 700; line-height: 1.2; letter-spacing: -0.5px; margin-bottom: 25px; }
+
+        /* --- Variant Selections --- */
+        .section-label { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; display: block; color: var(--text-main); }
+        
+        /* Capacities */
+        .cap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 35px; }
+        .chip-cap { background: #fff; border: 2px solid var(--border-color); border-radius: 16px; padding: 18px 15px; cursor: pointer; transition: 0.2s; text-align: center; }
+        .chip-cap.active { border-color: var(--accent-blue); background: rgba(0, 113, 227, 0.03); box-shadow: 0 4px 15px rgba(0,113,227,0.1); }
+        .chip-cap span { font-weight: 700; font-size: 1.1rem; }
+
+        /* Colors */
+        .color-flex { display: flex; gap: 15px; margin-bottom: 35px; overflow-x: auto; padding: 5px; -ms-overflow-style: none; scrollbar-width: none; }
+        .color-flex::-webkit-scrollbar { display: none; }
+        .color-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+        .color-circle { width: 45px; height: 45px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 1px var(--border-color); transition: 0.2s; flex-shrink: 0; }
+        .color-wrap.active .color-circle { box-shadow: 0 0 0 2px var(--accent-blue); transform: scale(1.1); }
+        .color-name { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-align: center; }
+        .color-wrap.active .color-name { color: var(--accent-blue); }
+
+        /* ================= Financial Box (Smart Display) ================= */
+        .finance-card { background: #fff; border-radius: 24px; padding: 25px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 30px; }
+        
+        /* Cash Price */
+        .cash-price-box { border-bottom: 1px solid var(--border-color); padding-bottom: 20px; margin-bottom: 20px; }
+        .cash-label { font-size: 0.95rem; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; }
+        .cash-value { font-size: 2.2rem; font-weight: 700; color: var(--text-main); display: flex; align-items: baseline; gap: 10px; }
+        .cash-strike { font-size: 1.2rem; color: var(--text-muted); text-decoration: line-through; font-weight: 500; }
+        .sale-badge { background: rgba(255,59,48,0.1); color: var(--danger); font-size: 0.85rem; padding: 4px 8px; border-radius: 8px; vertical-align: middle; }
+
+        /* Installment Info */
+        .install-box { display: flex; justify-content: space-between; align-items: center; background: var(--bg-body); padding: 15px 20px; border-radius: 16px; margin-bottom: 15px; }
+        .install-text h4 { font-size: 1rem; font-weight: 700; color: var(--text-main); margin-bottom: 3px; }
+        .install-text p { font-size: 0.85rem; color: var(--text-muted); }
+        .install-value { font-size: 1.3rem; font-weight: 700; color: var(--accent-blue); text-align: right; }
+        .install-value span { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+
+        .btn-store-visit { width: 100%; background: transparent; color: var(--accent-blue); border: 1px solid var(--accent-blue); padding: 14px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-store-visit:hover { background: var(--accent-light); }
+
+        /* ================= Specs & Features ================= */
+        .specs-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
+        .spec-item { display: flex; align-items: center; gap: 15px; font-size: 0.95rem; font-weight: 500; color: var(--text-main); }
+        .spec-item i { font-size: 1.5rem; color: var(--text-muted); width: 30px; text-align: center; }
+
+        /* ================= Sticky Bottom Action Bar (Mobile Only) ================= */
+        .action-bar { 
+            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255,255,255,0.85); 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 15px 20px 25px; border-top: 1px solid rgba(0,0,0,0.05); z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center; gap: 15px;
+        }
+        .action-price { flex: 1; }
+        .action-price .label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+        .action-price .val { font-size: 1.3rem; font-weight: 700; color: var(--text-main); }
+        
+        .btn-buy { 
+            background: var(--text-main); color: #fff; border: none; padding: 16px 28px; 
+            border-radius: 16px; font-size: 1.05rem; font-weight: 700; cursor: pointer; 
+            transition: 0.2s; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-buy:active { transform: scale(0.95); }
+        .btn-buy:disabled { background: var(--text-muted); cursor: not-allowed; }
+
+        @media (min-width: 900px) {
+            .action-bar { display: none; } /* ซ่อนแถบล่างใน Desktop เพราะใช้ปุ่มบนการ์ดแทนได้ */
+            .desktop-buy-btn { display: flex !important; margin-top: 20px; }
+        }
+        .desktop-buy-btn { display: none; width: 100%; background: var(--text-main); color: #fff; border: none; padding: 18px; border-radius: 16px; font-size: 1.1rem; font-weight: 700; cursor: pointer; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
+
+        /* Loader */
+        .loader-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-body); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; transition:0.3s; }
+        .loader-overlay.hide { opacity: 0; visibility: hidden; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Alert Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; visibility: hidden; transition: 0.3s ease; padding: 20px; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-alert { background: var(--bg-surface); width: 100%; max-width: 400px; border-radius: var(--radius-lg); padding: 40px 30px; text-align: center; transform: scale(0.9); transition: 0.3s; box-shadow: var(--shadow-md); }
+        .modal-overlay.active .modal-alert { transform: scale(1); }
+        .modal-alert i { font-size: 3.5rem; color: var(--accent-blue); margin-bottom: 15px; }
+        .modal-alert h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; }
+        .modal-alert p { font-size: 1rem; color: var(--text-muted); margin-bottom: 25px; line-height: 1.5; }
+        .modal-alert button { width: 100%; background: var(--text-main); color: #fff; border: none; padding: 16px; border-radius: 12px; font-weight: 600; font-size: 1.05rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="loader-overlay" id="loader">
+        <i class="ph-bold ph-spinner-gap" style="font-size: 3rem; color: var(--accent-blue); animation: spin 1s linear infinite;"></i>
+        <div style="font-weight: 600; color: var(--text-muted);">กำลังโหลดข้อมูลสินค้า...</div>
+    </div>
+
+    <header class="store-header">
+        <button class="header-btn" onclick="window.history.back()"><i class="ph-bold ph-arrow-left"></i></button>
+        <div class="logo"><i class="ph-fill ph-device-mobile-camera"></i> NT PHONE</div>
+        <button class="header-btn"><i class="ph-bold ph-shopping-bag"></i></button>
+    </header>
+
+    <div class="container" id="main-layout" style="display: none;">
+        <div class="gallery-section">
+            <div class="badge-cond" id="cond-badge">มือหนึ่ง</div>
+            <img id="main-img" src="" alt="Product Image">
+        </div>
+
+        <div class="detail-section">
+            <div class="brand-name" id="p-brand">BRAND</div>
+            <h1 class="product-title" id="p-model">Product Name</h1>
+
+            <span class="section-label">1. เลือกความจุ (Capacity)</span>
+            <div class="cap-grid" id="cap-container"></div>
+
+            <span class="section-label">2. เลือกสี (Color)</span>
+            <div class="color-flex" id="color-container"></div>
+
+            <div class="finance-card">
+                <div class="cash-price-box">
+                    <div class="cash-label">ซื้อราคาเงินสด (ลดพิเศษ)</div>
+                    <div class="cash-value" id="cash-display">
+                        </div>
+                </div>
+
+                <div class="install-box">
+                    <div class="install-text">
+                        <h4>ผ่อนชำระกับร้าน (0%*)</h4>
+                        <p>นานสูงสุด 12 เดือน</p>
+                    </div>
+                    <div class="install-value" id="install-display">
+                        ฿0 <span>/ ด.</span>
+                    </div>
+                </div>
+                <button class="btn-store-visit" onclick="showStoreAlert()">
+                    <i class="ph-bold ph-storefront"></i> ดูสาขาเพื่อติดต่อขอผ่อนชำระ
+                </button>
+
+                <button class="desktop-buy-btn" id="btn-buy-desk" onclick="buyCash()">
+                    <i class="ph-bold ph-shopping-cart-simple"></i> สั่งซื้อเงินสดทันที
+                </button>
+            </div>
+
+            <div class="specs-list">
+                <div class="spec-item">
+                    <i class="ph-fill ph-shield-check"></i>
+                    <span id="info-warranty">รับประกันศูนย์ 1 ปี</span>
+                </div>
+                <div class="spec-item">
+                    <i class="ph-fill ph-check-circle" style="color: var(--success);"></i>
+                    <span id="info-stock">สินค้าพร้อมจำหน่าย (ส่งฟรีทั่วประเทศ)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-bar" id="mobile-action-bar">
+        <div class="action-price">
+            <div class="label">ยอดชำระสุทธิ (เงินสด)</div>
+            <div class="val" id="bottom-price">฿0</div>
+        </div>
+        <button class="btn-buy" id="btn-buy-mobile" onclick="buyCash()">
+            <i class="ph-bold ph-shopping-cart-simple"></i> สั่งซื้อทันที
+        </button>
+    </div>
+
+    <div class="modal-overlay" id="sys-modal">
+        <div class="modal-alert">
+            <i id="sys-icon" class="ph-fill ph-storefront"></i>
+            <h3 id="sys-title">Title</h3>
+            <p id="sys-msg">Message</p>
+            <button onclick="document.getElementById('sys-modal').classList.remove('active')">รับทราบ</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+        const supabaseUrl = 'https://xjjcnlzynzsvopmcooky.supabase.co'
+        const supabaseKey = 'sb_publishable_w7A_BOSi0r1r4t93exl1gg_j1jPRU_E'
+        const supabase = createClient(supabaseUrl, supabaseKey)
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        let productData = null;
+        let availableCaps = [];
+        let availableColors = [];
+        let selectedCap = '';
+        let selectedColor = '';
+        let currentSKU = null;
+
+        async function initStore() {
+            try {
+                let fetchQuery;
+                if(!productId) {
+                    // Preview mode: Fetch latest
+                    fetchQuery = supabase.from('products').select(`*, product_skus(*)`).order('created_at', { ascending: false }).limit(1).single();
+                } else {
+                    fetchQuery = supabase.from('products').select(`*, product_skus(*)`).eq('product_id', productId).single();
+                }
+
+                const { data, error } = await fetchQuery;
+                if(error || !data) { alert('ไม่พบข้อมูลสินค้า'); window.location.href = 'index.html'; return; }
+                
+                productData = data;
+                document.getElementById('main-layout').style.display = 'grid'; // Grid for Desktop
+                
+                // Extract Variants
+                const capsSet = new Set(); const colorsMap = new Map();
+                if(productData.product_skus) {
+                    productData.product_skus.forEach(sku => {
+                        capsSet.add(sku.capacity);
+                        if(!colorsMap.has(sku.color_name)) colorsMap.set(sku.color_name, { name: sku.color_name, hex: sku.color_hex, img: sku.image_url });
+                    });
+                }
+
+                availableCaps = Array.from(capsSet);
+                availableColors = Array.from(colorsMap.values());
+
+                if(availableCaps.length > 0) selectedCap = availableCaps[0];
+                if(availableColors.length > 0) selectedColor = availableColors[0].name;
+
+                renderBaseInfo(); renderVariants(); updateSelection();
+                setTimeout(() => { document.getElementById('loader').classList.add('hide'); }, 500);
+
+            } catch (err) { console.error(err); alert('เกิดข้อผิดพลาดในการโหลดข้อมูล'); }
+        }
+
+        function renderBaseInfo() {
+            document.getElementById('p-brand').innerText = productData.brand;
+            document.getElementById('p-model').innerText = productData.model || productData.name;
+            document.getElementById('cond-badge').innerText = productData.condition === 'used' ? 'สินค้ามือสอง' : 'สินค้าใหม่ (มือหนึ่ง)';
+            if(productData.warranty_info) document.getElementById('info-warranty').innerText = productData.warranty_info;
+        }
+
+        function renderVariants() {
+            // Capacities
+            const capContainer = document.getElementById('cap-container'); capContainer.innerHTML = '';
+            availableCaps.forEach(cap => {
+                capContainer.innerHTML += `<div class="chip-cap ${cap === selectedCap ? 'active' : ''}" onclick="selectCap('${cap}')" id="c-cap-${cap}"><span>${cap}</span></div>`;
+            });
+
+            // Colors
+            const colContainer = document.getElementById('color-container'); colContainer.innerHTML = '';
+            availableColors.forEach(col => {
+                colContainer.innerHTML += `
+                    <div class="color-wrap ${col.name === selectedColor ? 'active' : ''}" onclick="selectColor('${col.name}')" id="c-col-${col.name.replace(/\s+/g, '-')}">
+                        <div class="color-circle" style="background-color: ${col.hex};"></div>
+                        <div class="color-name">${col.name}</div>
+                    </div>`;
+            });
+        }
+
+        window.selectCap = (cap) => {
+            selectedCap = cap;
+            document.querySelectorAll('.chip-cap').forEach(el => el.classList.remove('active'));
+            document.getElementById(`c-cap-${cap}`).classList.add('active');
+            updateSelection();
+        };
+
+        window.selectColor = (colorName) => {
+            selectedColor = colorName;
+            document.querySelectorAll('.color-wrap').forEach(el => el.classList.remove('active'));
+            document.getElementById(`c-col-${colorName.replace(/\s+/g, '-')}`).classList.add('active');
+            updateSelection();
+        };
+
+        function updateSelection() {
+            currentSKU = productData.product_skus.find(s => s.capacity === selectedCap && s.color_name === selectedColor);
+            
+            const btnDesk = document.getElementById('btn-buy-desk');
+            const btnMobile = document.getElementById('btn-buy-mobile');
+            const infoStock = document.getElementById('info-stock');
+
+            if(!currentSKU) {
+                document.getElementById('cash-display').innerHTML = `<span style="color:var(--text-muted); font-size:1.5rem;">ไม่มีจำหน่าย</span>`;
+                document.getElementById('install-display').innerHTML = `฿0 <span>/ ด.</span>`;
+                document.getElementById('bottom-price').innerText = '฿0';
+                
+                btnDesk.disabled = true; btnMobile.disabled = true;
+                btnDesk.innerHTML = 'ไม่มีสินค้า'; btnMobile.innerHTML = 'ไม่มีสินค้า';
+                infoStock.innerText = 'รุ่นและสีที่เลือกไม่มีผลิต'; infoStock.style.color = 'var(--danger)';
+                return;
+            }
+
+            // Update Image
+            const imgEl = document.getElementById('main-img');
+            imgEl.style.opacity = 0;
+            setTimeout(() => {
+                imgEl.src = currentSKU.image_url || productData.image_url || 'https://via.placeholder.com/400?text=No+Image';
+                imgEl.style.opacity = 1;
+            }, 200);
+
+            // Update Cash Price
+            const cPrice = currentSKU.price_cash || 0;
+            const sPrice = currentSKU.sale_price || 0;
+            const finalPrice = (sPrice > 0 && sPrice < cPrice) ? sPrice : cPrice;
+
+            if(sPrice > 0 && sPrice < cPrice) {
+                document.getElementById('cash-display').innerHTML = `฿${sPrice.toLocaleString()} <span class="cash-strike">฿${cPrice.toLocaleString()}</span> <span class="sale-badge">ลดพิเศษ</span>`;
+            } else {
+                document.getElementById('cash-display').innerHTML = `฿${cPrice.toLocaleString()}`;
+            }
+            document.getElementById('bottom-price').innerText = `฿${finalPrice.toLocaleString()}`;
+
+            // Update Installment (12 Months Estimate)
+            const installBase = currentSKU.price_installment_base || finalPrice;
+            const interest = currentSKU.interest_rate || 1.5;
+            const monthly = Math.round((installBase + (installBase * (interest/100) * 12)) / 12);
+            document.getElementById('install-display').innerHTML = `฿${monthly.toLocaleString()} <span>/ ด.</span>`;
+
+            // Check Stock
+            let totalStock = 0;
+            if(currentSKU.branch_stocks) { Object.values(currentSKU.branch_stocks).forEach(q => totalStock += parseInt(q)||0); }
+
+            if(totalStock > 0) {
+                infoStock.innerText = 'สินค้าพร้อมจำหน่าย (ส่งฟรีทั่วประเทศ)'; infoStock.style.color = 'var(--text-main)';
+                btnDesk.disabled = false; btnMobile.disabled = false;
+                btnDesk.innerHTML = `<i class="ph-bold ph-shopping-cart-simple"></i> สั่งซื้อเงินสดทันที`;
+                btnMobile.innerHTML = `<i class="ph-bold ph-shopping-cart-simple"></i> สั่งซื้อทันที`;
+            } else {
+                infoStock.innerText = 'สินค้าหมดชั่วคราว'; infoStock.style.color = 'var(--danger)';
+                btnDesk.disabled = true; btnMobile.disabled = true;
+                btnDesk.innerHTML = `สินค้าหมด`; btnMobile.innerHTML = `สินค้าหมด`;
+            }
+        }
+
+        window.showStoreAlert = () => {
+            const modal = document.getElementById('sys-modal');
+            document.getElementById('sys-icon').className = 'ph-fill ph-storefront';
+            document.getElementById('sys-title').innerText = 'ติดต่อทำรายการผ่อนชำระ';
+            document.getElementById('sys-msg').innerText = 'ระบบผ่อนชำระและออมสินค้า จำเป็นต้องตรวจสอบเอกสาร กรุณาติดต่อที่สาขา NT PHONE ใกล้บ้านท่าน หรือทักแชทเพจเพื่อประเมินวงเงินเบื้องต้นครับ';
+            modal.classList.add('active');
+        };
+
+        window.buyCash = () => {
+            if(!currentSKU) return;
+            const finalPrice = document.getElementById('bottom-price').innerText;
+            // TODO: Link to Checkout Flow
+            alert(`เตรียมเข้าสู่หน้าชำระเงิน (ซื้อสด)\n\nรุ่น: ${productData.model}\nความจุ: ${selectedCap}\nสี: ${selectedColor}\nยอดชำระ: ${finalPrice}\n\n(เตรียมเข้าสู่ระบบแนบสลิปในขั้นตอนถัดไป)`);
+        };
+
+        initStore();
+    </script>
+</body>
+</html>

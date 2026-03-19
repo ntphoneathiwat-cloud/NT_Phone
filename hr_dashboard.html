@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NT PHONE | HR & Branch Management</title>
+    
+    <style>@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap');</style>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* ================= Premium Variables (Apple Minimalist) ================= */
+        :root {
+            --bg-body: #F5F5F7; --bg-surface: #FFFFFF;
+            --text-main: #1D1D1F; --text-muted: #86868B; --border-color: #E5E5EA;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --accent-blue: #0071E3; --accent-light: #E8F2FC;
+            --accent-indigo: #5856D6;
+            --danger: #FF3B30; --success: #34C759;
+            --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --radius-md: 12px; --radius-lg: 20px; --radius-xl: 24px;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #000000; --bg-surface: #1C1C1E;
+            --text-main: #F5F5F7; --text-muted: #A1A1A6; --border-color: #38383A;
+            --glass-bg: rgba(28, 28, 30, 0.75);
+            --accent-blue: #2997FF; --accent-light: rgba(41, 151, 255, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Anuphan', sans-serif; transition: background-color 0.3s, border-color 0.3s, color 0.3s; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding-top: 110px; padding-bottom: 60px; overflow-x: hidden; }
+
+        /* ================= Floating Navbar ================= */
+        .nav-wrapper { position: fixed; top: 20px; left: 0; width: 100%; z-index: 1000; display: flex; justify-content: center; padding: 0 20px; }
+        .navbar { width: 100%; max-width: 1400px; height: 70px; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 35px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 15px 0 25px; }
+        .nav-left, .nav-right { display: flex; align-items: center; gap: 12px; }
+        .nav-brand { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 700; color: var(--text-main); text-decoration: none; }
+        .nav-brand i { color: var(--accent-blue); font-size: 1.6rem; }
+        .nav-divider { width: 1px; height: 20px; background: var(--border-color); margin: 0 5px; }
+        .breadcrumb { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+        
+        .user-pill { display: flex; align-items: center; gap: 10px; background: var(--bg-body); padding: 6px 16px 6px 6px; border-radius: 30px; font-weight: 600; font-size: 0.95rem; border: 1px solid var(--border-color); }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--text-main); color: var(--bg-surface); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .btn-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); cursor: pointer; font-size: 1.2rem; }
+        .btn-icon:hover { border-color: var(--accent-blue); color: var(--accent-blue); background: var(--bg-body); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* ================= Header Box ================= */
+        .page-header-box { background: var(--bg-surface); border-radius: var(--radius-xl); padding: 35px 40px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .header-content { flex: 1; }
+        .back-link { font-size: 0.95rem; font-weight: 600; margin-bottom: 15px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); transition: 0.2s; }
+        .back-link:hover { color: var(--accent-blue); transform: translateX(-5px); }
+        .header-title { font-size: 2.2rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 5px; }
+        .header-desc { font-size: 1rem; color: var(--text-muted); }
+
+        /* ================= Content Cards ================= */
+        .content-card { background: var(--bg-surface); padding: 40px; border-radius: var(--radius-xl); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 30px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; flex-wrap: wrap; gap: 15px; }
+        .card-title { font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+        .card-title i { font-size: 1.5rem; color: var(--accent-blue); }
+
+        /* Buttons */
+        .btn-primary { background: var(--accent-blue); color: #FFFFFF; border: none; padding: 12px 24px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 113, 227, 0.25); }
+        .btn-outline { background: var(--bg-surface); color: var(--danger); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
+        .btn-outline:hover { background: rgba(255, 59, 48, 0.1); border-color: var(--danger); }
+
+        /* ================= Branch Grid ================= */
+        .branch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .branch-card { background: var(--bg-body); border-radius: var(--radius-lg); padding: 25px; border: 1px solid var(--border-color); transition: 0.2s; }
+        .branch-card:hover { border-color: var(--accent-blue); transform: translateY(-3px); box-shadow: var(--shadow-sm); }
+        .b-icon { width: 50px; height: 50px; border-radius: 16px; background: var(--bg-surface); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--accent-blue); margin-bottom: 15px; border: 1px solid var(--border-color); }
+        .b-name { font-size: 1.2rem; font-weight: 700; margin-bottom: 5px; }
+        .b-address { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .b-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 15px; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); }
+        
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .status-active .status-dot { background: var(--success); box-shadow: 0 0 10px var(--success); }
+        .status-inactive .status-dot { background: var(--danger); }
+
+        /* ================= Employee Table ================= */
+        .table-responsive { width: 100%; overflow-x: auto; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-surface); }
+        .data-table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        .data-table th { background: var(--bg-body); padding: 15px 20px; font-size: 0.85rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; border-bottom: 1px solid var(--border-color); text-align: left; }
+        .data-table td { padding: 15px 20px; border-bottom: 1px solid var(--border-color); vertical-align: middle; background: var(--bg-surface); }
+        .data-table tr:hover td { background: var(--bg-body); }
+        
+        .emp-profile { display: flex; align-items: center; gap: 12px; }
+        .emp-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-body); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--accent-blue); }
+        .emp-name { font-weight: 700; font-size: 1rem; }
+        .emp-user { font-size: 0.8rem; color: var(--text-muted); }
+
+        .role-badge { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; }
+        .role-admin { background: rgba(0, 113, 227, 0.1); color: var(--accent-blue); }
+        .role-manager { background: rgba(88, 86, 214, 0.1); color: var(--accent-indigo); }
+        .role-sales { background: rgba(52, 199, 89, 0.1); color: var(--success); }
+
+        /* ================= Custom Forms & Dropdowns ================= */
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
+        .form-input { width: 100%; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-size: 0.95rem; outline: none; transition: 0.2s; }
+        .form-input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px var(--accent-light); background: var(--bg-surface); }
+
+        /* Custom Dropdown (Locked UI) */
+        .c-dropdown { position: relative; width: 100%; }
+        .c-dropdown-trigger { width: 100%; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-body); color: var(--text-main); font-size: 0.95rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500; transition: 0.2s; }
+        .c-dropdown-list { position: absolute; top: calc(100% + 8px); left: 0; width: 100%; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-md); z-index: 100; max-height: 250px; overflow-y: auto; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: 0.2s; padding: 8px; }
+        .c-dropdown.active .c-dropdown-list { opacity: 1; visibility: visible; transform: translateY(0); }
+        .c-dropdown-item { padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; color: var(--text-main); transition: 0.2s; }
+        .c-dropdown-item:hover { background: var(--bg-body); color: var(--accent-blue); font-weight: 600; }
+
+        .btn-submit { width: 100%; background: var(--text-main); color: var(--bg-surface); padding: 16px; border-radius: var(--radius-md); font-weight: 700; font-size: 1.05rem; border: none; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        /* ================= Modals ================= */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; visibility: hidden; transition: 0.3s ease; padding: 20px; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-card { background: var(--bg-surface); width: 100%; max-width: 500px; border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--border-color); transform: scale(0.9); transition: 0.3s; box-shadow: var(--shadow-md); position: relative; }
+        .modal-overlay.active .modal-card { transform: scale(1); }
+        
+        .modal-header { padding: 25px 30px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .btn-close { background: var(--bg-body); border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
+        .btn-close:hover { background: var(--border-color); color: var(--text-main); }
+        .modal-body { padding: 30px; }
+
+        /* Danger Confirm Modal */
+        .modal-danger { max-width: 400px; text-align: center; border-top: 5px solid var(--danger); padding: 40px 30px; }
+        .modal-danger i { font-size: 4rem; color: var(--danger); margin-bottom: 15px; }
+        .modal-danger h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; }
+        .modal-danger p { color: var(--text-muted); margin-bottom: 25px; line-height: 1.5; }
+        
+        @media (max-width: 800px) {
+            .navbar { padding: 0 15px; border-radius: 20px; height: 65px; }
+            .nav-brand span, .nav-divider, .breadcrumb { display: none; }
+            .user-name { display: inline-block; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .page-header-box { padding: 25px 20px; }
+            .header-title { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-wrapper">
+        <nav class="navbar">
+            <div class="nav-left">
+                <a href="ceo_dashboard.html" class="nav-brand"><i class="ph-bold ph-device-mobile-camera"></i> <span>NT PHONE</span></a>
+                <div class="nav-divider"></div>
+                <div class="breadcrumb"><span>ทีมงาน & สาขา</span></div>
+            </div>
+            <div class="nav-right">
+                <button class="btn-icon" onclick="toggleTheme()" title="สลับโหมดสี"><i class="ph-bold ph-moon" id="theme-icon"></i></button>
+                <div class="user-pill"><div class="user-avatar"><i class="ph-bold ph-user"></i></div><span class="user-name" id="topbar-name">Admin</span></div>
+                <button class="btn-icon" style="color:var(--danger); border-color:transparent;" onclick="handleLogout()"><i class="ph-bold ph-sign-out"></i></button>
+            </div>
+        </nav>
+    </div>
+
+    <main class="container">
+        <div class="page-header-box">
+            <div class="header-content">
+                <p class="back-link" onclick="window.location.href='ceo_dashboard.html'"><i class="ph-bold ph-arrow-left"></i> กลับศูนย์บัญชาการ (CEO Dashboard)</p>
+                <h1 class="header-title">จัดการทีมงาน & สาขา</h1>
+                <p class="header-desc">กำหนดสิทธิ์พนักงาน (Role) และจัดการข้อมูลสาขาทั้งหมดของ NT PHONE</p>
+            </div>
+        </div>
+
+        <!-- ================= 1. BRANCH MANAGEMENT ================= -->
+        <div class="content-card">
+            <div class="card-header">
+                <div class="card-title"><i class="ph-fill ph-storefront"></i> ข้อมูลสาขา (Branches)</div>
+                <button class="btn-primary" onclick="openModal('modal-branch')"><i class="ph-bold ph-plus"></i> เพิ่มสาขาใหม่</button>
+            </div>
+            
+            <div class="branch-grid" id="branch-grid">
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+                    <i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite; font-size: 2rem;"></i><br>กำลังดึงข้อมูลฐานระบบ...
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 2. EMPLOYEE ROSTER ================= -->
+        <div class="content-card">
+            <div class="card-header">
+                <div class="card-title"><i class="ph-fill ph-users-three"></i> รายชื่อพนักงาน (Employee Roster)</div>
+                <button class="btn-primary" onclick="openModal('modal-employee')"><i class="ph-bold ph-user-plus"></i> เพิ่มพนักงาน</button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>โปรไฟล์พนักงาน</th>
+                            <th>สิทธิ์การใช้งาน (Role)</th>
+                            <th>สาขาที่สังกัด</th>
+                            <th style="text-align: center;">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employee-tbody">
+                        <tr><td colspan="4" style="text-align: center; padding: 40px;"><i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite; font-size: 2rem;"></i></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- ================= MODAL: ADD BRANCH ================= -->
+    <div class="modal-overlay" id="modal-branch">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="ph-fill ph-storefront" style="color: var(--accent-blue);"></i> เพิ่มสาขาใหม่</h3>
+                <button class="btn-close" onclick="closeModal('modal-branch')"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">ชื่อสาขา (Branch Name)</label>
+                    <input type="text" class="form-input" id="b-name" placeholder="เช่น สาขาเซ็นทรัล นครศรีธรรมราช">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ที่อยู่ / รายละเอียด (Address)</label>
+                    <textarea class="form-input" id="b-address" rows="3" placeholder="ระบุที่อยู่ หรือจุดสังเกต"></textarea>
+                </div>
+                
+                <!-- Custom Dropdown: Branch Status -->
+                <div class="form-group">
+                    <label class="form-label">สถานะการเปิดให้บริการ</label>
+                    <div class="c-dropdown" id="drop-b-status">
+                        <div class="c-dropdown-trigger" onclick="toggleDropdown('drop-b-status')">
+                            <span id="txt-b-status">เปิดให้บริการปกติ (Active)</span><i class="ph-bold ph-caret-down"></i>
+                        </div>
+                        <div class="c-dropdown-list">
+                            <div class="c-dropdown-item" onclick="selectDropdown('drop-b-status', 'txt-b-status', 'เปิดให้บริการปกติ (Active)', 'active', 'val-b-status')">เปิดให้บริการปกติ (Active)</div>
+                            <div class="c-dropdown-item" onclick="selectDropdown('drop-b-status', 'txt-b-status', 'ปิดปรับปรุงชั่วคราว (Inactive)', 'inactive', 'val-b-status')">ปิดปรับปรุงชั่วคราว (Inactive)</div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="val-b-status" value="active">
+                </div>
+
+                <button class="btn-submit" id="btn-save-branch" onclick="saveBranch()"><i class="ph-bold ph-floppy-disk"></i> บันทึกข้อมูลสาขา</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL: ADD EMPLOYEE ================= -->
+    <div class="modal-overlay" id="modal-employee">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="ph-fill ph-user-plus" style="color: var(--accent-indigo);"></i> สร้างบัญชีพนักงาน</h3>
+                <button class="btn-close" onclick="closeModal('modal-employee')"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">ชื่อ-นามสกุล / ชื่อเล่น</label>
+                    <input type="text" class="form-input" id="e-name" placeholder="สำหรับแสดงบนหน้าจอ POS">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">Username (เบอร์โทร)</label>
+                        <input type="text" class="form-input" id="e-username" placeholder="ใช้สำหรับ Login">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">รหัสผ่าน (Password)</label>
+                        <input type="text" class="form-input" id="e-password" placeholder="ตั้งรหัสผ่าน">
+                    </div>
+                </div>
+
+                <!-- Custom Dropdown: Role -->
+                <div class="form-group">
+                    <label class="form-label">ตำแหน่ง / สิทธิ์การเข้าถึง (Role)</label>
+                    <div class="c-dropdown" id="drop-e-role">
+                        <div class="c-dropdown-trigger" onclick="toggleDropdown('drop-e-role')">
+                            <span id="txt-e-role">เลือกตำแหน่งสิทธิ์...</span><i class="ph-bold ph-caret-down"></i>
+                        </div>
+                        <div class="c-dropdown-list">
+                            <div class="c-dropdown-item" onclick="selectDropdown('drop-e-role', 'txt-e-role', 'พนักงานขาย (Sales)', 'sales', 'val-e-role')">พนักงานขาย (Sales - ใช้ POS ได้)</div>
+                            <div class="c-dropdown-item" onclick="selectDropdown('drop-e-role', 'txt-e-role', 'ผู้จัดการสาขา (Manager)', 'manager', 'val-e-role')">ผู้จัดการสาขา (Manager - อนุมัติผ่อนได้)</div>
+                            <div class="c-dropdown-item" onclick="selectDropdown('drop-e-role', 'txt-e-role', 'เจ้าของร้าน (Admin)', 'admin', 'val-e-role')">เจ้าของร้าน (Admin - เข้าถึงได้ทุกระบบ)</div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="val-e-role">
+                </div>
+
+                <!-- Custom Dropdown: Branch Select -->
+                <div class="form-group">
+                    <label class="form-label">ประจำสาขา (Branch)</label>
+                    <div class="c-dropdown" id="drop-e-branch">
+                        <div class="c-dropdown-trigger" onclick="toggleDropdown('drop-e-branch')">
+                            <span id="txt-e-branch">กำลังโหลดข้อมูลสาขา...</span><i class="ph-bold ph-caret-down"></i>
+                        </div>
+                        <div class="c-dropdown-list" id="list-e-branch"></div>
+                    </div>
+                    <input type="hidden" id="val-e-branch">
+                </div>
+
+                <button class="btn-submit" id="btn-save-employee" onclick="saveEmployee()"><i class="ph-bold ph-floppy-disk"></i> บันทึกบัญชีพนักงาน</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= SYSTEM MODALS ================= -->
+    
+    <!-- Info/Success Modal -->
+    <div class="modal-overlay" id="sys-modal">
+        <div class="modal-card modal-danger" style="border-top: 5px solid var(--accent-blue);" id="sys-box">
+            <i id="sys-icon" class="ph-fill ph-info" style="color: var(--accent-blue);"></i>
+            <h3 id="sys-title">Title</h3>
+            <p id="sys-msg">Message</p>
+            <button class="btn-submit" style="background: var(--text-main);" onclick="closeModal('sys-modal')">ตกลง</button>
+        </div>
+    </div>
+
+    <!-- Danger Confirm Modal (Real Delete) -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal-card modal-danger">
+            <i class="ph-bold ph-warning-circle"></i>
+            <h3>ยืนยันการลบพนักงาน?</h3>
+            <p>การดำเนินการนี้ไม่สามารถเรียกคืนได้ ระบบจะลบข้อมูลล็อกอินของพนักงานคนนี้ออกจากฐานข้อมูลทันที</p>
+            <input type="hidden" id="del-emp-id">
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-submit" style="background: var(--bg-body); color: var(--text-main);" onclick="closeModal('confirm-modal')">ยกเลิก</button>
+                <button class="btn-submit" style="background: var(--danger);" id="btn-confirm-del" onclick="executeDeleteEmp()">ยืนยันการลบ</button>
+            </div>
+        </div>
+    </div>
+
+    <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+        const supabaseUrl = 'https://xjjcnlzynzsvopmcooky.supabase.co'
+        const supabaseKey = 'sb_publishable_w7A_BOSi0r1r4t93exl1gg_j1jPRU_E'
+        const supabase = createClient(supabaseUrl, supabaseKey)
+
+        // UI Basic
+        document.getElementById('topbar-name').innerText = localStorage.getItem('emp_name') || 'Admin';
+
+        window.toggleTheme = () => {
+            const body = document.body; const icon = document.getElementById('theme-icon');
+            if (body.getAttribute('data-theme') === 'dark') { body.removeAttribute('data-theme'); icon.className = 'ph-bold ph-moon'; } 
+            else { body.setAttribute('data-theme', 'dark'); icon.className = 'ph-bold ph-sun'; }
+        };
+        window.handleLogout = () => { localStorage.clear(); window.location.href = "index.html"; };
+
+        window.openModal = (id) => document.getElementById(id).classList.add('active');
+        window.closeModal = (id) => document.getElementById(id).classList.remove('active');
+        
+        window.customAlert = (type, title, msg) => {
+            document.getElementById('sys-title').innerText = title; document.getElementById('sys-msg').innerText = msg;
+            const icon = document.getElementById('sys-icon');
+            const box = document.getElementById('sys-box');
+            
+            icon.className = type === 'success' ? 'ph-fill ph-check-circle' : type === 'error' ? 'ph-fill ph-warning-circle' : 'ph-fill ph-info';
+            icon.style.color = type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--accent-blue)';
+            box.style.borderTopColor = icon.style.color;
+            
+            openModal('sys-modal');
+        };
+
+        // Custom Dropdown Logic
+        window.toggleDropdown = (id) => {
+            document.querySelectorAll('.c-dropdown').forEach(d => { if(d.id !== id) d.classList.remove('active'); });
+            document.getElementById(id).classList.toggle('active');
+        };
+        window.selectDropdown = (dropId, txtId, text, val, inputId) => {
+            document.getElementById(txtId).innerText = text; document.getElementById(inputId).value = val;
+            document.getElementById(dropId).classList.remove('active');
+        };
+        document.addEventListener('click', (e) => { if (!e.target.closest('.c-dropdown')) document.querySelectorAll('.c-dropdown').forEach(d => d.classList.remove('active')); });
+
+        // ================= Fetch Real Data from Supabase (BULLETPROOF VERSION) =================
+        let branchList = [];
+
+        async function initRealData() {
+            try {
+                // 1. ดึงตารางสาขา (เอา order ออก ป้องกัน Error ถ้าไม่มีคอลัมน์ created_at)
+                const { data: branches, error: bErr } = await supabase.from('branches').select('*');
+                if(bErr) throw bErr;
+                branchList = branches || [];
+                
+                // 2. ดึงตารางพนักงาน (ดึงแบบธรรมดา ไม่ใช้ JOIN ป้องกัน Error 400 Foreign Key)
+                const { data: employees, error: eErr } = await supabase.from('employees').select('*');
+                
+                if(eErr) {
+                    console.warn("Employees Table Error (อาจจะยังไม่ได้สร้างตาราง):", eErr);
+                }
+
+                let employeeList = employees || [];
+
+                // 3. จับคู่ชื่อสาขาด้วย JavaScript (แก้ปัญหาแบบถึกทนชัวร์ 100%)
+                employeeList = employeeList.map(emp => {
+                    const matchedBranch = branchList.find(b => b.branch_id === emp.branch_id);
+                    return { 
+                        ...emp, 
+                        branches: { branch_name: matchedBranch ? matchedBranch.branch_name : 'ไม่ระบุสาขา' } 
+                    };
+                });
+
+                // 4. เรียงข้อมูลใหม่ล่าสุดขึ้นก่อน (ทำใน JS)
+                employeeList.sort((a, b) => (b.id || 0) - (a.id || 0));
+
+                renderBranches(branchList, employeeList);
+                renderEmployees(employeeList);
+                populateBranchDropdown(branchList);
+
+            } catch(err) {
+                console.error("Supabase Error:", err);
+                document.getElementById('branch-grid').innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--danger);">ตรวจสอบว่าสร้างตาราง branches ใน Supabase แล้วหรือยังครับ? (Error: ${err.message})</div>`;
+                document.getElementById('employee-tbody').innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--danger);">ไม่สามารถดึงข้อมูลได้</td></tr>`;
+            }
+        }
+
+        function renderBranches(branches, employees) {
+            const grid = document.getElementById('branch-grid');
+            if(branches.length === 0) { grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">ยังไม่มีข้อมูลสาขาในระบบ กรุณาเพิ่มสาขาแรก</div>`; return; }
+            
+            grid.innerHTML = '';
+            branches.forEach(b => {
+                const empCount = employees.filter(e => e.branch_id === b.branch_id).length;
+                const isActive = b.status !== 'inactive';
+                
+                grid.innerHTML += `
+                    <div class="branch-card">
+                        <div class="b-icon"><i class="ph-fill ph-storefront"></i></div>
+                        <div class="b-name">${b.branch_name}</div>
+                        <div class="b-address">${b.address || 'ไม่ระบุที่อยู่'}</div>
+                        <div class="b-footer status-${isActive ? 'active' : 'inactive'}">
+                            <span><span class="status-dot"></span>${isActive ? 'เปิดบริการ' : 'ปิดปรับปรุง'}</span>
+                            <span><i class="ph-bold ph-users"></i> ${empCount} คน</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderEmployees(employees) {
+            const tbody = document.getElementById('employee-tbody');
+            if(employees.length === 0) { tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">ยังไม่มีข้อมูลพนักงานในระบบ</td></tr>`; return; }
+            
+            tbody.innerHTML = '';
+            employees.forEach(e => {
+                let roleName = 'พนักงานขาย'; let roleClass = 'role-sales'; let roleIcon = 'ph-shopping-bag';
+                if(e.role === 'admin') { roleName = 'เจ้าของร้าน'; roleClass = 'role-admin'; roleIcon = 'ph-crown'; }
+                if(e.role === 'manager') { roleName = 'ผู้จัดการสาขา'; roleClass = 'role-manager'; roleIcon = 'ph-star'; }
+
+                const branchName = e.branches?.branch_name || 'ไม่ระบุสาขา';
+                const initial = e.name ? e.name.charAt(0).toUpperCase() : 'U';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>
+                            <div class="emp-profile">
+                                <div class="emp-avatar">${initial}</div>
+                                <div><div class="emp-name">${e.name}</div><div class="emp-user">Username: ${e.username}</div></div>
+                            </div>
+                        </td>
+                        <td><div class="role-badge ${roleClass}"><i class="ph-fill ${roleIcon}" style="margin-right:5px;"></i> ${roleName}</div></td>
+                        <td style="font-weight:600; color:var(--text-muted);">${branchName}</td>
+                        <td style="text-align: center;">
+                            <button class="btn-outline" onclick="confirmDeleteEmp('${e.id}')"><i class="ph-bold ph-trash"></i> ลบสิทธิ์</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // นำข้อมูลสาขาที่ดึงมาจาก Supabase มาสร้างเป็น Custom Dropdown Item
+        function populateBranchDropdown(branches) {
+            const listEl = document.getElementById('list-e-branch');
+            const txtEl = document.getElementById('txt-e-branch');
+            
+            if(branches.length === 0) {
+                txtEl.innerText = 'กรุณาเพิ่มสาขาก่อน';
+                listEl.innerHTML = '<div class="c-dropdown-item">ไม่พบข้อมูลสาขา</div>';
+                return;
+            }
+
+            txtEl.innerText = 'เลือกสาขาที่สังกัด...';
+            listEl.innerHTML = '';
+            branches.forEach(b => {
+                listEl.innerHTML += `<div class="c-dropdown-item" onclick="selectDropdown('drop-e-branch', 'txt-e-branch', '${b.branch_name}', '${b.branch_id}', 'val-e-branch')">${b.branch_name}</div>`;
+            });
+        }
+
+        // ================= Real CRUD Logic to Supabase =================
+
+        window.saveBranch = async () => {
+            const name = document.getElementById('b-name').value.trim();
+            const address = document.getElementById('b-address').value.trim();
+            const status = document.getElementById('val-b-status').value;
+            
+            if(!name) return customAlert('error', 'ข้อมูลไม่ครบ', 'กรุณากรอกชื่อสาขาครับ');
+            
+            const btn = document.getElementById('btn-save-branch');
+            btn.innerHTML = '<i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite;"></i> กำลังบันทึก...'; btn.disabled = true;
+
+            try {
+                // บันทึกลงตาราง branches
+                const { error } = await supabase.from('branches').insert([{ branch_name: name, address: address, status: status }]);
+                if(error) throw error;
+                
+                customAlert('success', 'บันทึกสำเร็จ', 'ระบบได้เพิ่มสาขาใหม่เรียบร้อยแล้ว');
+                closeModal('modal-branch');
+                initRealData(); // รีเฟรชข้อมูลใหม่ทันที
+
+                // เคลียร์ฟอร์ม
+                document.getElementById('b-name').value = '';
+                document.getElementById('b-address').value = '';
+
+            } catch (err) {
+                console.error(err); customAlert('error', 'เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกข้อมูลสาขาได้');
+            } finally {
+                btn.innerHTML = '<i class="ph-bold ph-floppy-disk"></i> บันทึกข้อมูลสาขา'; btn.disabled = false;
+            }
+        };
+
+        window.saveEmployee = async () => {
+            const name = document.getElementById('e-name').value.trim();
+            const user = document.getElementById('e-username').value.trim();
+            const pass = document.getElementById('e-password').value.trim();
+            const role = document.getElementById('val-e-role').value;
+            const branch = document.getElementById('val-e-branch').value;
+            
+            if(!name || !user || !pass || !role || !branch) return customAlert('error', 'ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูล และเลือกตัวเลือกให้ครบทุกช่องครับ');
+            
+            const btn = document.getElementById('btn-save-employee');
+            btn.innerHTML = '<i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite;"></i> กำลังสร้างบัญชี...'; btn.disabled = true;
+
+            try {
+                // บันทึกลงตาราง employees
+                const { error } = await supabase.from('employees').insert([{ name: name, username: user, password: pass, role: role, branch_id: branch }]);
+                if(error) throw error;
+                
+                customAlert('success', 'สร้างบัญชีสำเร็จ', `พนักงาน ${name} สามารถเข้าสู่ระบบได้ทันที`);
+                closeModal('modal-employee');
+                initRealData(); // รีเฟรชข้อมูลใหม่ทันที
+
+                // เคลียร์ฟอร์ม
+                document.getElementById('e-name').value = '';
+                document.getElementById('e-username').value = '';
+                document.getElementById('e-password').value = '';
+                
+            } catch (err) {
+                console.error(err); customAlert('error', 'เกิดข้อผิดพลาด', 'Username นี้อาจมีในระบบแล้ว หรือตารางพนักงานขัดข้อง');
+            } finally {
+                btn.innerHTML = '<i class="ph-bold ph-floppy-disk"></i> บันทึกบัญชีพนักงาน'; btn.disabled = false;
+            }
+        };
+
+        // Real Delete Logic
+        window.confirmDeleteEmp = (id) => {
+            document.getElementById('del-emp-id').value = id;
+            openModal('confirm-modal');
+        };
+
+        window.executeDeleteEmp = async () => {
+            const id = document.getElementById('del-emp-id').value;
+            const btn = document.getElementById('btn-confirm-del');
+            btn.innerHTML = '<i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite;"></i> กำลังลบ...'; btn.disabled = true;
+
+            try {
+                const { error } = await supabase.from('employees').delete().eq('id', id);
+                if(error) throw error;
+                
+                closeModal('confirm-modal');
+                initRealData(); // รีเฟรชตารางหลังลบเสร็จ
+                
+            } catch(err) {
+                console.error(err); customAlert('error', 'เกิดข้อผิดพลาด', 'ไม่สามารถลบข้อมูลพนักงานได้');
+            } finally {
+                btn.innerHTML = 'ยืนยันการลบ'; btn.disabled = false;
+            }
+        };
+
+        // Run Real Logic
+        initRealData();
+    </script>
+</body>
+</html>

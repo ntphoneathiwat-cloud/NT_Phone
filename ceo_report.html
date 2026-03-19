@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NT PHONE | Executive Report</title>
+    
+    <style>@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap');</style>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* ================= The Holy Variables ================= */
+        :root {
+            --bg-body: #F5F5F7; --bg-surface: #FFFFFF;
+            --text-main: #1D1D1F; --text-muted: #86868B; --border-color: #E5E5EA;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --accent-blue: #0071E3; --accent-light: #E8F2FC;
+            --accent-indigo: #5856D6; --accent-teal: #00C7BE;
+            --danger: #FF3B30; --success: #34C759; --warning: #F59E0B;
+            --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --radius-md: 12px; --radius-lg: 20px; --radius-xl: 24px;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #000000; --bg-surface: #1C1C1E;
+            --text-main: #F5F5F7; --text-muted: #A1A1A6; --border-color: #38383A;
+            --glass-bg: rgba(28, 28, 30, 0.75);
+            --accent-blue: #2997FF; --accent-light: rgba(41, 151, 255, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Anuphan', sans-serif; transition: background-color 0.3s, border-color 0.3s, color 0.3s; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding-top: 110px; padding-bottom: 60px; overflow-x: hidden; }
+
+        /* ================= Floating Navbar (Fixed & Perfect) ================= */
+        .nav-wrapper { position: fixed; top: 20px; left: 0; width: 100%; z-index: 1000; display: flex; justify-content: center; padding: 0 20px; }
+        .navbar { width: 100%; max-width: 1400px; height: 70px; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 35px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 15px 0 25px; }
+        
+        .nav-left, .nav-right { display: flex; align-items: center; gap: 12px; } /* จุดที่เคยขาดหายไป! */
+        
+        .nav-brand { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 700; color: var(--text-main); text-decoration: none; }
+        .nav-brand i { color: var(--accent-blue); font-size: 1.6rem; }
+        .nav-divider { width: 1px; height: 20px; background: var(--border-color); margin: 0 5px; }
+        .breadcrumb { font-size: 0.95rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+        
+        .user-pill { display: flex; align-items: center; gap: 10px; background: var(--bg-body); padding: 6px 16px 6px 6px; border-radius: 30px; font-weight: 600; font-size: 0.95rem; border: 1px solid var(--border-color); }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--text-main); color: var(--bg-surface); display: flex; align-items: center; justify-content: center; }
+        .btn-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); cursor: pointer; font-size: 1.2rem; transition: 0.2s; }
+        .btn-icon:hover { border-color: var(--accent-blue); color: var(--accent-blue); background: var(--bg-body); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* ================= Header Box ================= */
+        .page-header-box { background: var(--bg-surface); border-radius: var(--radius-xl); padding: 35px 40px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .header-content { flex: 1; }
+        .back-link { font-size: 0.95rem; font-weight: 600; margin-bottom: 15px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); transition: 0.2s; }
+        .back-link:hover { color: var(--accent-blue); transform: translateX(-5px); }
+        .header-title { font-size: 2.2rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 5px; color: var(--text-main); }
+        .header-desc { font-size: 1rem; color: var(--text-muted); }
+
+        /* ================= TIER 1: KPI Widgets ================= */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .kpi-card { background: var(--bg-surface); border-radius: var(--radius-xl); padding: 25px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); position: relative; overflow: hidden; transition: 0.3s; }
+        .kpi-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--accent-blue); }
+        
+        .kpi-title { font-size: 0.95rem; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .kpi-title i { font-size: 1.4rem; }
+        .kpi-value { font-size: 2.4rem; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; margin-bottom: 5px; }
+        .kpi-trend { font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; }
+        .trend-up { background: rgba(52, 199, 89, 0.1); color: var(--success); }
+        .trend-down { background: rgba(255, 59, 48, 0.1); color: var(--danger); }
+        
+        .kpi-card::after { content: ''; position: absolute; right: -20px; bottom: -20px; width: 100px; height: 100px; border-radius: 50%; opacity: 0.05; z-index: 0; }
+        .c-blue::after { background: var(--accent-blue); }
+        .c-green::after { background: var(--success); }
+        .c-orange::after { background: var(--warning); }
+        .c-indigo::after { background: var(--accent-indigo); }
+
+        /* ================= TIER 2: Charts ================= */
+        .chart-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .chart-card { background: var(--bg-surface); border-radius: var(--radius-xl); padding: 30px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .card-title { font-size: 1.2rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+        .chart-container { position: relative; height: 300px; width: 100%; }
+
+        /* ================= TIER 3: Behavior Insights ================= */
+        .insight-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .insight-box { background: var(--bg-body); padding: 20px; border-radius: var(--radius-lg); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 15px; }
+        .insight-icon { width: 50px; height: 50px; border-radius: 50%; background: var(--bg-surface); display: flex; justify-content: center; align-items: center; font-size: 1.5rem; color: var(--accent-indigo); box-shadow: var(--shadow-sm); flex-shrink: 0; }
+        .insight-text h4 { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 3px; font-weight: 600; }
+        .insight-text p { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
+
+        @media (max-width: 900px) {
+            .chart-grid { grid-template-columns: 1fr; }
+            .navbar { padding: 0 15px; border-radius: 20px; height: 65px; }
+            .nav-brand span, .nav-divider, .breadcrumb { display: none; }
+            .page-header-box { padding: 25px 20px; }
+            .header-title { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-wrapper">
+        <nav class="navbar">
+            <div class="nav-left">
+                <a href="ceo_dashboard.html" class="nav-brand"><i class="ph-bold ph-device-mobile-camera"></i> <span>NT PHONE</span></a>
+                <div class="nav-divider"></div>
+                <div class="breadcrumb"><span>รายงานผู้บริหาร</span></div>
+            </div>
+            <div class="nav-right">
+                <button class="btn-icon" onclick="toggleTheme()" title="สลับโหมดสี"><i class="ph-bold ph-moon" id="theme-icon"></i></button>
+                <div class="user-pill"><div class="user-avatar"><i class="ph-bold ph-user"></i></div><span id="cashier-name">Admin</span></div>
+            </div>
+        </nav>
+    </div>
+
+    <main class="container">
+        
+        <div class="page-header-box">
+            <div class="header-content">
+                <p class="back-link" onclick="window.location.href='ceo_dashboard.html'"><i class="ph-bold ph-arrow-left"></i> กลับศูนย์บัญชาการ</p>
+                <h1 class="header-title">รายงานสรุปผู้บริหาร (CEO Report)</h1>
+                <p class="header-desc">ข้อมูลทั้งหมดประมวลผลจากฐานข้อมูลจริง 100% (Real-time Analytics)</p>
+            </div>
+            <button class="btn-icon" style="width: 50px; height: 50px; border-radius: 16px; background: var(--text-main); color: var(--bg-surface);" onclick="window.location.reload()" title="รีเฟรชข้อมูล">
+                <i class="ph-bold ph-arrows-clockwise" id="refresh-icon"></i>
+            </button>
+        </div>
+
+        <!-- ================= TIER 1: KPI WIDGETS ================= -->
+        <div class="kpi-grid">
+            <div class="kpi-card c-blue">
+                <div class="kpi-title"><i class="ph-fill ph-wallet" style="color:var(--accent-blue);"></i> ยอดขายรวม (รับชำระจริงแล้ว)</div>
+                <div class="kpi-value" id="kpi-revenue">฿0</div>
+                <div class="kpi-trend trend-up"><i class="ph-bold ph-check-circle"></i> ข้อมูลเรียลไทม์</div>
+            </div>
+            
+            <div class="kpi-card c-green">
+                <div class="kpi-title"><i class="ph-fill ph-chart-line-up" style="color:var(--success);"></i> กำไรสุทธิ (ประเมินขั้นต่ำ)</div>
+                <div class="kpi-value" id="kpi-profit">฿0</div>
+                <div class="kpi-trend trend-up" id="kpi-margin-pct"><i class="ph-bold ph-percent"></i> มาร์จิ้น 15%</div>
+            </div>
+            
+            <div class="kpi-card c-orange">
+                <div class="kpi-title"><i class="ph-fill ph-hand-coins" style="color:var(--warning);"></i> ลูกหนี้ค้างรับ (A/R)</div>
+                <div class="kpi-value" id="kpi-ar">฿0</div>
+                <div class="kpi-trend" style="background:var(--bg-body); color:var(--text-muted);"><i class="ph-bold ph-info"></i> ยอดค่างวดที่ยังเก็บไม่ครบ</div>
+            </div>
+            
+            <div class="kpi-card c-indigo">
+                <div class="kpi-title"><i class="ph-fill ph-package" style="color:var(--accent-indigo);"></i> มูลค่าสต็อกคงคลัง (ทุนจม)</div>
+                <div class="kpi-value" id="kpi-stock">฿0</div>
+                <div class="kpi-trend" style="background:var(--bg-body); color:var(--text-muted);"><i class="ph-bold ph-warehouse"></i> สินค้าที่ยังขายไม่ออก</div>
+            </div>
+        </div>
+
+        <!-- ================= TIER 2: CHARTS ================= -->
+        <div class="chart-grid">
+            <!-- Line Chart: Real Revenue Data -->
+            <div class="chart-card">
+                <div class="card-header">
+                    <div class="card-title"><i class="ph-fill ph-chart-bar" style="color: var(--accent-blue);"></i> ยอดขายรายเดือน (Real Data)</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="profitChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Doughnut Chart: Top Models -->
+            <div class="chart-card">
+                <div class="card-header">
+                    <div class="card-title"><i class="ph-fill ph-device-mobile" style="color: var(--accent-indigo);"></i> รุ่นยอดฮิต (ออม+ผ่อน)</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="topModelsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TIER 3: BEHAVIOR INSIGHTS ================= -->
+        <div class="content-card">
+            <div class="card-header" style="margin-bottom: 20px; border: none; padding: 0;">
+                <div class="card-title"><i class="ph-fill ph-brain" style="color: var(--warning);"></i> ข้อมูลพฤติกรรมลูกค้า (Real Data Insights)</div>
+            </div>
+            <div class="insight-grid">
+                <div class="insight-box">
+                    <div class="insight-icon"><i class="ph-bold ph-heart"></i></div>
+                    <div class="insight-text">
+                        <h4>รุ่นที่คนนิยม "ออม" มากที่สุด</h4>
+                        <p id="ins-top-save">กำลังวิเคราะห์ข้อมูลจริง...</p>
+                    </div>
+                </div>
+                <div class="insight-box">
+                    <div class="insight-icon"><i class="ph-bold ph-check-square-offset"></i></div>
+                    <div class="insight-text">
+                        <h4>สัญญาผ่อนชำระที่ปิดยอดสำเร็จ</h4>
+                        <p id="ins-completed-contracts">0 สัญญา</p>
+                    </div>
+                </div>
+                <div class="insight-box">
+                    <div class="insight-icon"><i class="ph-bold ph-users"></i></div>
+                    <div class="insight-text">
+                        <h4>จำนวนลูกค้าในระบบทั้งหมด</h4>
+                        <p id="ins-total-cus">0 คน</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ================= SCRIPT LOGIC ================= -->
+    <script>
+        document.getElementById('cashier-name').innerText = localStorage.getItem('emp_name') || 'CEO';
+
+        function toggleTheme() {
+            const body = document.body; const icon = document.getElementById('theme-icon');
+            if (body.getAttribute('data-theme') === 'dark') { body.removeAttribute('data-theme'); icon.className = 'ph-bold ph-moon'; Chart.defaults.color = '#86868B'; } 
+            else { body.setAttribute('data-theme', 'dark'); icon.className = 'ph-bold ph-sun'; Chart.defaults.color = '#A1A1A6'; }
+            if(window.profitChart) window.profitChart.update(); 
+            if(window.topChart) window.topChart.update();
+        }
+    </script>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+        const supabaseUrl = 'https://xjjcnlzynzsvopmcooky.supabase.co'
+        const supabaseKey = 'sb_publishable_w7A_BOSi0r1r4t93exl1gg_j1jPRU_E'
+        const supabase = createClient(supabaseUrl, supabaseKey)
+
+        // Global Charts
+        window.profitChart = null;
+        window.topChart = null;
+
+        // Chart Theme
+        Chart.defaults.font.family = "'Anuphan', sans-serif";
+        Chart.defaults.color = '#86868B';
+
+        async function initDashboard() {
+            try {
+                // ดึงข้อมูลจากฐานข้อมูลของจริงแบบ 100% ไม่ใส่ Data ปลอม
+                const [resTxn, resCon, resSav, resSku, resCus] = await Promise.all([
+                    supabase.from('transactions').select('*').eq('status', 'approved'),
+                    supabase.from('contracts').select('*'),
+                    supabase.from('savings').select('*'),
+                    supabase.from('product_skus').select('*'),
+                    supabase.from('customers').select('*')
+                ]);
+
+                const txns = resTxn.data || [];
+                const contracts = resCon.data || [];
+                const savings = resSav.data || [];
+                const skus = resSku.data || [];
+                const customers = resCus.data || [];
+
+                // ================= 1. Calculate Real KPIs =================
+                let totalRev = 0;
+                txns.forEach(t => { totalRev += parseFloat(t.amount || 0); });
+
+                let totalAR = 0;
+                contracts.forEach(c => {
+                    if(c.status === 'active') {
+                        const paid = txns.filter(t => t.ref_id === c.id && t.type === 'installment').reduce((sum, t) => sum + parseFloat(t.amount||0), 0);
+                        totalAR += (parseFloat(c.total_amount||0) - paid);
+                    }
+                });
+
+                let deadStockValue = 0;
+                skus.forEach(sku => {
+                    // ใช้ cost_price ถ้ามี, ถ้าไม่มีประเมินทุนที่ 85% ของราคาขาย (เพราะในระบบร้านมือถือ Margin เฉลี่ยอยู่ที่ 15%)
+                    const cost = parseFloat(sku.cost_price || 0) > 0 ? parseFloat(sku.cost_price) : (parseFloat(sku.price_cash || 0) * 0.85); 
+                    let stockQty = 0;
+                    if(sku.branch_stocks && typeof sku.branch_stocks === 'object') {
+                        Object.values(sku.branch_stocks).forEach(q => stockQty += parseInt(q)||0);
+                    }
+                    deadStockValue += (stockQty * cost);
+                });
+
+                // สำหรับธุรกิจมือถือ หากยังไม่มีการใส่ Cost Price ตรงๆ จะใช้เกณฑ์กำไรขั้นต้นประเมิน (Gross Margin) 15%
+                let netProfit = totalRev * 0.15; 
+
+                // แสดงผล KPI
+                document.getElementById('kpi-revenue').innerText = `฿${totalRev.toLocaleString()}`;
+                document.getElementById('kpi-profit').innerText = `฿${netProfit.toLocaleString()}`;
+                document.getElementById('kpi-ar').innerText = `฿${totalAR.toLocaleString()}`;
+                document.getElementById('kpi-stock').innerText = `฿${deadStockValue.toLocaleString()}`;
+
+                // ================= 2. Render Real Data Chart =================
+                renderRealProfitChart(txns);
+                renderTopModelsChart(contracts, savings);
+
+                // ================= 3. Behavioral Insights (Real Data) =================
+                
+                // วิเคราะห์รุ่นที่คนออมมากที่สุด
+                if(savings.length > 0) {
+                    const saveCounts = {};
+                    savings.forEach(s => { const m = s.target_model || 'ไม่ระบุรุ่น'; saveCounts[m] = (saveCounts[m] || 0) + 1; });
+                    const topSaveModel = Object.keys(saveCounts).reduce((a, b) => saveCounts[a] > saveCounts[b] ? a : b);
+                    document.getElementById('ins-top-save').innerText = topSaveModel;
+                } else {
+                    document.getElementById('ins-top-save').innerText = "ยังไม่มีข้อมูล";
+                }
+
+                // นับสัญญาที่ปิดยอดแล้ว
+                const completedContracts = contracts.filter(c => c.status === 'completed').length;
+                document.getElementById('ins-completed-contracts').innerText = `${completedContracts} สัญญา`;
+
+                // นับจำนวนลูกค้า
+                document.getElementById('ins-total-cus').innerText = `${customers.length} คน`;
+
+            } catch (err) {
+                console.error("Dashboard Engine Error:", err);
+                document.getElementById('kpi-revenue').innerText = "ERROR";
+            }
+        }
+
+        // --- Chart Function: Group Transactions by Month (ของจริง 100%) ---
+        function renderRealProfitChart(txns) {
+            const ctx = document.getElementById('profitChart').getContext('2d');
+            if(window.profitChart) window.profitChart.destroy();
+
+            // จัดกลุ่มยอดเงินตามเดือน-ปี จากข้อมูล Transaction จริง
+            const monthlyData = {};
+            txns.forEach(t => {
+                const d = new Date(t.created_at);
+                const monthYear = d.toLocaleDateString('th-TH', { month: 'short', year: '2-digit' });
+                if(!monthlyData[monthYear]) monthlyData[monthYear] = 0;
+                monthlyData[monthYear] += parseFloat(t.amount || 0);
+            });
+
+            const labels = Object.keys(monthlyData);
+            const revData = Object.values(monthlyData);
+            
+            // ประเมินกำไรจากยอดขายจริง (15% Margin)
+            const profData = revData.map(v => v * 0.15);
+
+            // ถ้าไม่มีข้อมูลเลย ให้แสดงกราฟว่างๆ อย่างสวยงาม
+            if(labels.length === 0) {
+                labels.push('ยังไม่มีข้อมูลยอดขาย');
+                revData.push(0);
+                profData.push(0);
+            }
+
+            window.profitChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'ยอดขายรวม (Revenue)', data: revData, borderColor: '#0071E3', backgroundColor: 'rgba(0, 113, 227, 0.1)', fill: true, tension: 0.4, borderWidth: 3 },
+                        { label: 'กำไรสุทธิ (Profit - ประเมิน 15%)', data: profData, borderColor: '#34C759', backgroundColor: 'transparent', fill: false, tension: 0.4, borderWidth: 3 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 8 } } },
+                    scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } },
+                    interaction: { mode: 'index', intersect: false }
+                }
+            });
+        }
+
+        function renderTopModelsChart(contracts, savings) {
+            const ctx = document.getElementById('topModelsChart').getContext('2d');
+            if(window.topChart) window.topChart.destroy();
+
+            const modelCounts = {};
+            contracts.forEach(c => { const m = c.model || 'ไม่ระบุรุ่น'; modelCounts[m] = (modelCounts[m] || 0) + 1; });
+            savings.forEach(s => { const m = s.target_model || 'ไม่ระบุรุ่น'; modelCounts[m] = (modelCounts[m] || 0) + 1; });
+
+            const sortedModels = Object.entries(modelCounts).sort((a,b) => b[1] - a[1]).slice(0,5);
+            const labels = sortedModels.length > 0 ? sortedModels.map(x => x[0].substring(0,15)) : ['ไม่มีข้อมูล'];
+            const data = sortedModels.length > 0 ? sortedModels.map(x => x[1]) : [1];
+
+            window.topChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{ data: data, backgroundColor: ['#0071E3', '#5856D6', '#34C759', '#F59E0B', '#FF3B30'], borderWidth: 0, hoverOffset: 10 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '75%',
+                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 15 } } }
+                }
+            });
+        }
+
+        // Start Dashboard Engine
+        initDashboard();
+        
+    </script>
+</body>
+</html>

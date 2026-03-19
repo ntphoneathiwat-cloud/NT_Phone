@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NT PHONE | The Ultimate UI Library</title>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap');</style>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        /* ================= CORE SYSTEM ================= */
+        :root {
+            --bg-body: #F5F5F7; --bg-surface: #FFFFFF; --bg-dark: #1D1D1F;
+            --text-main: #1D1D1F; --text-muted: #86868B; --text-light: #FFFFFF;
+            --border: #E5E5EA; --border-dark: #38383A;
+            --blue: #0071E3; --red: #FF3B30; --green: #34C759; --orange: #F59E0B;
+            --shadow-sm: 0 4px 10px rgba(0,0,0,0.05); --shadow-md: 0 10px 30px rgba(0,0,0,0.08);
+            --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 50px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Anuphan', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding: 20px; }
+        .showroom { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 50px; padding-bottom: 100px; }
+        .section-title { font-size: 1.8rem; font-weight: 700; border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; color: var(--blue); }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .box { background: var(--bg-surface); padding: 20px; border-radius: var(--radius-lg); border: 1px dashed var(--border); position: relative; }
+        .box-label { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; }
+
+        /* ================= 1. NAVBARS (10 Styles) ================= */
+        .nav-base { display: flex; align-items: center; justify-content: space-between; padding: 0 20px; height: 60px; background: var(--bg-surface); }
+        .n-logo { font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 5px; }
+        .n-menu { display: flex; gap: 15px; font-size: 0.9rem; font-weight: 600; }
+        
+        .n1 { border-radius: var(--radius-pill); box-shadow: var(--shadow-sm); border: 1px solid var(--border); } /* Pill */
+        .n2 { border-bottom: 1px solid var(--border); background: transparent; } /* Flat Border */
+        .n3 { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); position: sticky; top: 10px; border-radius: var(--radius-md); box-shadow: var(--shadow-md); } /* Glass */
+        .n4 { background: var(--bg-dark); color: var(--text-light); border-radius: var(--radius-md); } /* Dark */
+        .n5 { justify-content: center; position: relative; border-radius: var(--radius-md); border: 1px solid var(--border); } /* Center Logo */
+        .n5 .n-logo { position: absolute; left: 50%; transform: translateX(-50%); }
+        .n6 { height: auto; flex-direction: column; padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border); } /* Double Decker */
+        .n6 .top { width: 100%; display: flex; justify-content: flex-end; font-size: 0.7rem; color: var(--text-muted); border-bottom: 1px solid var(--border); padding-bottom: 5px; margin-bottom: 5px; }
+        .n7 { background: linear-gradient(90deg, var(--blue), #5856D6); color: white; border-radius: var(--radius-md); } /* Gradient */
+        .n8 { border-radius: var(--radius-lg) var(--radius-lg) 0 0; border: 1px solid var(--border); border-bottom: none; } /* Top Radius Only */
+        .n9 { justify-content: space-around; max-width: 400px; margin: 0 auto; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--border); height: 70px; } /* Mobile App Bar */
+        .n9 .m-item { display: flex; flex-direction: column; align-items: center; font-size: 0.7rem; color: var(--text-muted); } .n9 .m-item.active { color: var(--blue); }
+        .n10 { display: flex; justify-content: space-between; border-radius: var(--radius-md); border: 1px solid var(--border); } /* Hamburger Style */
+
+        /* ================= 2. DROPDOWNS (10 Styles) ================= */
+        .drop-wrapper { position: relative; width: 100%; }
+        .d-btn { width: 100%; padding: 12px 15px; background: var(--bg-body); border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500; font-size: 0.9rem; }
+        .d-menu { position: absolute; top: calc(100% + 5px); left: 0; width: 100%; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-md); opacity: 0; visibility: hidden; transform: translateY(-5px); transition: 0.2s; z-index: 10; padding: 5px; }
+        .drop-wrapper.active .d-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        .d-item { padding: 10px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.9rem; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .d-item:hover { background: var(--bg-body); color: var(--blue); }
+
+        .d2 .d-btn { width: auto; border-radius: var(--radius-pill); padding: 8px 15px; } /* Pill Trigger */
+        .d3 .d-btn { background: transparent; border: none; width: auto; padding: 5px; border-radius: 50%; } /* Icon Only (3 Dots) */
+        .d3 .d-menu { width: 200px; right: 0; left: auto; }
+        .d4 .d-search { width: 100%; padding: 8px; border: none; border-bottom: 1px solid var(--border); outline: none; margin-bottom: 5px; } /* Searchable */
+        .d5 .d-menu { transform: translateY(5px); top: auto; bottom: calc(100% + 5px); } /* Drop-UP */
+        .drop-wrapper.active.d5 .d-menu { transform: translateY(0); }
+        .d6 .d-item { justify-content: space-between; } /* With Checkmark */
+        .d7 .d-group { font-size: 0.7rem; color: var(--text-muted); padding: 5px 10px; text-transform: uppercase; } /* Grouped */
+        .d8 .d-menu { display: grid; grid-template-columns: 1fr 1fr; width: 250px; } /* Mega / Grid */
+        .d9 .d-item { padding: 5px; justify-content: center; } .d9 .color-dot { width: 20px; height: 20px; border-radius: 50%; } /* Color Picker */
+        .d9 .d-menu { display: flex; flex-direction: row; gap: 5px; width: max-content; }
+        .d10 .d-btn { border: 2px dashed var(--border); background: transparent; } /* Dashed Trigger */
+
+        /* ================= 3. MODALS & POPUPS (10 Styles) ================= */
+        .btn-demo { background: var(--text-main); color: white; border: none; padding: 10px 20px; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; width: 100%; }
+        
+        .modal-base { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; z-index: 9999; opacity: 0; visibility: hidden; transition: 0.3s; }
+        .modal-base.active { opacity: 1; visibility: visible; }
+        .m-box { background: var(--bg-surface); transition: 0.3s; position: relative; }
+        .m-close { position: absolute; top: 15px; right: 15px; background: var(--bg-body); border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
+        
+        /* 1. Center Alert (Apple Style) */
+        .m1 { justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); }
+        .m1 .m-box { width: 100%; max-width: 350px; border-radius: var(--radius-lg); padding: 30px; text-align: center; transform: scale(0.9); }
+        .m1.active .m-box { transform: scale(1); }
+        
+        /* 2. Bottom Sheet (Mobile) */
+        .m2 { align-items: flex-end; }
+        .m2 .m-box { width: 100%; max-width: 600px; margin: 0 auto; border-radius: 30px 30px 0 0; padding: 30px; transform: translateY(100%); }
+        .m2.active .m-box { transform: translateY(0); }
+        .m2 .drag { width: 40px; height: 5px; background: var(--border); border-radius: 5px; margin: 0 auto 20px; }
+
+        /* 3. Right Sidebar (Cart) */
+        .m3 { justify-content: flex-end; }
+        .m3 .m-box { width: 100%; max-width: 350px; height: 100%; padding: 30px; transform: translateX(100%); }
+        .m3.active .m-box { transform: translateX(0); }
+
+        /* 4. Left Sidebar (Menu) */
+        .m4 { justify-content: flex-start; }
+        .m4 .m-box { width: 100%; max-width: 300px; height: 100%; padding: 30px; transform: translateX(-100%); }
+        .m4.active .m-box { transform: translateX(0); }
+
+        /* 5. Top Toast Notification */
+        .m5 { align-items: flex-start; justify-content: center; padding-top: 20px; background: transparent; pointer-events: none; }
+        .m5 .m-box { background: var(--bg-dark); color: white; padding: 15px 25px; border-radius: var(--radius-pill); transform: translateY(-50px); box-shadow: var(--shadow-md); pointer-events: auto; }
+        .m5.active .m-box { transform: translateY(0); }
+
+        /* 6. Bottom Snackbar */
+        .m6 { align-items: flex-end; justify-content: center; padding-bottom: 20px; background: transparent; pointer-events: none; }
+        .m6 .m-box { background: var(--bg-dark); color: white; padding: 15px 20px; border-radius: var(--radius-md); width: 90%; max-width: 400px; transform: translateY(50px); display: flex; justify-content: space-between; pointer-events: auto; }
+        .m6.active .m-box { transform: translateY(0); }
+
+        /* 7. Full Screen Modal */
+        .m7 { align-items: center; justify-content: center; }
+        .m7 .m-box { width: 100%; height: 100%; padding: 40px; transform: translateY(100%); overflow-y: auto; }
+        .m7.active .m-box { transform: translateY(0); }
+
+        /* 8. Form Modal (Input) */
+        .m8 { justify-content: center; align-items: flex-start; padding-top: 10vh; }
+        .m8 .m-box { width: 100%; max-width: 500px; border-radius: var(--radius-lg); padding: 30px; transform: scale(0.95); }
+        .m8.active .m-box { transform: scale(1); }
+
+        /* 9. Image Lightbox (Transparent) */
+        .m9 { justify-content: center; align-items: center; background: rgba(0,0,0,0.9); }
+        .m9 .m-box { background: transparent; box-shadow: none; transform: scale(0.8); }
+        .m9.active .m-box { transform: scale(1); }
+
+        /* 10. Danger Confirm (Red Accents) */
+        .m10 { justify-content: center; align-items: center; padding: 20px; }
+        .m10 .m-box { width: 100%; max-width: 350px; border-radius: var(--radius-lg); padding: 30px; text-align: center; border-top: 5px solid var(--red); transform: translateY(-20px); }
+        .m10.active .m-box { transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+    <div class="showroom">
+        <div style="text-align: center; padding: 20px 0;">
+            <h1 style="font-size: 2.5rem; letter-spacing: -1px;">The Ultimate UI Library</h1>
+            <p style="color: var(--text-muted);">30 Components | Apple Design | Fully Functional</p>
+        </div>
+
+        <!-- ================= 1. NAVBARS ================= -->
+        <section>
+            <div class="section-title"><i class="ph-bold ph-layout"></i> 1. Navbars (แถบบาร์ 10 สไตล์)</div>
+            <div class="grid-2">
+                <div class="box"><div class="box-label">1. Pill Floating (ลอยแคปซูล)</div>
+                    <nav class="nav-base n1"><div class="n-logo"><i class="ph-fill ph-apple-logo"></i></div><div class="n-menu"><span>Home</span><span>Shop</span></div></nav>
+                </div>
+                <div class="box"><div class="box-label">2. Minimal Flat (เรียบแบน)</div>
+                    <nav class="nav-base n2"><div class="n-logo">NT PHONE</div><div class="n-menu"><span>Menu</span></div></nav>
+                </div>
+                <div class="box" style="background:#e5e5ea;"><div class="box-label">3. Frosted Glass (กระจกฝ้า)</div>
+                    <nav class="nav-base n3"><div class="n-logo">GLASS</div><div class="n-menu"><i class="ph-bold ph-magnifying-glass"></i></div></nav>
+                </div>
+                <div class="box"><div class="box-label">4. Dark Mode (ธีมมืด)</div>
+                    <nav class="nav-base n4"><div class="n-logo">DARK</div><div class="n-menu" style="color:var(--text-muted)"><span>Log in</span></div></nav>
+                </div>
+                <div class="box"><div class="box-label">5. Center Logo (โลโก้กลาง)</div>
+                    <nav class="nav-base n5"><i class="ph-bold ph-list"></i><div class="n-logo">CENTER</div><i class="ph-bold ph-shopping-bag"></i></nav>
+                </div>
+                <div class="box"><div class="box-label">6. Double Decker (สองชั้น)</div>
+                    <nav class="nav-base n6"><div class="top">Call: 1234</div><div style="display:flex; justify-content:space-between; width:100%;"><b>MAIN</b><span>Menu</span></div></nav>
+                </div>
+                <div class="box"><div class="box-label">7. Gradient Accent (ไล่สี)</div>
+                    <nav class="nav-base n7"><div class="n-logo">PRO</div><div class="n-menu"><span>Buy</span></div></nav>
+                </div>
+                <div class="box"><div class="box-label">8. Card Header (หัวการ์ด)</div>
+                    <nav class="nav-base n8"><div class="n-logo">Card</div><i class="ph-bold ph-x"></i></nav>
+                </div>
+                <div class="box"><div class="box-label">9. Mobile App Bar (แถบล่างมือถือ)</div>
+                    <nav class="nav-base n9">
+                        <div class="m-item active"><i class="ph-fill ph-house"></i> Home</div>
+                        <div class="m-item"><i class="ph-bold ph-magnifying-glass"></i> Search</div>
+                        <div class="m-item"><i class="ph-bold ph-user"></i> Profile</div>
+                    </nav>
+                </div>
+                <div class="box"><div class="box-label">10. Hamburger Toggle</div>
+                    <nav class="nav-base n10"><div class="n-logo">MENU</div><i class="ph-bold ph-list" style="font-size:1.5rem;"></i></nav>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 2. DROPDOWNS ================= -->
+        <section>
+            <div class="section-title"><i class="ph-bold ph-caret-down"></i> 2. Dropdowns (ดรอปดาวน์ 10 สไตล์)</div>
+            <div class="grid-3">
+                <div class="box"><div class="box-label">1. Standard</div>
+                    <div class="drop-wrapper d1" onclick="toggleDrop(this)"><div class="d-btn">Select <i class="ph-bold ph-caret-down"></i></div>
+                        <div class="d-menu"><div class="d-item">Item 1</div><div class="d-item">Item 2</div></div></div>
+                </div>
+                <div class="box"><div class="box-label">2. Pill Button</div>
+                    <div class="drop-wrapper d2" onclick="toggleDrop(this)"><div class="d-btn">Filter <i class="ph-bold ph-funnel"></i></div>
+                        <div class="d-menu"><div class="d-item">New</div><div class="d-item">Old</div></div></div>
+                </div>
+                <div class="box"><div class="box-label">3. Action Dots (Right)</div>
+                    <div style="display:flex; justify-content:flex-end;">
+                        <div class="drop-wrapper d3" onclick="toggleDrop(this)"><div class="d-btn"><i class="ph-bold ph-dots-three-vertical" style="font-size:1.5rem;"></i></div>
+                            <div class="d-menu"><div class="d-item"><i class="ph-bold ph-pencil"></i> Edit</div><div class="d-item" style="color:var(--red)"><i class="ph-bold ph-trash"></i> Delete</div></div></div>
+                    </div>
+                </div>
+                <div class="box"><div class="box-label">4. Searchable</div>
+                    <div class="drop-wrapper d4" onclick="toggleDrop(this)"><div class="d-btn">Find Brand <i class="ph-bold ph-caret-down"></i></div>
+                        <div class="d-menu"><input type="text" class="d-search" placeholder="Search..." onclick="event.stopPropagation()"><div class="d-item">Apple</div><div class="d-item">Samsung</div></div></div>
+                </div>
+                <div class="box"><div class="box-label">5. Drop-UP (เด้งขึ้นบน)</div>
+                    <div class="drop-wrapper d5" onclick="toggleDrop(this)"><div class="d-btn">Upward <i class="ph-bold ph-caret-up"></i></div>
+                        <div class="d-menu"><div class="d-item">Top 1</div><div class="d-item">Top 2</div></div></div>
+                </div>
+                <div class="box"><div class="box-label">6. Checkmark Select</div>
+                    <div class="drop-wrapper d6" onclick="toggleDrop(this)"><div class="d-btn">Sort By <i class="ph-bold ph-caret-down"></i></div>
+                        <div class="d-menu"><div class="d-item" style="color:var(--blue)">Price <i class="ph-bold ph-check"></i></div><div class="d-item">Name</div></div></div>
+                </div>
+                <div class="box"><div class="box-label">7. Grouped Headers</div>
+                    <div class="drop-wrapper d7" onclick="toggleDrop(this)"><div class="d-btn">Categories <i class="ph-bold ph-caret-down"></i></div>
+                        <div class="d-menu"><div class="d-group">Phones</div><div class="d-item">iOS</div><div class="d-item">Android</div></div></div>
+                </div>
+                <div class="box"><div class="box-label">8. Mega Grid</div>
+                    <div class="drop-wrapper d8" onclick="toggleDrop(this)"><div class="d-btn">Features <i class="ph-bold ph-caret-down"></i></div>
+                        <div class="d-menu"><div class="d-item"><i class="ph-bold ph-camera"></i> Cam</div><div class="d-item"><i class="ph-bold ph-battery-full"></i> Bat</div><div class="d-item"><i class="ph-bold ph-cpu"></i> CPU</div><div class="d-item"><i class="ph-bold ph-wifi-high"></i> 5G</div></div></div>
+                </div>
+                <div class="box"><div class="box-label">9. Color Picker Swatch</div>
+                    <div class="drop-wrapper d9" onclick="toggleDrop(this)"><div class="d-btn">Color <i class="ph-bold ph-palette"></i></div>
+                        <div class="d-menu"><div class="d-item"><div class="color-dot" style="background:#000;"></div></div><div class="d-item"><div class="color-dot" style="background:#FF3B30;"></div></div><div class="d-item"><div class="color-dot" style="background:#0071E3;"></div></div></div></div>
+                </div>
+                <div class="box"><div class="box-label">10. Dashed Trigger</div>
+                    <div class="drop-wrapper d10" onclick="toggleDrop(this)"><div class="d-btn">+ Add New</div>
+                        <div class="d-menu"><div class="d-item">Product</div><div class="d-item">Brand</div></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 3. MODALS ================= -->
+        <section>
+            <div class="section-title"><i class="ph-bold ph-copy"></i> 3. Modals & Popups (ป๊อปอัพ 10 สไตล์)</div>
+            <div class="grid-3">
+                <div class="box"><div class="box-label">1. Center Alert (Apple)</div><button class="btn-demo" onclick="openModal('mod1')">Open</button></div>
+                <div class="box"><div class="box-label">2. Bottom Sheet (Mobile)</div><button class="btn-demo" onclick="openModal('mod2')">Open</button></div>
+                <div class="box"><div class="box-label">3. Right Sidebar (Cart)</div><button class="btn-demo" onclick="openModal('mod3')">Open</button></div>
+                <div class="box"><div class="box-label">4. Left Sidebar (Menu)</div><button class="btn-demo" onclick="openModal('mod4')">Open</button></div>
+                <div class="box"><div class="box-label">5. Top Toast (Auto-hide)</div><button class="btn-demo" onclick="openModal('mod5')">Open</button></div>
+                <div class="box"><div class="box-label">6. Bottom Snackbar</div><button class="btn-demo" onclick="openModal('mod6')">Open</button></div>
+                <div class="box"><div class="box-label">7. Full Screen Overlay</div><button class="btn-demo" onclick="openModal('mod7')">Open</button></div>
+                <div class="box"><div class="box-label">8. Form Input Modal</div><button class="btn-demo" onclick="openModal('mod8')">Open</button></div>
+                <div class="box"><div class="box-label">9. Image Lightbox</div><button class="btn-demo" onclick="openModal('mod9')">Open</button></div>
+                <div class="box"><div class="box-label">10. Danger Confirm (Red)</div><button class="btn-demo" onclick="openModal('mod10')">Open</button></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ================= MODAL HTML ================= -->
+    <div class="modal-base m1" id="mod1"><div class="m-box"><i class="ph-fill ph-check-circle" style="font-size:3rem; color:var(--green)"></i><h3>Success!</h3><p style="color:var(--text-muted); margin-bottom:15px;">Saved.</p><button class="btn-demo" onclick="closeModal('mod1')">OK</button></div></div>
+    
+    <div class="modal-base m2" id="mod2" onclick="closeModal('mod2')"><div class="m-box" onclick="event.stopPropagation()"><div class="drag"></div><h3>Options</h3><div style="height:100px; background:var(--bg-body); border-radius:10px; margin-top:10px;"></div></div></div>
+    
+    <div class="modal-base m3" id="mod3" onclick="closeModal('mod3')"><div class="m-box" onclick="event.stopPropagation()"><button class="m-close" onclick="closeModal('mod3')"><i class="ph-bold ph-x"></i></button><h3>Cart</h3></div></div>
+    
+    <div class="modal-base m4" id="mod4" onclick="closeModal('mod4')"><div class="m-box" onclick="event.stopPropagation()"><button class="m-close" onclick="closeModal('mod4')"><i class="ph-bold ph-x"></i></button><h3>Menu</h3></div></div>
+    
+    <div class="modal-base m5" id="mod5"><div class="m-box"><i class="ph-bold ph-info"></i> Notification Top</div></div>
+    
+    <div class="modal-base m6" id="mod6"><div class="m-box"><span>Item added to cart</span><span style="color:var(--blue); font-weight:700; cursor:pointer;" onclick="closeModal('mod6')">UNDO</span></div></div>
+    
+    <div class="modal-base m7" id="mod7"><div class="m-box"><button class="m-close" onclick="closeModal('mod7')"><i class="ph-bold ph-x"></i></button><h1>Full Screen Data</h1><div style="height:800px; background:var(--bg-body); margin-top:20px; border-radius:20px;"></div></div></div>
+    
+    <div class="modal-base m8" id="mod8"><div class="m-box"><button class="m-close" onclick="closeModal('mod8')"><i class="ph-bold ph-x"></i></button><h3>Add Data</h3><input type="text" placeholder="Type here..." style="width:100%; padding:15px; margin:20px 0; border:1px solid var(--border); border-radius:10px;"><button class="btn-demo" onclick="closeModal('mod8')">Submit</button></div></div>
+    
+    <div class="modal-base m9" id="mod9" onclick="closeModal('mod9')"><div class="m-box" onclick="event.stopPropagation()"><img src="https://via.placeholder.com/600" style="border-radius:20px; max-width:100%;"><button class="m-close" style="top:-40px; right:0; color:white; background:transparent;" onclick="closeModal('mod9')"><i class="ph-bold ph-x" style="font-size:2rem;"></i></button></div></div>
+    
+    <div class="modal-base m10" id="mod10"><div class="m-box"><i class="ph-bold ph-warning-circle" style="font-size:3rem; color:var(--red)"></i><h3>Delete Item?</h3><p style="color:var(--text-muted); margin-bottom:15px;">Cannot be undone.</p><button class="btn-demo" style="background:var(--red);" onclick="closeModal('mod10')">Delete</button><button style="background:transparent; border:none; margin-top:10px; cursor:pointer; font-weight:600;" onclick="closeModal('mod10')">Cancel</button></div></div>
+
+    <script>
+        // Dropdown Logic
+        function toggleDrop(el) {
+            const isActive = el.classList.contains('active');
+            document.querySelectorAll('.drop-wrapper').forEach(d => d.classList.remove('active'));
+            if(!isActive) el.classList.add('active');
+        }
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.drop-wrapper')) { document.querySelectorAll('.drop-wrapper').forEach(d => d.classList.remove('active')); }
+        });
+
+        // Modal Logic
+        function openModal(id) { 
+            const modal = document.getElementById(id);
+            modal.classList.add('active'); 
+            if(id === 'mod5' || id === 'mod6') setTimeout(() => closeModal(id), 3000); // Auto hide for toast/snackbar
+        }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    </script>
+</body>
+</html>

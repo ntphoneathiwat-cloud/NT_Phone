@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NT PHONE | Installment & Savings</title>
+    
+    <style>@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap');</style>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* ================= The Holy Variables ================= */
+        :root {
+            --bg-body: #F5F5F7; --bg-surface: #FFFFFF;
+            --text-main: #1D1D1F; --text-muted: #86868B; --border-color: #E5E5EA;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --accent-blue: #0071E3; --accent-light: #E8F2FC;
+            --accent-indigo: #5856D6; --accent-teal: #00C7BE;
+            --danger: #FF3B30; --success: #34C759; --warning: #F59E0B;
+            --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --radius-md: 12px; --radius-lg: 20px; --radius-xl: 24px;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #000000; --bg-surface: #1C1C1E;
+            --text-main: #F5F5F7; --text-muted: #A1A1A6; --border-color: #38383A;
+            --glass-bg: rgba(28, 28, 30, 0.75);
+            --accent-blue: #2997FF; --accent-light: rgba(41, 151, 255, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Anuphan', sans-serif; transition: background-color 0.3s, border-color 0.3s, color 0.3s; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding-top: 110px; padding-bottom: 60px; }
+
+        /* ================= Floating Navbar ================= */
+        .nav-wrapper { position: fixed; top: 20px; left: 0; width: 100%; z-index: 1000; display: flex; justify-content: center; padding: 0 20px; }
+        .navbar { width: 100%; max-width: 1400px; height: 70px; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 35px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 15px 0 25px; }
+        .nav-left, .nav-right { display: flex; align-items: center; gap: 12px; }
+        .nav-brand { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 700; color: var(--text-main); text-decoration: none; }
+        .nav-brand i { color: var(--accent-blue); font-size: 1.6rem; }
+        .nav-divider { width: 1px; height: 20px; background: var(--border-color); margin: 0 5px; }
+        .breadcrumb { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+        
+        .user-pill { display: flex; align-items: center; gap: 10px; background: var(--bg-body); padding: 6px 16px 6px 6px; border-radius: 30px; font-weight: 600; font-size: 0.95rem; border: 1px solid var(--border-color); }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--text-main); color: var(--bg-surface); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .btn-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); cursor: pointer; font-size: 1.2rem; }
+        .btn-icon:hover { border-color: var(--accent-blue); color: var(--accent-blue); background: var(--bg-body); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* ================= Header Box ================= */
+        .page-header-box { background: var(--bg-surface); border-radius: var(--radius-xl); padding: 35px 40px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .header-content { flex: 1; }
+        .back-link { font-size: 0.95rem; font-weight: 600; margin-bottom: 15px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); transition: 0.2s; }
+        .back-link:hover { color: var(--accent-blue); transform: translateX(-5px); }
+        .header-title { font-size: 2.2rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 5px; }
+        .header-desc { font-size: 1rem; color: var(--text-muted); }
+
+        /* ================= Stats Grid ================= */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: var(--bg-surface); border-radius: var(--radius-lg); padding: 25px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 20px; }
+        .stat-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 2rem; flex-shrink: 0; }
+        .s-pending { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .s-active { background: rgba(52, 199, 89, 0.1); color: var(--success); }
+        .s-money { background: rgba(0, 113, 227, 0.1); color: var(--accent-blue); }
+        .stat-info h4 { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-info .val { font-size: 1.8rem; font-weight: 700; color: var(--text-main); }
+
+        /* ================= Content Card & Table ================= */
+        .content-card { background: var(--bg-surface); padding: 35px; border-radius: var(--radius-xl); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
+        .card-title { font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .card-title i { font-size: 1.5rem; color: var(--accent-blue); }
+
+        /* Filter Chips */
+        .filter-group { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; -ms-overflow-style: none; scrollbar-width: none; }
+        .filter-group::-webkit-scrollbar { display: none; }
+        .filter-chip { padding: 10px 20px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-body); font-weight: 600; font-size: 0.9rem; cursor: pointer; white-space: nowrap; color: var(--text-muted); }
+        .filter-chip.active { background: var(--text-main); color: var(--bg-surface); border-color: var(--text-main); }
+
+        /* Table */
+        .table-responsive { width: 100%; overflow-x: auto; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-surface); margin-top: 20px; }
+        .data-table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        .data-table th { background: var(--bg-body); padding: 15px 20px; font-size: 0.85rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; border-bottom: 1px solid var(--border-color); text-align: left; }
+        .data-table td { padding: 15px 20px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        .data-table tr:hover td { background: var(--bg-body); }
+        
+        .cus-info { display: flex; flex-direction: column; gap: 3px; }
+        .cus-name { font-weight: 700; font-size: 0.95rem; }
+        .cus-phone { font-size: 0.8rem; color: var(--text-muted); }
+        
+        .prod-info { font-size: 0.9rem; font-weight: 600; color: var(--accent-blue); }
+
+        /* Apple Progress Bar */
+        .progress-wrapper { width: 100%; max-width: 200px; }
+        .progress-stats { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 700; margin-bottom: 5px; color: var(--text-muted); }
+        .progress-bar-bg { width: 100%; height: 8px; background: var(--border-color); border-radius: 10px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--accent-blue); border-radius: 10px; transition: width 0.5s ease; }
+        .progress-bar-fill.done { background: var(--success); }
+
+        .badge { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+        .badge.pending { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .badge.active { background: rgba(0, 113, 227, 0.1); color: var(--accent-blue); }
+        .badge.completed { background: rgba(52, 199, 89, 0.1); color: var(--success); }
+
+        /* Action Buttons */
+        .btn-action { background: var(--bg-surface); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: 0.2s; color: var(--text-main); display: inline-flex; align-items: center; gap: 5px; }
+        .btn-action:hover { background: var(--bg-body); border-color: var(--text-muted); }
+        .btn-action.primary { background: var(--text-main); color: var(--bg-surface); border-color: var(--text-main); }
+        .btn-action.primary:hover { opacity: 0.8; }
+
+        /* ================= Modals (Locked Specs) ================= */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; visibility: hidden; transition: 0.3s ease; padding: 20px; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-card { background: var(--bg-surface); width: 100%; max-width: 500px; border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--border-color); transform: scale(0.9); transition: 0.3s; box-shadow: var(--shadow-md); display: flex; flex-direction: column; max-height: 90vh; }
+        .modal-overlay.active .modal-card { transform: scale(1); }
+        
+        .modal-header { padding: 25px 30px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        .modal-header h3 { font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .btn-close { background: var(--bg-body); border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
+        .btn-close:hover { background: var(--border-color); color: var(--text-main); }
+        
+        .modal-body { padding: 30px; overflow-y: auto; }
+
+        /* Form Inputs inside Modal */
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
+        .form-input { width: 100%; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-size: 0.95rem; outline: none; transition: 0.2s; }
+        .form-input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px var(--accent-light); background: var(--bg-surface); }
+
+        .btn-submit { width: 100%; background: var(--text-main); color: var(--bg-surface); padding: 16px; border-radius: var(--radius-md); font-weight: 700; font-size: 1.05rem; border: none; cursor: pointer; transition: 0.2s; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        /* Custom Dropdown (Locked UI) */
+        .c-dropdown { position: relative; width: 100%; }
+        .c-dropdown-trigger { width: 100%; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-body); color: var(--text-main); font-size: 0.95rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500; transition: 0.2s; }
+        .c-dropdown-list { position: absolute; top: calc(100% + 8px); left: 0; width: 100%; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-md); z-index: 100; max-height: 200px; overflow-y: auto; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: 0.2s; padding: 8px; }
+        .c-dropdown.active .c-dropdown-list { opacity: 1; visibility: visible; transform: translateY(0); }
+        .c-dropdown-item { padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; color: var(--text-main); transition: 0.2s; }
+        .c-dropdown-item:hover { background: var(--bg-body); color: var(--accent-blue); font-weight: 600; }
+
+        /* Slip Image Box */
+        .slip-preview { width: 100%; max-height: 400px; object-fit: contain; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-body); margin-bottom: 20px; }
+
+        /* Payment Timeline */
+        .timeline { position: relative; padding-left: 20px; margin-top: 10px; }
+        .timeline::before { content: ''; position: absolute; left: 6px; top: 5px; bottom: 0; width: 2px; background: var(--border-color); }
+        .tl-item { position: relative; margin-bottom: 20px; padding-left: 20px; }
+        .tl-item:last-child { margin-bottom: 0; }
+        .tl-dot { position: absolute; left: -20px; top: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface); border: 2px solid var(--success); }
+        .tl-content { display: flex; justify-content: space-between; align-items: flex-start; }
+        .tl-date { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 2px; }
+        .tl-amt { font-size: 1rem; font-weight: 700; color: var(--text-main); }
+        .tl-status { font-size: 0.75rem; font-weight: 600; color: var(--success); }
+
+        @media (max-width: 800px) {
+            .navbar { padding: 0 15px; border-radius: 20px; height: 65px; }
+            .nav-brand span, .nav-divider, .breadcrumb { display: none; }
+            .user-name { display: inline-block; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .page-header-box { padding: 25px 20px; }
+            .header-title { font-size: 1.8rem; }
+            .content-card { padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-wrapper">
+        <nav class="navbar">
+            <div class="nav-left">
+                <a href="ceo_dashboard.html" class="nav-brand"><i class="ph-bold ph-device-mobile-camera"></i> <span>NT PHONE</span></a>
+                <div class="nav-divider"></div>
+                <div class="breadcrumb"><span>ระบบผ่อน & ออม</span></div>
+            </div>
+            <div class="nav-right">
+                <button class="btn-icon" onclick="toggleTheme()" title="สลับโหมดสี"><i class="ph-bold ph-moon" id="theme-icon"></i></button>
+                <div class="user-pill"><div class="user-avatar"><i class="ph-bold ph-user"></i></div><span class="user-name" id="topbar-name">Admin</span></div>
+                <button class="btn-icon" style="color:var(--danger); border-color:transparent;" onclick="handleLogout()"><i class="ph-bold ph-sign-out"></i></button>
+            </div>
+        </nav>
+    </div>
+
+    <main class="container">
+        <div class="page-header-box">
+            <div class="header-content">
+                <p class="back-link" onclick="window.location.href='ceo_dashboard.html'"><i class="ph-bold ph-arrow-left"></i> กลับศูนย์บัญชาการ</p>
+                <h1 class="header-title">ระบบผ่อน & ออมสินค้า</h1>
+                <p class="header-desc">ตรวจสอบสลิป, อนุมัติยอดเงิน และดูประวัติการผ่อนชำระของลูกค้า</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon s-pending"><i class="ph-bold ph-receipt"></i></div>
+                <div class="stat-info"><h4>รอตรวจสลิป (รายการ)</h4><div class="val" id="stat-pending">0</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon s-active"><i class="ph-bold ph-file-text"></i></div>
+                <div class="stat-info"><h4>ลูกค้าที่กำลังผ่อน (สัญญา)</h4><div class="val" id="stat-active">0</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon s-money"><i class="ph-bold ph-coins"></i></div>
+                <div class="stat-info"><h4>ยอดรอรับชำระทั้งหมด (บาท)</h4><div class="val" id="stat-money">฿0</div></div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header">
+                <div class="card-title"><i class="ph-fill ph-files"></i> ข้อมูลสัญญาและสลิปเงินโอน</div>
+                
+                <div class="filter-group">
+                    <button class="filter-chip active" onclick="filterData('all', this)">ทั้งหมด</button>
+                    <button class="filter-chip" onclick="filterData('pending', this)"><i class="ph-fill ph-circle" style="color:var(--warning)"></i> รอตรวจสลิป</button>
+                    <button class="filter-chip" onclick="filterData('active', this)"><i class="ph-fill ph-circle" style="color:var(--accent-blue)"></i> กำลังผ่อน</button>
+                    <button class="filter-chip" onclick="filterData('completed', this)"><i class="ph-fill ph-check-circle" style="color:var(--success)"></i> ผ่อนครบแล้ว</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>เลขสัญญา / ลูกค้า</th>
+                            <th>รายการสินค้า</th>
+                            <th style="width: 250px;">ความคืบหน้า (Progress)</th>
+                            <th>สถานะสัญญา</th>
+                            <th style="text-align: center;">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contract-tbody">
+                        <tr><td colspan="5" style="text-align: center; padding: 40px;"><i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite; font-size: 2rem; color: var(--accent-blue);"></i><br><br>กำลังดึงข้อมูล...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- ================= MODAL: ตรวจสอบสลิป (Slip Verification) ================= -->
+    <div class="modal-overlay" id="modal-slip">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="ph-fill ph-magnifying-glass" style="color: var(--accent-blue);"></i> ตรวจสอบสลิปโอนเงิน</h3>
+                <button class="btn-close" onclick="closeModal('modal-slip')"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <img src="" id="slip-image" class="slip-preview" alt="Slip Preview">
+                
+                <div class="form-group">
+                    <label class="form-label">ยอดเงินที่ลูกค้าโอนมา (ตรวจสอบจากสลิป)</label>
+                    <input type="number" class="form-input" id="slip-amount" placeholder="กรอกยอดเงินที่ถูกต้อง" style="font-size: 1.2rem; font-weight: 700; color: var(--accent-blue);">
+                </div>
+
+                <input type="hidden" id="slip-payment-id">
+                <input type="hidden" id="slip-contract-id">
+
+                <div style="display: flex; gap: 10px; margin-top: 30px;">
+                    <button class="btn-submit" style="background: var(--bg-body); color: var(--danger); border: 1px solid var(--danger);" onclick="rejectSlip()"><i class="ph-bold ph-x"></i> ปฏิเสธสลิป</button>
+                    <button class="btn-submit" style="background: var(--success);" onclick="approveSlip()"><i class="ph-bold ph-check-circle"></i> อนุมัติยอดนี้</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL: ดูประวัติการชำระเงิน (Payment History) ================= -->
+    <div class="modal-overlay" id="modal-history">
+        <div class="modal-card" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3><i class="ph-fill ph-clock-counter-clockwise" style="color: var(--accent-indigo);"></i> ประวัติการชำระเงิน</h3>
+                <button class="btn-close" onclick="closeModal('modal-history')"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body" style="background: var(--bg-body);">
+                <div style="background: var(--bg-surface); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px;">
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">เลขสัญญา: <span id="hist-id" style="color: var(--text-main); font-weight: 700;">-</span></div>
+                    <div style="font-size: 1.1rem; font-weight: 700; margin-top: 5px;" id="hist-prod">-</div>
+                </div>
+
+                <div class="timeline" id="history-timeline">
+                    <!-- Data will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= SYSTEM ALERT MODAL ================= -->
+    <div class="modal-overlay" id="sys-modal">
+        <div class="modal-card" style="max-width: 350px; text-align: center;">
+            <div class="modal-body" style="padding-top: 40px;">
+                <i id="sys-icon" class="ph-fill ph-info" style="font-size: 3.5rem; margin-bottom: 15px;"></i>
+                <h3 id="sys-title" style="font-size: 1.3rem; margin-bottom: 10px;">Title</h3>
+                <p id="sys-msg" style="color: var(--text-muted); margin-bottom: 25px;">Message</p>
+                <button class="btn-submit" onclick="closeModal('sys-modal')">ตกลง</button>
+            </div>
+        </div>
+    </div>
+
+    <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+        const supabaseUrl = 'https://xjjcnlzynzsvopmcooky.supabase.co'
+        const supabaseKey = 'sb_publishable_w7A_BOSi0r1r4t93exl1gg_j1jPRU_E'
+        const supabase = createClient(supabaseUrl, supabaseKey)
+
+        // UI Basic
+        document.getElementById('topbar-name').innerText = localStorage.getItem('emp_name') || 'Admin';
+        window.toggleTheme = () => {
+            const body = document.body; const icon = document.getElementById('theme-icon');
+            if (body.getAttribute('data-theme') === 'dark') { body.removeAttribute('data-theme'); icon.className = 'ph-bold ph-moon'; } 
+            else { body.setAttribute('data-theme', 'dark'); icon.className = 'ph-bold ph-sun'; }
+        };
+        window.handleLogout = () => { localStorage.clear(); window.location.href = "index.html"; };
+
+        window.openModal = (id) => document.getElementById(id).classList.add('active');
+        window.closeModal = (id) => document.getElementById(id).classList.remove('active');
+        
+        window.customAlert = (type, title, msg) => {
+            document.getElementById('sys-title').innerText = title; document.getElementById('sys-msg').innerText = msg;
+            const icon = document.getElementById('sys-icon');
+            icon.className = type === 'success' ? 'ph-fill ph-check-circle' : type === 'error' ? 'ph-fill ph-warning-circle' : 'ph-fill ph-info';
+            icon.style.color = type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--accent-blue)';
+            openModal('sys-modal');
+        };
+
+        // Custom Dropdown Logic
+        window.toggleDropdown = (id) => {
+            document.querySelectorAll('.c-dropdown').forEach(d => { if(d.id !== id) d.classList.remove('active'); });
+            document.getElementById(id).classList.toggle('active');
+        };
+        window.selectDropdown = (dropId, txtId, text, val, inputId) => {
+            document.getElementById(txtId).innerText = text; document.getElementById(inputId).value = val;
+            document.getElementById(dropId).classList.remove('active');
+        };
+        document.addEventListener('click', (e) => { if (!e.target.closest('.c-dropdown')) document.querySelectorAll('.c-dropdown').forEach(d => d.classList.remove('active')); });
+
+
+        // ================= Fetch Bulletproof Data =================
+        let allContracts = [];
+        let allPayments = [];
+        let currentFilter = 'all';
+
+        async function initInstallmentData() {
+            try {
+                // 1. ดึงข้อมูล Contracts แบบตรงๆ ไม่ใช้ JOIN เพื่อป้องกัน 400
+                const { data: contracts, error: cErr } = await supabase.from('contracts').select('*');
+                if(cErr) console.warn("Table 'contracts' might not exist:", cErr);
+                
+                // 2. ดึงข้อมูล Payments แบบตรงๆ
+                const { data: payments, error: pErr } = await supabase.from('payments').select('*');
+                if(pErr) console.warn("Table 'payments' might not exist:", pErr);
+
+                allContracts = contracts || [];
+                allPayments = payments || [];
+
+                // 3. Map ข้อมูลและเรียงล่าสุดขึ้นก่อน
+                allContracts.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+                updateDashboard();
+
+            } catch (err) {
+                console.error("DB Init Error:", err);
+                document.getElementById('contract-tbody').innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--danger);">ไม่สามารถโหลดข้อมูลได้ (กรุณาเช็คตาราง contracts และ payments ใน Supabase)</td></tr>`;
+            }
+        }
+
+        window.filterData = (filterType, btnElement) => {
+            currentFilter = filterType;
+            document.querySelectorAll('.filter-chip').forEach(el => el.classList.remove('active'));
+            btnElement.classList.add('active');
+            updateDashboard();
+        };
+
+        function updateDashboard() {
+            let pendingCount = 0;
+            let activeCount = 0;
+            let totalReceivable = 0;
+
+            const tbody = document.getElementById('contract-tbody');
+            tbody.innerHTML = '';
+
+            let displayContracts = [];
+
+            // คำนวณยอดรวมและสกัดข้อมูล
+            allContracts.forEach(contract => {
+                // หารายการ payment ที่รอตรวจ (pending)
+                const cPayments = allPayments.filter(p => p.contract_id === contract.id);
+                const hasPendingSlip = cPayments.some(p => p.status === 'pending');
+                
+                if(hasPendingSlip) pendingCount++;
+                if(contract.status === 'active') {
+                    activeCount++;
+                    totalReceivable += (parseFloat(contract.total_amount) - parseFloat(contract.paid_amount));
+                }
+
+                // กรองข้อมูลตาม Tab ที่เลือก
+                if(currentFilter === 'all') displayContracts.push({ ...contract, hasPendingSlip });
+                else if(currentFilter === 'pending' && hasPendingSlip) displayContracts.push({ ...contract, hasPendingSlip });
+                else if(currentFilter === 'active' && contract.status === 'active' && !hasPendingSlip) displayContracts.push({ ...contract, hasPendingSlip });
+                else if(currentFilter === 'completed' && contract.status === 'completed') displayContracts.push({ ...contract, hasPendingSlip });
+            });
+
+            // Update Stats Widgets
+            document.getElementById('stat-pending').innerText = pendingCount;
+            document.getElementById('stat-active').innerText = activeCount;
+            document.getElementById('stat-money').innerText = `฿${totalReceivable.toLocaleString()}`;
+
+            // Render Table
+            if(displayContracts.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:30px;">ไม่พบรายการที่ตรงกับเงื่อนไข</td></tr>`;
+                return;
+            }
+
+            displayContracts.forEach(c => {
+                const total = parseFloat(c.total_amount) || 0;
+                const paid = parseFloat(c.paid_amount) || 0;
+                const percent = total > 0 ? Math.min(100, Math.round((paid / total) * 100)) : 0;
+                
+                let statusHtml = '';
+                if(c.status === 'pending') statusHtml = `<div class="badge pending"><i class="ph-fill ph-clock"></i> รออนุมัติสัญญา</div>`;
+                else if(c.status === 'active') statusHtml = `<div class="badge active"><i class="ph-fill ph-spinner-gap"></i> กำลังผ่อน</div>`;
+                else statusHtml = `<div class="badge completed"><i class="ph-fill ph-check-circle"></i> ผ่อนครบแล้ว</div>`;
+
+                let actionHtml = `<button class="btn-action" onclick="viewHistory('${c.id}')"><i class="ph-bold ph-clock-counter-clockwise"></i> ประวัติ</button>`;
+                
+                // ถ้ารอตรวจสลิป ให้ปุ่มตรวจสลิปเด่นขึ้นมา
+                if(c.hasPendingSlip) {
+                    const pendingPayment = allPayments.find(p => p.contract_id === c.id && p.status === 'pending');
+                    statusHtml = `<div class="badge pending"><i class="ph-fill ph-warning-circle"></i> มีสลิปใหม่รอตรวจ!</div>`;
+                    actionHtml = `<button class="btn-action primary" onclick="verifySlip('${pendingPayment.id}')"><i class="ph-bold ph-magnifying-glass"></i> ตรวจสลิป</button>` + actionHtml;
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>
+                            <div class="cus-info">
+                                <span class="cus-name">${c.customer_name || 'ลูกค้าทั่วไป'}</span>
+                                <span class="cus-phone">Ref: ${c.id.substring(0,8)} | โทร: ${c.customer_phone || '-'}</span>
+                            </div>
+                        </td>
+                        <td><div class="prod-info">${c.product_details || 'สินค้าไม่ระบุ'}</div></td>
+                        <td>
+                            <div class="progress-wrapper">
+                                <div class="progress-stats"><span>จ่ายแล้ว ฿${paid.toLocaleString()}</span><span>฿${total.toLocaleString()}</span></div>
+                                <div class="progress-bar-bg"><div class="progress-bar-fill ${percent === 100 ? 'done' : ''}" style="width: ${percent}%;"></div></div>
+                            </div>
+                        </td>
+                        <td>${statusHtml}</td>
+                        <td><div style="display:flex; gap:8px;">${actionHtml}</div></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // ================= Modals Actions =================
+
+        window.verifySlip = (paymentId) => {
+            const p = allPayments.find(x => x.id === paymentId);
+            if(!p) return;
+
+            document.getElementById('slip-payment-id').value = p.id;
+            document.getElementById('slip-contract-id').value = p.contract_id;
+            document.getElementById('slip-image').src = p.slip_url || 'https://via.placeholder.com/400x500?text=No+Slip+Image';
+            document.getElementById('slip-amount').value = p.amount || 0;
+
+            openModal('modal-slip');
+        };
+
+        window.approveSlip = async () => {
+            const pId = document.getElementById('slip-payment-id').value;
+            const cId = document.getElementById('slip-contract-id').value;
+            const approvedAmount = parseFloat(document.getElementById('slip-amount').value) || 0;
+
+            if(approvedAmount <= 0) return customAlert('error', 'ยอดเงินไม่ถูกต้อง', 'กรุณาระบุยอดเงินที่อนุมัติให้ถูกต้องครับ');
+
+            // TODO: เชื่อมต่อ Supabase เพื่อ Update payment status = 'approved' และบวก paid_amount ใน contract
+            // ตัวอย่างจำลองการบันทึก:
+            customAlert('success', 'อนุมัติเรียบร้อย', `อนุมัติยอดโอน ${approvedAmount.toLocaleString()} บาท เข้าสัญญาเรียบร้อยแล้ว (จำลอง)`);
+            closeModal('modal-slip');
+            
+            // จำลองการอัปเดตหน้าจอทันที (Optimistic Update)
+            const pIndex = allPayments.findIndex(x => x.id === pId);
+            if(pIndex > -1) allPayments[pIndex].status = 'approved';
+            
+            const cIndex = allContracts.findIndex(x => x.id === cId);
+            if(cIndex > -1) {
+                allContracts[cIndex].paid_amount = parseFloat(allContracts[cIndex].paid_amount) + approvedAmount;
+                if(allContracts[cIndex].status === 'pending') allContracts[cIndex].status = 'active'; // ถ้าจ่ายดาวน์งวดแรก เปลี่ยนเป็นเริ่มผ่อน
+                if(allContracts[cIndex].paid_amount >= allContracts[cIndex].total_amount) allContracts[cIndex].status = 'completed';
+            }
+            
+            updateDashboard();
+        };
+
+        window.rejectSlip = async () => {
+            const pId = document.getElementById('slip-payment-id').value;
+            // TODO: เชื่อมต่อ Supabase เพื่อ Update payment status = 'rejected'
+            customAlert('info', 'ปฏิเสธสลิป', 'สลิปถูกปฏิเสธเรียบร้อยแล้ว (จำลอง)');
+            closeModal('modal-slip');
+
+            // จำลองการอัปเดตหน้าจอ
+            const pIndex = allPayments.findIndex(x => x.id === pId);
+            if(pIndex > -1) allPayments[pIndex].status = 'rejected';
+            updateDashboard();
+        };
+
+        window.viewHistory = (contractId) => {
+            const contract = allContracts.find(x => x.id === contractId);
+            const cPayments = allPayments.filter(p => p.contract_id === contractId).sort((a,b) => new Date(b.payment_date || 0) - new Date(a.payment_date || 0));
+            
+            document.getElementById('hist-id').innerText = contract.id.substring(0,12);
+            document.getElementById('hist-prod').innerText = contract.product_details;
+
+            const tlContainer = document.getElementById('history-timeline');
+            if(cPayments.length === 0) {
+                tlContainer.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">ยังไม่มีประวัติการชำระเงิน</div>`;
+            } else {
+                tlContainer.innerHTML = '';
+                cPayments.forEach(p => {
+                    const d = new Date(p.payment_date || Date.now());
+                    const dateStr = d.toLocaleDateString('th-TH', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+                    
+                    let statText = ''; let statColor = '';
+                    if(p.status === 'approved') { statText = 'อนุมัติแล้ว'; statColor = 'var(--success)'; }
+                    else if(p.status === 'rejected') { statText = 'ถูกปฏิเสธ'; statColor = 'var(--danger)'; }
+                    else { statText = 'รอตรวจสอบ'; statColor = 'var(--warning)'; }
+
+                    tlContainer.innerHTML += `
+                        <div class="tl-item">
+                            <div class="tl-dot" style="border-color: ${statColor};"></div>
+                            <div class="tl-content">
+                                <div>
+                                    <div class="tl-date">${dateStr}</div>
+                                    <div class="tl-status" style="color:${statColor};">${statText}</div>
+                                </div>
+                                <div class="tl-amt">฿${parseFloat(p.amount||0).toLocaleString()}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            openModal('modal-history');
+        };
+
+        // เพื่อความสวยงาม กรณีไม่มีตารางในระบบ ให้ใส่ Mock Data ทนแทนไปก่อน
+        function injectMockData() {
+            if(allContracts.length === 0) {
+                allContracts = [
+                    { id: 'C-001', customer_name: 'คุณ สมชาย ใจดี', customer_phone: '081-111-2222', product_details: 'iPhone 15 Pro 256GB - Blue Titanium', total_amount: 41900, paid_amount: 15000, status: 'active', created_at: new Date().toISOString() },
+                    { id: 'C-002', customer_name: 'น้องฟ้า น่ารัก', customer_phone: '089-888-7777', product_details: 'iPad Air 5 64GB - Space Gray', total_amount: 23900, paid_amount: 23900, status: 'completed', created_at: new Date(Date.now() - 86400000).toISOString() },
+                    { id: 'C-003', customer_name: 'ลุงพล คนเก่ง', customer_phone: '085-555-4444', product_details: 'Samsung Galaxy S24 Ultra - Black', total_amount: 46900, paid_amount: 0, status: 'pending', created_at: new Date().toISOString() }
+                ];
+                allPayments = [
+                    { id: 'P-001', contract_id: 'C-001', amount: 5000, slip_url: 'https://via.placeholder.com/400x600/0071E3/FFFFFF?text=SLIP+5000', status: 'approved', payment_date: new Date(Date.now() - 86400000).toISOString() },
+                    { id: 'P-002', contract_id: 'C-001', amount: 5000, slip_url: 'https://via.placeholder.com/400x600/F59E0B/FFFFFF?text=NEW+SLIP', status: 'pending', payment_date: new Date().toISOString() },
+                    { id: 'P-003', contract_id: 'C-003', amount: 10000, slip_url: 'https://via.placeholder.com/400x600/F59E0B/FFFFFF?text=DOWNPAYMENT', status: 'pending', payment_date: new Date().toISOString() }
+                ];
+                updateDashboard();
+            }
+        }
+
+        // Run
+        initInstallmentData().then(() => injectMockData());
+    </script>
+</body>
+</html>
